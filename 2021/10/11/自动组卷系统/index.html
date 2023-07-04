@@ -1,0 +1,821 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-Hans" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="sun_zhi_bin">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="自动组卷系统系统使用手册数据库说明数据库使用的是neo4j-3.3.3版本，由于服务器最开始安装的是jdk8，而高版本的neo4j需要使用的是jdk11或者jdk12，所以项目使用了低版本的neo4j数据库。 数据库对任意的ip地址都是可以访问的，数据库的访问网址是http:&#x2F;&#x2F;1.15.187.75:7474&#x2F;访问界面如下   在命令行中输入命令match(n) return n;可以看到当前数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自动组卷系统">
+<meta property="og:url" content="http://example.com/2021/10/11/%E8%87%AA%E5%8A%A8%E7%BB%84%E5%8D%B7%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="sun&#39;s blog">
+<meta property="og:description" content="自动组卷系统系统使用手册数据库说明数据库使用的是neo4j-3.3.3版本，由于服务器最开始安装的是jdk8，而高版本的neo4j需要使用的是jdk11或者jdk12，所以项目使用了低版本的neo4j数据库。 数据库对任意的ip地址都是可以访问的，数据库的访问网址是http:&#x2F;&#x2F;1.15.187.75:7474&#x2F;访问界面如下   在命令行中输入命令match(n) return n;可以看到当前数">
+<meta property="og:locale">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/自动组卷系统/image-20211013092136019.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/自动组卷系统/image-20211013102423350.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/自动组卷系统/image-20211013102404814.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/自动组卷系统/image-20211012140033427.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/自动组卷系统/image-20211012143235855.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/自动组卷系统/image-20211013143847081.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/自动组卷系统/image-20211025014218913.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/自动组卷系统/image-20211011155000074.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/自动组卷系统/image-20211012140033427.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/自动组卷系统/image-20211012143235855.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/自动组卷系统/image-20211012154800153.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/自动组卷系统/image-20211013130646335.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/自动组卷系统/image-20211020165009512.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/自动组卷系统/image-20211026220958331.png">
+<meta property="article:published_time" content="2021-10-11T03:00:24.000Z">
+<meta property="article:modified_time" content="2022-04-15T11:38:51.805Z">
+<meta property="article:author" content="sun_zhi_bin">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/自动组卷系统/image-20211013092136019.png">
+  
+  
+  
+  <title>自动组卷系统 - sun&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="自动组卷系统"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-10-11 11:00" pubdate>
+          October 11, 2021 am
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          29k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          246 mins
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">自动组卷系统</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="自动组卷系统"><a href="#自动组卷系统" class="headerlink" title="自动组卷系统"></a>自动组卷系统</h1><h2 id="系统使用手册"><a href="#系统使用手册" class="headerlink" title="系统使用手册"></a>系统使用手册</h2><h3 id="数据库说明"><a href="#数据库说明" class="headerlink" title="数据库说明"></a>数据库说明</h3><p>数据库使用的是neo4j-3.3.3版本，由于服务器最开始安装的是jdk8，而高版本的neo4j需要使用的是jdk11或者jdk12，所以项目使用了低版本的neo4j数据库。</p>
+<p>数据库对任意的ip地址都是可以访问的，数据库的访问网址是<code>http://1.15.187.75:7474/</code>访问界面如下</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\自动组卷系统\image-20211013092136019.png" srcset="/img/loading.gif" lazyload alt="image-20211013092136019" style="zoom:30%;" />
+
+<p>在命令行中输入命令<code>match(n) return n;</code>可以看到当前数据库的基本图网络。</p>
+<h4 id="图网络结构说明"><a href="#图网络结构说明" class="headerlink" title="图网络结构说明"></a>图网络结构说明</h4><p>整体框架中所有的节点分为两类，一类是层节点，一类是题目节点。分层的基本结构如下图所示。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\自动组卷系统\image-20211013102423350.png" srcset="/img/loading.gif" lazyload alt="image-20211013102423350" style="zoom:50%;" />
+
+<p>可以看到层节点总共有四种类型。分别是<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\自动组卷系统\image-20211013102404814.png" srcset="/img/loading.gif" lazyload alt="image-20211013102404814" style="zoom:50%;" />。每个高层节点对低层节点的关系都是<strong>include</strong>.每类层节点的介绍如下(从高到低)。</p>
+<ol>
+<li><p><u>Class节点</u>：该节点只有一个，是Python课程。具体属性有：**”Title”:(课程的名称)** 和 **”Teacher”: (授课老师)**。</p>
+</li>
+<li><p><u>Theme节点</u>：是课程中的每一讲，是根据课程的pdf文件的名称进行命名的。具体属性有：**”Title”: (该讲的名称)、”Difficulty”: (该讲难易度)、”Importance”: (该讲应当掌握的重要程度)**。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\自动组卷系统\image-20211012140033427.png" srcset="/img/loading.gif" lazyload alt="image-20211012140033427" style="zoom:50%;" /></li>
+<li><p><u>Knowledge节点</u>：是每一讲中的每一节，根据每一讲文件中的目录进行命名的。具体属性有：**”Title”: (该知识的名称)<strong>、</strong>“Difficulty”: (该知识难易度)<strong>、</strong>“Importance”: (该知识应当掌握的重要程度)**。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\自动组卷系统\image-20211012143235855.png" srcset="/img/loading.gif" lazyload alt="image-20211012143235855" style="zoom:50%;" /></li>
+<li><p><u>Point节点</u>：是每一节中的每一个具体知识点。具体属性有：**”Title”: (该知识点的名称)<strong>、</strong>“Difficulty”: (该知识点难易度)<strong>、</strong>“Importance”: (该知识点应当掌握的重要程度)**。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\自动组卷系统\image-20211013143847081.png" srcset="/img/loading.gif" lazyload alt="image-20211013143847081" style="zoom:20%;" /></li>
+</ol>
+<p>除了层节点还有题目节点，题目节点的类型是<strong>Test</strong>.</p>
+<p>Test就是题目本身，一个test可以和多个Point相关，一个Point也可以和多个Test相关。具体属性有：**”Type”：（该习题的习题类型）、”Content”: (该习题的具体内容)、”Difficulty”: (该题目难易度)、”Answer”:(该题目的答案)、”Importance”: (该题目的重要程度)**。每一个Test对Point节点的关系是relate。</p>
+<h3 id="系统操作"><a href="#系统操作" class="headerlink" title="系统操作"></a>系统操作</h3><h4 id="服务器说明"><a href="#服务器说明" class="headerlink" title="服务器说明"></a>服务器说明</h4><p>服务器的ip地址是：1.15.187.75，账号是root，密码是zjzty@1123@.</p>
+<p>项目的地址是:/usr/local/python_projects/python_web/PythonClass/</p>
+<p>nginx的地址是：/usr/local/nginx</p>
+<p>anaconda的地址是：/root/anaconda3</p>
+<h4 id="项目说明"><a href="#项目说明" class="headerlink" title="项目说明"></a>项目说明</h4><p>项目的启动方式有两种</p>
+<ol>
+<li>直接在项目的根目录中使用  <code>python manage.py runserver 0.0.0.0:80</code></li>
+<li>在本机的pycharm中进行django项目的配置，之后直接启动项目，效果和1的类似</li>
+<li>先使用命令<code>python manage.py runserver</code>，再启动nginx，再启动uwsgi，之后可以进行访问</li>
+</ol>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\自动组卷系统\image-20211025014218913.png" srcset="/img/loading.gif" lazyload alt="image-20211025014218913" style="zoom:30%;" />
+
+
+
+
+
+<h2 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h2><h3 id="项目需求"><a href="#项目需求" class="headerlink" title="项目需求"></a>项目需求</h3><ol>
+<li>管理员可以将题库上传</li>
+<li>题库按照知识点进行分类</li>
+<li>系统自动根据知识点随机出题</li>
+<li>学生端完成题目，系统自动进行判卷</li>
+</ol>
+<h3 id="项目架构"><a href="#项目架构" class="headerlink" title="项目架构"></a>项目架构</h3><ol>
+<li>使用neo4j作为数据库</li>
+<li>前端使用浏览器</li>
+</ol>
+<h2 id="平台设计"><a href="#平台设计" class="headerlink" title="平台设计"></a>平台设计</h2><p>平台主要有三个模块，分别是登录模块、教师模块、学生模块。</p>
+<h3 id="登录模块"><a href="#登录模块" class="headerlink" title="登录模块"></a>登录模块</h3><p>登录模块主要是负责在登录的时候把教师和学生进行区分，即在neo4j数据库中存储有学生类型的节点和教师类型的节点，节点的属性都包含用户名和密码。通过登录模块把每个学生和老师分开，平台的UI操作也会不一样。同样当用户输入任何网址的时候都需要先登录。</p>
+<h3 id="教师模块"><a href="#教师模块" class="headerlink" title="教师模块"></a>教师模块</h3><p>需要多个教师节点，每个教师节点对应不同的学生。</p>
+<p>教师节点会存储教师登录的用户名和密码。所以教师节点的属性有：登陆账号和登陆密码。班级，（有的知识多个老师讲了没有）</p>
+<p>教师模块能够实现知识图谱的构建与题库的录入。还可以进行作业和考试试卷的布置。主要就是有权限。</p>
+<h3 id="学生模块"><a href="#学生模块" class="headerlink" title="学生模块"></a>学生模块</h3><p>学生节点的属性有：</p>
+<ol>
+<li>学号（登录的账号）</li>
+<li>登录密码</li>
+<li>姓名</li>
+<li>班级</li>
+<li>性别</li>
+</ol>
+<p>每一个学生节点和Test类型的节点都是有一条边（LEARN）联系的，属性有：</p>
+<ol>
+<li>该生做这个题目做了多少次</li>
+<li>该生做对了这个题目多少次</li>
+</ol>
+<h3 id="学生模块和教师模块的结合"><a href="#学生模块和教师模块的结合" class="headerlink" title="学生模块和教师模块的结合"></a>学生模块和教师模块的结合</h3><h4 id="作业模块"><a href="#作业模块" class="headerlink" title="作业模块"></a>作业模块</h4><p>教师可以通过教师端布置作业。选择想要考察的知识点和其对应的题目数目。平台进行记录，保存到一个json文件中，包含知识点名称和其对应的出题数目。学生端在完成本次作业的时候，平台会对此json文件进行读取，再随机出题。</p>
+<p>本次作业的结果会以csv文件的格式保存表格的属性有：题目名称、题目内容、出题次数、答错次数。同样本次的结果也会对题目节点的属性进行更新。</p>
+<p>每个学生都会维护一个表格（名称是：“姓名_学号_班级”），用来记录自己的学习情况，每一行是一个题目。每当有一个题目节点被添加进来了，该表格就会多一行。属性有：完成次数、答对次数、答错次数、第几次作业答对、第几次作业答错。</p>
+<p>方便教师对每个学生单独的学习信息进行统计分析。</p>
+<h2 id="中期推进"><a href="#中期推进" class="headerlink" title="中期推进"></a>中期推进</h2><h3 id="安装neo4j"><a href="#安装neo4j" class="headerlink" title="安装neo4j"></a>安装neo4j</h3><p>按照<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Hackerman/p/12555365.html">centos 安装neo4j图形数据库 - Hackerman - 博客园 (cnblogs.com)</a>这篇文章进行安装，可以最终得到如下结果。</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\自动组卷系统\image-20211011155000074.png" srcset="/img/loading.gif" lazyload alt="image-20211011155000074"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br></pre></td><td class="code"><pre><span class="line">#*****************************************************************</span><br><span class="line"># Neo4j configuration</span><br><span class="line">#</span><br><span class="line"># For more details and a complete list of settings, please see</span><br><span class="line"># https:&#x2F;&#x2F;neo4j.com&#x2F;docs&#x2F;operations-manual&#x2F;current&#x2F;reference&#x2F;configuration-settings&#x2F;</span><br><span class="line">#*****************************************************************</span><br><span class="line"></span><br><span class="line"># The name of the database to mount</span><br><span class="line">#要装载的数据库的名称，默认就是graph.db</span><br><span class="line">dbms.active_database&#x3D;graph.db</span><br><span class="line"></span><br><span class="line"># Paths of directories in the installation.</span><br><span class="line">#安装中目录的路径，默认使用当前安装Neo4j的目录</span><br><span class="line">#dbms.directories.data&#x3D;data</span><br><span class="line">#dbms.directories.plugins&#x3D;plugins</span><br><span class="line">#dbms.directories.certificates&#x3D;certificates</span><br><span class="line">#dbms.directories.logs&#x3D;logs</span><br><span class="line">#dbms.directories.lib&#x3D;lib</span><br><span class="line">#dbms.directories.run&#x3D;run</span><br><span class="line"></span><br><span class="line"># This setting constrains all &#96;LOAD CSV&#96; import files to be under the &#96;import&#96; directory. Remove or comment it out to</span><br><span class="line"># allow files to be loaded from anywhere in the filesystem; this introduces possible security problems. See the</span><br><span class="line"># &#96;LOAD CSV&#96; section of the manual for details.</span><br><span class="line">#导入数据的CSV数据文件的默认存放目录</span><br><span class="line">dbms.directories.import&#x3D;import</span><br><span class="line"></span><br><span class="line"># Whether requests to Neo4j are authenticated.</span><br><span class="line"># To disable authentication, uncomment this line</span><br><span class="line">#对Neo4j的请求是否经过身份验证。</span><br><span class="line">dbms.security.auth_enabled&#x3D;true</span><br><span class="line"></span><br><span class="line"># Enable this to be able to upgrade a store from an older version.</span><br><span class="line"># 是否能够从旧版本升级存储</span><br><span class="line">#dbms.allow_upgrade&#x3D;true</span><br><span class="line"></span><br><span class="line"># Java Heap Size: by default the Java heap size is dynamically</span><br><span class="line"># calculated based on available system resources.</span><br><span class="line"># Uncomment these lines to set specific initial and maximum</span><br><span class="line"># heap size.</span><br><span class="line">#Java堆大小：默认情况下，Java堆大小是基于可用系统资源动态计算的。</span><br><span class="line">#未注释这些行以设置特定的初始和最大堆大小。</span><br><span class="line">#可自己设置初始堆大小和最大堆大小值，具体值需要根据自己系统及数据量大小而定</span><br><span class="line">#dbms.memory.heap.initial_size&#x3D;512m</span><br><span class="line">#dbms.memory.heap.max_size&#x3D;512m</span><br><span class="line"></span><br><span class="line"># The amount of memory to use for mapping the store files, in bytes (or</span><br><span class="line"># kilobytes with the &#39;k&#39; suffix, megabytes with &#39;m&#39; and gigabytes with &#39;g&#39;).</span><br><span class="line"># If Neo4j is running on a dedicated server, then it is generally recommended</span><br><span class="line"># to leave about 2-4 gigabytes for the operating system, give the JVM enough</span><br><span class="line"># heap to hold all your transaction state and query context, and then leave the</span><br><span class="line"># rest for the page cache.</span><br><span class="line"># The default page cache memory assumes the machine is dedicated to running</span><br><span class="line"># Neo4j, and is heuristically set to 50% of RAM minus the max Java heap size.</span><br><span class="line">#用于映射存储文件的内存量，也就是缓存，单位可以是k&#x2F;m&#x2F;g。</span><br><span class="line">#如果Neo4j运行在专用服务器上，则通常建议为了给操作系统留下大约2-4gb的空间，</span><br><span class="line">#给JVM足够的空间堆以保存所有事务状态和查询上下文，然后在页面缓存中休息。</span><br><span class="line">#建议设置为RAM的50%减去最大Java堆大小。</span><br><span class="line">#dbms.memory.pagecache.size&#x3D;10g</span><br><span class="line"></span><br><span class="line">#*****************************************************************</span><br><span class="line"># Network connector configuration</span><br><span class="line">#*****************************************************************</span><br><span class="line"></span><br><span class="line"># With default configuration Neo4j only accepts local connections.</span><br><span class="line"># To accept non-local connections, uncomment this line:</span><br><span class="line"># 默认配置下，Neo4j只接受本地连接。要接受非本地连接，请取消注释此行：</span><br><span class="line">dbms.connectors.default_listen_address&#x3D;0.0.0.0</span><br><span class="line"></span><br><span class="line"># You can also choose a specific network interface, and configure a non-default</span><br><span class="line"># port for each connector, by setting their individual listen_address.</span><br><span class="line"></span><br><span class="line"># The address at which this server can be reached by its clients. This may be the server&#39;s IP address or DNS name, or</span><br><span class="line"># it may be the address of a reverse proxy which sits in front of the server. This setting may be overridden for</span><br><span class="line"># individual connectors below.</span><br><span class="line">#您还可以选择一个特定的网络接口，并为每个连接器配置一个非默认端口，方法是设置它们各自的侦听地址。</span><br><span class="line">#客户端可以访问此服务器的地址。这可能是服务器的IP地址或DNS名称，也可能是位于服务器前面的反向代理的地址。</span><br><span class="line">#对于下面的单独连接器，此设置可能被重写</span><br><span class="line">#默认是本地地址</span><br><span class="line">dbms.connectors.default_advertised_address&#x3D;localhost</span><br><span class="line"></span><br><span class="line"># You can also choose a specific advertised hostname or IP address, and</span><br><span class="line"># configure an advertised port for each connector, by setting their</span><br><span class="line"># individual advertised_address.</span><br><span class="line"></span><br><span class="line"># Bolt connector</span><br><span class="line"># Bolt 连接开启</span><br><span class="line">dbms.connector.bolt.enabled&#x3D;true</span><br><span class="line">#dbms.connector.bolt.tls_level&#x3D;OPTIONAL</span><br><span class="line">#Bolt端口号</span><br><span class="line">dbms.connector.bolt.listen_address&#x3D;:7687</span><br><span class="line"></span><br><span class="line"># HTTP Connector. There must be exactly one HTTP connector.</span><br><span class="line">#HTTP连接</span><br><span class="line">dbms.connector.http.enabled&#x3D;true</span><br><span class="line">#HTTP连接端口号</span><br><span class="line">dbms.connector.http.listen_address&#x3D;:7474</span><br><span class="line"></span><br><span class="line"># HTTPS Connector. There can be zero or one HTTPS connectors.</span><br><span class="line">#HTTPs连接</span><br><span class="line">dbms.connector.https.enabled&#x3D;true</span><br><span class="line">#HTTPS端口</span><br><span class="line">dbms.connector.https.listen_address&#x3D;:7473</span><br><span class="line"></span><br><span class="line"># Number of Neo4j worker threads.</span><br><span class="line">#运行线程数</span><br><span class="line">#dbms.threads.worker_count&#x3D;</span><br><span class="line"></span><br><span class="line">#*****************************************************************</span><br><span class="line"># SSL system configuration</span><br><span class="line">#*****************************************************************</span><br><span class="line"></span><br><span class="line"># Names of the SSL policies to be used for the respective components.</span><br><span class="line"></span><br><span class="line"># The legacy policy is a special policy which is not defined in</span><br><span class="line"># the policy configuration section, but rather derives from</span><br><span class="line"># dbms.directories.certificates and associated files</span><br><span class="line"># (by default: neo4j.key and neo4j.cert). Its use will be deprecated.</span><br><span class="line"></span><br><span class="line"># The policies to be used for connectors.</span><br><span class="line">#</span><br><span class="line"># N.B: Note that a connector must be configured to support&#x2F;require</span><br><span class="line">#      SSL&#x2F;TLS for the policy to actually be utilized.</span><br><span class="line">#</span><br><span class="line"># see: dbms.connector.*.tls_level</span><br><span class="line"></span><br><span class="line">#bolt.ssl_policy&#x3D;legacy</span><br><span class="line">#https.ssl_policy&#x3D;legacy</span><br><span class="line"></span><br><span class="line">#*****************************************************************</span><br><span class="line"># SSL policy configuration SSL策略配置</span><br><span class="line">#*****************************************************************</span><br><span class="line"></span><br><span class="line"># Each policy is configured under a separate namespace, e.g.</span><br><span class="line">#    dbms.ssl.policy.&lt;policyname&gt;.*</span><br><span class="line">#</span><br><span class="line"># The example settings below are for a new policy named &#39;default&#39;.</span><br><span class="line"></span><br><span class="line"># The base directory for cryptographic objects. Each policy will by</span><br><span class="line"># default look for its associated objects (keys, certificates, ...)</span><br><span class="line"># under the base directory.</span><br><span class="line">#</span><br><span class="line"># Every such setting can be overriden using a full path to</span><br><span class="line"># the respective object, but every policy will by default look</span><br><span class="line"># for cryptographic objects in its base location.</span><br><span class="line">#</span><br><span class="line"># Mandatory setting 强制设置</span><br><span class="line"></span><br><span class="line">#dbms.ssl.policy.default.base_directory&#x3D;certificates&#x2F;default</span><br><span class="line"></span><br><span class="line"># Allows the generation of a fresh private key and a self-signed</span><br><span class="line"># certificate if none are found in the expected locations. It is</span><br><span class="line"># recommended to turn this off again after keys have been generated.</span><br><span class="line">#</span><br><span class="line"># Keys should in general be generated and distributed offline</span><br><span class="line"># by a trusted certificate authority (CA) and not by utilizing</span><br><span class="line"># this mode.</span><br><span class="line">#密钥通常应该由受信任的证书颁发机构（CA）脱机生成和分发，而不是使用此模式。</span><br><span class="line">#是否允许生成秘钥</span><br><span class="line"></span><br><span class="line">#dbms.ssl.policy.default.allow_key_generation&#x3D;false</span><br><span class="line"></span><br><span class="line"># Enabling this makes it so that this policy ignores the contents</span><br><span class="line"># of the trusted_dir and simply resorts to trusting everything.</span><br><span class="line">#</span><br><span class="line"># Use of this mode is discouraged. It would offer encryption but no security.</span><br><span class="line"># 不鼓励使用此模式。它将提供加密，但没有安全性。</span><br><span class="line"># 是否信任所有</span><br><span class="line"></span><br><span class="line">#dbms.ssl.policy.default.trust_all&#x3D;false</span><br><span class="line"></span><br><span class="line"># The private key for the default SSL policy. By default a file</span><br><span class="line"># named private.key is expected under the base directory of the policy.</span><br><span class="line"># It is mandatory that a key can be found or generated.</span><br><span class="line"></span><br><span class="line">#dbms.ssl.policy.default.private_key&#x3D;</span><br><span class="line"></span><br><span class="line"># The private key for the default SSL policy. By default a file</span><br><span class="line"># named public.crt is expected under the base directory of the policy.</span><br><span class="line"># It is mandatory that a certificate can be found or generated.</span><br><span class="line"></span><br><span class="line">#dbms.ssl.policy.default.public_certificate&#x3D;</span><br><span class="line"></span><br><span class="line"># The certificates of trusted parties. By default a directory named</span><br><span class="line"># &#39;trusted&#39; is expected under the base directory of the policy. It is</span><br><span class="line"># mandatory to create the directory so that it exists, because it cannot</span><br><span class="line"># be auto-created (for security purposes).</span><br><span class="line">#</span><br><span class="line"># To enforce client authentication client_auth must be set to &#39;require&#39;!</span><br><span class="line"></span><br><span class="line">#dbms.ssl.policy.default.trusted_dir&#x3D;</span><br><span class="line"></span><br><span class="line"># Client authentication setting. Values: none, optional, require</span><br><span class="line"># The default is to require client authentication.</span><br><span class="line">#</span><br><span class="line"># Servers are always authenticated unless explicitly overridden</span><br><span class="line"># using the trust_all setting. In a mutual authentication setup this</span><br><span class="line"># should be kept at the default of require and trusted certificates</span><br><span class="line"># must be installed in the trusted_dir.</span><br><span class="line"></span><br><span class="line">#dbms.ssl.policy.default.client_auth&#x3D;require</span><br><span class="line"></span><br><span class="line"># A comma-separated list of allowed TLS versions.</span><br><span class="line"># By default TLSv1, TLSv1.1 and TLSv1.2 are allowed.</span><br><span class="line"></span><br><span class="line">#dbms.ssl.policy.default.tls_versions&#x3D;</span><br><span class="line"></span><br><span class="line"># A comma-separated list of allowed ciphers.</span><br><span class="line"># The default ciphers are the defaults of the JVM platform.</span><br><span class="line"></span><br><span class="line">#dbms.ssl.policy.default.ciphers&#x3D;</span><br><span class="line"></span><br><span class="line">#*****************************************************************</span><br><span class="line"># Logging configuration 日志配置</span><br><span class="line">#*****************************************************************</span><br><span class="line"></span><br><span class="line"># To enable HTTP logging, uncomment this line</span><br><span class="line">#是否启用HTTP日志记录</span><br><span class="line">#dbms.logs.http.enabled&#x3D;true</span><br><span class="line"></span><br><span class="line"># Number of HTTP logs to keep.</span><br><span class="line">#保留日志文件数</span><br><span class="line">#dbms.logs.http.rotation.keep_number&#x3D;5</span><br><span class="line"></span><br><span class="line"># Size of each HTTP log that is kept.</span><br><span class="line">#日志文件大小</span><br><span class="line">#dbms.logs.http.rotation.size&#x3D;20m</span><br><span class="line"></span><br><span class="line"># To enable GC Logging, uncomment this line</span><br><span class="line"># 启用GC日志记录</span><br><span class="line">#dbms.logs.gc.enabled&#x3D;true</span><br><span class="line"></span><br><span class="line"># GC Logging Options</span><br><span class="line">#日志记录选项，详情见下地址</span><br><span class="line"># see http:&#x2F;&#x2F;docs.oracle.com&#x2F;cd&#x2F;E19957-01&#x2F;819-0084-10&#x2F;pt_tuningjava.html#wp57013 for more information.</span><br><span class="line">#dbms.logs.gc.options&#x3D;-XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure -XX:+PrintTenuringDistribution</span><br><span class="line"></span><br><span class="line"># Number of GC logs to keep.</span><br><span class="line">#GC日志保留数</span><br><span class="line">#dbms.logs.gc.rotation.keep_number&#x3D;5</span><br><span class="line"></span><br><span class="line"># Size of each GC log that is kept.</span><br><span class="line">#GC日志文件大小</span><br><span class="line">#dbms.logs.gc.rotation.size&#x3D;20m</span><br><span class="line"></span><br><span class="line"># Size threshold for rotation of the debug log. If set to zero then no rotation will occur. Accepts a binary suffix &quot;k&quot;,</span><br><span class="line"># &quot;m&quot; or &quot;g&quot;.</span><br><span class="line">#调试日志阈值大小</span><br><span class="line">#dbms.logs.debug.rotation.size&#x3D;20m</span><br><span class="line"></span><br><span class="line"># Maximum number of history files for the internal log.</span><br><span class="line">#最多保留日志文件数</span><br><span class="line">#dbms.logs.debug.rotation.keep_number&#x3D;7</span><br><span class="line"></span><br><span class="line">#*****************************************************************</span><br><span class="line"># Miscellaneous configuration 其他配置</span><br><span class="line">#*****************************************************************</span><br><span class="line"></span><br><span class="line"># Enable this to specify a parser other than the default one.</span><br><span class="line">#cypher 版本</span><br><span class="line">#cypher.default_language_version&#x3D;3.0</span><br><span class="line"></span><br><span class="line"># Determines if Cypher will allow using file URLs when loading data using</span><br><span class="line"># &#96;LOAD CSV&#96;. Setting this value to &#96;false&#96; will cause Neo4j to fail &#96;LOAD CSV&#96;</span><br><span class="line"># clauses that load data from the file system.</span><br><span class="line">#是否允许Cypher在Load CSV时引用互联网上的地址</span><br><span class="line">#dbms.security.allow_csv_import_from_file_urls&#x3D;true</span><br><span class="line"></span><br><span class="line"># Retention policy for transaction logs needed to perform recovery and backups.</span><br><span class="line">#执行恢复和备份所需的事务日志的保留策略</span><br><span class="line">dbms.tx_log.rotation.retention_policy&#x3D;1 days</span><br><span class="line"></span><br><span class="line"># Enable a remote shell server which Neo4j Shell clients can log in to.</span><br><span class="line">#是否允许shell远程连接</span><br><span class="line">dbms.shell.enabled&#x3D;true</span><br><span class="line"># The network interface IP the shell will listen on (use 0.0.0.0 for all interfaces).</span><br><span class="line">#shell连接地址（用 0.0.0.0 表示所有地址都可连接）</span><br><span class="line">#127.0.0.1</span><br><span class="line">dbms.shell.host&#x3D;0.0.0.0</span><br><span class="line"># The port the shell will listen on, default is 1337.</span><br><span class="line">#Shell连接端口号</span><br><span class="line">dbms.shell.port&#x3D;1337</span><br><span class="line"></span><br><span class="line"># Only allow read operations from this Neo4j instance. This mode still requires</span><br><span class="line"># write access to the directory for lock purposes.</span><br><span class="line">#dbms.read_only&#x3D;false</span><br><span class="line"></span><br><span class="line"># Comma separated list of JAX-RS packages containing JAX-RS resources, one</span><br><span class="line"># package name for each mountpoint. The listed package names will be loaded</span><br><span class="line"># under the mountpoints specified. Uncomment this line to mount the</span><br><span class="line"># org.neo4j.examples.server.unmanaged.HelloWorldResource.java from</span><br><span class="line"># neo4j-server-examples under &#x2F;examples&#x2F;unmanaged, resulting in a final URL of</span><br><span class="line"># http:&#x2F;&#x2F;localhost:7474&#x2F;examples&#x2F;unmanaged&#x2F;helloworld&#x2F;&#123;nodeId&#125;</span><br><span class="line">#dbms.unmanaged_extension_classes&#x3D;org.neo4j.examples.server.unmanaged&#x3D;&#x2F;examples&#x2F;unmanaged</span><br><span class="line"></span><br><span class="line">#********************************************************************</span><br><span class="line"># JVM Parameters JVM参数配置</span><br><span class="line">#********************************************************************</span><br><span class="line"></span><br><span class="line"># G1GC generally strikes a good balance between throughput and tail</span><br><span class="line"># latency, without too much tuning.</span><br><span class="line">dbms.jvm.additional&#x3D;-XX:+UseG1GC</span><br><span class="line"></span><br><span class="line"># Have common exceptions keep producing stack traces, so they can be</span><br><span class="line"># debugged regardless of how often logs are rotated.</span><br><span class="line">dbms.jvm.additional&#x3D;-XX:-OmitStackTraceInFastThrow</span><br><span class="line"></span><br><span class="line"># Make sure that &#96;initmemory&#96; is not only allocated, but committed to</span><br><span class="line"># the process, before starting the database. This reduces memory</span><br><span class="line"># fragmentation, increasing the effectiveness of transparent huge</span><br><span class="line"># pages. It also reduces the possibility of seeing performance drop</span><br><span class="line"># due to heap-growing GC events, where a decrease in available page</span><br><span class="line"># cache leads to an increase in mean IO response time.</span><br><span class="line"># Try reducing the heap memory, if this flag degrades performance.</span><br><span class="line">dbms.jvm.additional&#x3D;-XX:+AlwaysPreTouch</span><br><span class="line"></span><br><span class="line"># Trust that non-static final fields are really final.</span><br><span class="line"># This allows more optimizations and improves overall performance.</span><br><span class="line"># NOTE: Disable this if you use embedded mode, or have extensions or dependencies that may use reflection or</span><br><span class="line"># serialization to change the value of final fields!</span><br><span class="line">dbms.jvm.additional&#x3D;-XX:+UnlockExperimentalVMOptions</span><br><span class="line">dbms.jvm.additional&#x3D;-XX:+TrustFinalNonStaticFields</span><br><span class="line"></span><br><span class="line"># Disable explicit garbage collection, which is occasionally invoked by the JDK itself.</span><br><span class="line">dbms.jvm.additional&#x3D;-XX:+DisableExplicitGC</span><br><span class="line"></span><br><span class="line"># Remote JMX monitoring, uncomment and adjust the following lines as needed. Absolute paths to jmx.access and</span><br><span class="line"># jmx.password files are required.</span><br><span class="line"># Also make sure to update the jmx.access and jmx.password files with appropriate permission roles and passwords,</span><br><span class="line"># the shipped configuration contains only a read only role called &#39;monitor&#39; with password &#39;Neo4j&#39;.</span><br><span class="line"># For more details, see: http:&#x2F;&#x2F;download.oracle.com&#x2F;javase&#x2F;8&#x2F;docs&#x2F;technotes&#x2F;guides&#x2F;management&#x2F;agent.html</span><br><span class="line"># On Unix based systems the jmx.password file needs to be owned by the user that will run the server,</span><br><span class="line"># and have permissions set to 0600.</span><br><span class="line"># For details on setting these file permissions on Windows see:</span><br><span class="line">#     http:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;8&#x2F;docs&#x2F;technotes&#x2F;guides&#x2F;management&#x2F;security-windows.html</span><br><span class="line">#dbms.jvm.additional&#x3D;-Dcom.sun.management.jmxremote.port&#x3D;3637</span><br><span class="line">#dbms.jvm.additional&#x3D;-Dcom.sun.management.jmxremote.authenticate&#x3D;true</span><br><span class="line">#dbms.jvm.additional&#x3D;-Dcom.sun.management.jmxremote.ssl&#x3D;false</span><br><span class="line">#dbms.jvm.additional&#x3D;-Dcom.sun.management.jmxremote.password.file&#x3D;&#x2F;absolute&#x2F;path&#x2F;to&#x2F;conf&#x2F;jmx.password</span><br><span class="line">#dbms.jvm.additional&#x3D;-Dcom.sun.management.jmxremote.access.file&#x3D;&#x2F;absolute&#x2F;path&#x2F;to&#x2F;conf&#x2F;jmx.access</span><br><span class="line"></span><br><span class="line"># Some systems cannot discover host name automatically, and need this line configured:</span><br><span class="line">#dbms.jvm.additional&#x3D;-Djava.rmi.server.hostname&#x3D;$THE_NEO4J_SERVER_HOSTNAME</span><br><span class="line"></span><br><span class="line"># Expand Diffie Hellman (DH) key size from default 1024 to 2048 for DH-RSA cipher suites used in server TLS handshakes.</span><br><span class="line"># This is to protect the server from any potential passive eavesdropping.</span><br><span class="line">dbms.jvm.additional&#x3D;-Djdk.tls.ephemeralDHKeySize&#x3D;2048</span><br><span class="line"></span><br><span class="line"># This mitigates a DDoS vector.</span><br><span class="line">dbms.jvm.additional&#x3D;-Djdk.tls.rejectClientInitiatedRenegotiation&#x3D;true</span><br><span class="line"></span><br><span class="line">#********************************************************************</span><br><span class="line"># Wrapper Windows NT&#x2F;2000&#x2F;XP Service Properties</span><br><span class="line">#********************************************************************</span><br><span class="line"># WARNING - Do not modify any of these properties when an application</span><br><span class="line">#  using this configuration file has been installed as a service.</span><br><span class="line">#  Please uninstall the service before modifying this section.  The</span><br><span class="line">#  service can then be reinstalled.</span><br><span class="line"></span><br><span class="line"># Name of the service</span><br><span class="line">dbms.windows_service_name&#x3D;neo4j</span><br><span class="line"></span><br><span class="line">#********************************************************************</span><br><span class="line"># Other Neo4j system properties</span><br><span class="line">#********************************************************************</span><br><span class="line">dbms.jvm.additional&#x3D;-Dunsupported.dbms.udc.source&#x3D;tarball</span><br></pre></td></tr></table></figure>
+
+<p>neo4j的配置文件的具体详情，可能之后会用到。</p>
+<h3 id="使用java连接neo4j"><a href="#使用java连接neo4j" class="headerlink" title="使用java连接neo4j"></a>使用java连接neo4j</h3><p>首先做的是一个小的java的程序，在idea中，使用了maven添加依赖。在<code>pom.xml</code>文件中加入如下语句。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.neo4j.driver<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>neo4j-java-driver<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.5.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>因为安装的neo4j的版本是3.3.3.1，所以使用的是1.5.0版本的api。之后在java中完成了一个简单连接数据库并写入节点的操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.neo4j.driver.v1.*;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.neo4j.driver.v1.Values.parameters;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorldExample</span> <span class="keyword">implements</span> <span class="title">AutoCloseable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Driver driver;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HelloWorldExample</span><span class="params">( String uri, String user, String password )</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        driver = GraphDatabase.driver( uri, AuthTokens.basic( user, password ) );</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        driver.close();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printGreeting</span><span class="params">( <span class="keyword">final</span> String message )</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> ( Session session = driver.session() )</span><br><span class="line">        &#123;</span><br><span class="line">            String greeting = session.writeTransaction( <span class="keyword">new</span> TransactionWork&lt;String&gt;()</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> String <span class="title">execute</span><span class="params">( Transaction tx )</span></span></span><br><span class="line"><span class="function">                </span>&#123;</span><br><span class="line">                    StatementResult result = tx.run( <span class="string">&quot;CREATE (a:Greeting) &quot;</span> +</span><br><span class="line">                                    <span class="string">&quot;SET a.message = $message &quot;</span> +</span><br><span class="line">                                    <span class="string">&quot;RETURN a.message + &#x27;, from node &#x27; + id(a)&quot;</span>,</span><br><span class="line">                            parameters( <span class="string">&quot;message&quot;</span>, message ) );</span><br><span class="line">                    <span class="keyword">return</span> result.single().get( <span class="number">0</span> ).asString();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; );</span><br><span class="line">            System.out.println( greeting );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">( String... args )</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> ( HelloWorldExample greeter = <span class="keyword">new</span> HelloWorldExample( <span class="string">&quot;bolt://1.15.187.75:7687&quot;</span>, <span class="string">&quot;neo4j&quot;</span>, <span class="string">&quot;szb123123&quot;</span> ) )</span><br><span class="line">        &#123;</span><br><span class="line">            greeter.printGreeting( <span class="string">&quot;hello, world&quot;</span> );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>找到了Neo4j的开发者文档<a target="_blank" rel="noopener" href="https://neo4j.com/docs/developer-manual/current/index.html">The Neo4j Developer Manual v3.4</a>可以学习和查阅。</p>
+<p>如下显示一个连接的生命周期</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DriverLifecycleExample</span> <span class="keyword">implements</span> <span class="title">AutoCloseable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Driver driver;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DriverLifecycleExample</span><span class="params">( String uri, String user, String password )</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        driver = GraphDatabase.driver( uri, AuthTokens.basic( user, password ) );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        driver.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="创建图网络"><a href="#创建图网络" class="headerlink" title="创建图网络"></a>创建图网络</h3><p>由于是最开始的基础部分，所以只是手动添加试题。按照老师的课件将所有python的知识分成21讲。如下所示。</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\自动组卷系统\image-20211012140033427.png" srcset="/img/loading.gif" lazyload alt="image-20211012140033427"></p>
+<p>因为只是一个初步的程序，所以只对第一讲的内容做具体分析。</p>
+<p>因为是图数据库，所以对每个节点进行不同的定义。将课程名称<strong>Python数据处理编程</strong>设置为第一个节点。该节点只有一个，节点属性如下（当前比较简单，之后可以再加）。节点的类型是Class，该节点叫做Python。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;properties&quot;</span>:</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;Title&quot;</span>:(课程的名称)</span><br><span class="line">    <span class="string">&quot;Teacher&quot;</span>: (授课老师)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Python节点的子节点的类型都是Theme，代表的是每一讲。第一讲的名字叫做Grammar。每个theme节点都有统一的节点属性，属性内容如下。其中Difficulty,</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;properties&quot;</span>:</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;Title&quot;</span>: (该讲的名称)</span><br><span class="line">    <span class="string">&quot;Difficulty&quot;</span>: (该讲难易度)</span><br><span class="line">    <span class="string">&quot;Importance&quot;</span>: (该讲应当掌握的重要程度)</span><br><span class="line">    <span class="string">&quot;Mastery&quot;</span>:(学生的掌握程度)</span><br><span class="line">    <span class="string">&quot;Weights&quot;</span>:(培养计划中所占的权重)</span><br><span class="line">    <span class="string">&quot;Teached&quot;</span>:(是否已经讲解)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Theme类型的子节点的类型都是Knowledge，也就是知识类型。第一讲所包含的知识点如下图。</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\自动组卷系统\image-20211012143235855.png" srcset="/img/loading.gif" lazyload alt="image-20211012143235855"></p>
+<p>Knowledge节点的属性内容如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;properties&quot;</span>:</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;Title&quot;</span>: (该讲的名称)</span><br><span class="line">    <span class="string">&quot;Difficulty&quot;</span>: (该讲难易度)</span><br><span class="line">    <span class="string">&quot;Importance&quot;</span>: (该讲应当掌握的重要程度)</span><br><span class="line">    <span class="string">&quot;Mastery&quot;</span>:(学生的掌握程度)</span><br><span class="line">    <span class="string">&quot;Weights&quot;</span>:(培养计划中所占的权重)</span><br><span class="line">    <span class="string">&quot;Teached&quot;</span>:(是否已经讲解)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Knowledge类型节点的子节点的类型都是Point，就是小的知识点了。例如<code>Python内置函数</code>的知识点就包括<code>类型转换与类型判断</code>等。</p>
+<p>Point节点的属性内容如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;properties&quot;</span>:</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;Title&quot;</span>: (该讲的名称)</span><br><span class="line">    <span class="string">&quot;Difficulty&quot;</span>: (该讲难易度)</span><br><span class="line">    <span class="string">&quot;Importance&quot;</span>: (该讲应当掌握的重要程度)</span><br><span class="line">    <span class="string">&quot;Mastery&quot;</span>:(学生的掌握程度)</span><br><span class="line">    <span class="string">&quot;Weights&quot;</span>:(培养计划中所占的权重)</span><br><span class="line">    <span class="string">&quot;Teached&quot;</span>:(是否已经讲解)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Point节点的子节点的类型都是Test，代表练习题。</p>
+<p>Test节点的属性内容如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;properties&quot;</span>:</span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">&quot;Type&quot;</span>：（该习题的习题类型）</span><br><span class="line">    <span class="string">&quot;Difficulty&quot;</span>: (该题目难易度)</span><br><span class="line">    <span class="string">&quot;Importance&quot;</span>: (该题目的重要程度)</span><br><span class="line">    <span class="string">&quot;HomeworkTimes&quot;</span>:(在作业中出现过几次)</span><br><span class="line">    <span class="string">&quot;WrongTimes&quot;</span>:(在作业中被做错的次数)</span><br><span class="line">    <span class="string">&quot;ExamTimes&quot;</span>:(在前几年的考试中总共出现的次数)</span><br><span class="line">    <span class="string">&quot;Teached&quot;</span>:(是否已经讲解)</span><br><span class="line">    <span class="string">&quot;Content&quot;</span>: (该习题的具体内容)</span><br><span class="line">    <span class="string">&quot;Answer&quot;</span>:(该题目的答案)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>创建各个节点的代码如下。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Create (Python:Class &#123;title:&#x27;Python数据处理编程&#x27;, Teacher:&#x27;蒋万春&#x27;&#125;)</span><br><span class="line">CREATE (Grammar:Theme &#123;title:&#x27;Python语法基础&#x27;,Difficulty:2,importance:5&#125;)</span><br><span class="line">Create (InFunction:Knowledge &#123;title:&#x27;Python内置函数&#x27;,Difficulty:2,importance:5&#125;)</span><br><span class="line">Create (TypeChangeJudge:Point &#123;title:&#x27;类型转换与判断&#x27;,Difficulty:2,importance:5&#125;)</span><br><span class="line">Create (Test1:Test &#123;title:&#x27;test1&#x27;,type:1,Dificulty:2,Content:&#x27;bin(555)的答案是\nA.0b1000101011\tB.100101011\tC.0b1000101010\tD.1000101010&#x27;&#125;)</span><br><span class="line"><span class="keyword">Create</span> (Python)<span class="operator">-</span>[:include]<span class="operator">-</span><span class="operator">&gt;</span>(Grammar)<span class="operator">-</span>[:include]<span class="operator">-</span><span class="operator">&gt;</span>(InFunction)<span class="operator">-</span>[:include]<span class="operator">-</span><span class="operator">&gt;</span>(TypeChangeJudge)</span><br><span class="line">Create (n:Knowledge &#123;title:&#x27;运算符与表达式&#x27;,Difficulty:3,importance:4&#125;)</span><br><span class="line">Create (p:Point &#123;title:&#x27;算数运算符&#x27;,Difficulty:3,importance:4&#125;)</span><br><span class="line">Create (t:Test &#123;title:&#x27;test2&#x27;,type:2,Dificulty:2,Content:&#x27;3**2的答案是&#x27;&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>之后创建各个节点之间的连接</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">match (k:Knowledge&#123;title:&quot;运算符与表达式&quot;&#125;),(t:Theme&#123;title:&quot;Python语法基础&quot;&#125;) create (t)-[:include]-&gt;(k)</span><br><span class="line">match (t:Test&#123;title:&quot;test2&quot;&#125;),(p:Point&#123;title:&quot;算数运算符&quot;&#125;),(k:Knowledge&#123;title:&quot;运算符与表达式&quot;&#125;) create (k)-[:include]-&gt;(p)-[:include]-&gt;(t);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>搭建的基本的图结构如下图所示。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\自动组卷系统\image-20211012154800153.png" srcset="/img/loading.gif" lazyload alt="image-20211012154800153" style="zoom:50%;" />
+
+<h3 id="使用python连接neo4j数据库"><a href="#使用python连接neo4j数据库" class="headerlink" title="使用python连接neo4j数据库"></a>使用python连接neo4j数据库</h3><p>首先是搭建环境，使用的neo4j的版本是3.3.3所以需要使用较低版本的各种python的库。</p>
+<p>安装的python的版本是3.7.经过多次调试，使用如下命令安装neo4j的相关包是可以成功的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install py2neo&#x3D;&#x3D;4.3</span><br><span class="line">pip install neo4j-driver&#x3D;&#x3D;1.5.3</span><br></pre></td></tr></table></figure>
+
+<p>重点使用py2neo包对图数据库的内容进行查找和操作。测试代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> py2neo <span class="keyword">import</span> Graph,Node,Relationship</span><br><span class="line">graph = Graph(<span class="string">&quot;http://localhost:7474&quot;</span>,auth=(<span class="string">&quot;neo4j&quot;</span>,<span class="string">&quot;password&quot;</span>))</span><br><span class="line">a = Node(<span class="string">&quot;Person&quot;</span>, name=<span class="string">&quot;Alice&quot;</span>)</span><br><span class="line">b = Node(<span class="string">&quot;Person&quot;</span>, name=<span class="string">&quot;Bob&quot;</span>)</span><br><span class="line">ab = Relationship(a, <span class="string">&quot;KNOWS&quot;</span>, b)</span><br><span class="line">graph.create(ab)</span><br></pre></td></tr></table></figure>
+
+<p>出现如下结果则证明环境已经安装完成。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\自动组卷系统\image-20211013130646335.png" srcset="/img/loading.gif" lazyload alt="image-20211013130646335" style="zoom:50%;" />
+
+<h3 id="python进行控制台系统设计"><a href="#python进行控制台系统设计" class="headerlink" title="python进行控制台系统设计"></a>python进行控制台系统设计</h3><h4 id="功能模块"><a href="#功能模块" class="headerlink" title="功能模块"></a>功能模块</h4><ol>
+<li>插入层节点</li>
+<li>插入题目</li>
+<li>出卷</li>
+<li>退出</li>
+</ol>
+<h4 id="插入层节点设计"><a href="#插入层节点设计" class="headerlink" title="插入层节点设计"></a>插入层节点设计</h4><p>因为Class节点只有一个，所以就手动创建了，之后系统只需要创建Theme、Knowledge、Point这三种层节点。在创建层节点的同时需要同时创建该层节点和上一个层节点的连接。</p>
+<h3 id="Django的相关知识"><a href="#Django的相关知识" class="headerlink" title="Django的相关知识"></a>Django的相关知识</h3><h4 id="项目的urls-py和app内的urls-py的区别"><a href="#项目的urls-py和app内的urls-py的区别" class="headerlink" title="项目的urls.py和app内的urls.py的区别"></a>项目的urls.py和app内的urls.py的区别</h4><p>在一个项目中，通常不会只有一个app，如果把所有的 app 的 views 中的视图都放在 urls.py 中进行映射，会让代码显得非常乱。因此 django 给我们提供了一个方法，可以在 app 内部包含自己的 url 匹配规则，而在项目的 urls.py 中再统一包含这个 app 的 urls 。使用这个技术需要借助 include 函数。</p>
+<p><strong>应用中的urls.py文件</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"> </span><br><span class="line"><span class="keyword">from</span> demo <span class="keyword">import</span> views</span><br><span class="line"> </span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r&#x27;^receive/&#x27;</span>, views.receive),</span><br><span class="line"> </span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p><strong>项目中的urls.py文件</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url, include</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"> </span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r&#x27;^admin/&#x27;</span>, admin.site.urls),</span><br><span class="line">    <span class="comment"># 自动同步的demo</span></span><br><span class="line">    url(<span class="string">r&#x27;^demo/&#x27;</span>, include(<span class="string">&#x27;demo.urls&#x27;</span>)),</span><br><span class="line">]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="django的url匹配问题"><a href="#django的url匹配问题" class="headerlink" title="django的url匹配问题"></a>django的url匹配问题</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/JiangLe/p/9197874.html">https://www.cnblogs.com/JiangLe/p/9197874.html</a> 和<a target="_blank" rel="noopener" href="https://blog.csdn.net/J_wb49/article/details/103055521%E8%BF%99%E4%B8%A4%E7%AF%87%E6%96%87%E7%AB%A0%E4%BB%8B%E7%BB%8D%E4%BA%86%E5%A6%82%E4%BD%95%E9%98%B2%E6%AD%A2%E5%9C%A8%E5%A4%9A%E4%B8%AAapp%E4%B8%AD%E5%87%BA%E7%8E%B0%E7%9B%B8%E5%90%8C%E5%91%BD%E5%90%8D%E7%9A%84html%E6%96%87%E4%BB%B6%E7%9A%84%E9%97%AE%E9%A2%98%E3%80%82">https://blog.csdn.net/J_wb49/article/details/103055521这两篇文章介绍了如何防止在多个app中出现相同命名的html文件的问题。</a></p>
+<h4 id="如何设置django的日志系统进行调试"><a href="#如何设置django的日志系统进行调试" class="headerlink" title="如何设置django的日志系统进行调试"></a>如何设置django的日志系统进行调试</h4><p>在<code>settings.py</code>文件中加入如下代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> django.utils.log</span><br><span class="line"><span class="keyword">import</span> logging.handlers</span><br><span class="line"><span class="comment"># 添加日志的打印项</span></span><br><span class="line">log_path = os.path.join(BASE_DIR, <span class="string">&quot;logs&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(log_path):</span><br><span class="line">    os.makedirs(<span class="string">&quot;logs&quot;</span>)</span><br><span class="line"></span><br><span class="line">LOGGING = &#123;</span><br><span class="line">    <span class="string">&#x27;version&#x27;</span>: <span class="number">1</span>,  <span class="comment"># 保留字</span></span><br><span class="line">    <span class="string">&#x27;disable_existing_loggers&#x27;</span>: <span class="literal">False</span>,  <span class="comment"># 禁用已经存在的logger实例</span></span><br><span class="line">    <span class="comment"># 日志文件的格式</span></span><br><span class="line">    <span class="string">&#x27;formatters&#x27;</span>: &#123;</span><br><span class="line">        <span class="comment"># 详细的日志格式</span></span><br><span class="line">        <span class="string">&#x27;standard&#x27;</span>: &#123;</span><br><span class="line">            <span class="string">&#x27;format&#x27;</span>: <span class="string">&#x27;[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d]&#x27;</span></span><br><span class="line">                      <span class="string">&#x27;[%(levelname)s][%(message)s]&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment"># 简单的日志格式</span></span><br><span class="line">        <span class="string">&#x27;simple&#x27;</span>: &#123;</span><br><span class="line">            <span class="string">&#x27;format&#x27;</span>: <span class="string">&#x27;[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d]%(message)s&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment"># 定义一个特殊的日志格式</span></span><br><span class="line">        <span class="string">&#x27;collect&#x27;</span>: &#123;</span><br><span class="line">            <span class="string">&#x27;format&#x27;</span>: <span class="string">&#x27;%(message)s&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment"># 过滤器</span></span><br><span class="line">    <span class="string">&#x27;filters&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;require_debug_true&#x27;</span>: &#123;</span><br><span class="line">            <span class="string">&#x27;()&#x27;</span>: <span class="string">&#x27;django.utils.log.RequireDebugTrue&#x27;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment"># 处理器</span></span><br><span class="line">    <span class="string">&#x27;handlers&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;console&#x27;</span>: &#123;     <span class="comment"># 在终端打印</span></span><br><span class="line">            <span class="string">&#x27;level&#x27;</span>: <span class="string">&#x27;DEBUG&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;filters&#x27;</span>: [<span class="string">&#x27;require_debug_true&#x27;</span>],  <span class="comment"># 只有在Django debug为True时才在屏幕打印日志</span></span><br><span class="line">            <span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;logging.StreamHandler&#x27;</span>,  <span class="comment">#</span></span><br><span class="line">            <span class="string">&#x27;formatter&#x27;</span>: <span class="string">&#x27;simple&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&#x27;default&#x27;</span>: &#123;    <span class="comment"># 默认的</span></span><br><span class="line">            <span class="string">&#x27;level&#x27;</span>: <span class="string">&#x27;INFO&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;logging.handlers.RotatingFileHandler&#x27;</span>,  <span class="comment"># 保存到文件，自动切</span></span><br><span class="line">            <span class="string">&#x27;filename&#x27;</span>: os.path.join(BASE_DIR+<span class="string">&#x27;/logs/&#x27;</span>, <span class="string">&quot;all.log&quot;</span>),  <span class="comment"># 日志文件</span></span><br><span class="line">            <span class="string">&#x27;maxBytes&#x27;</span>: <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">50</span>,                    <span class="comment"># 日志大小 50M</span></span><br><span class="line">            <span class="string">&#x27;backupCount&#x27;</span>: <span class="number">3</span>,                                <span class="comment"># 最多备份几个</span></span><br><span class="line">            <span class="string">&#x27;formatter&#x27;</span>: <span class="string">&#x27;standard&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;encoding&#x27;</span>: <span class="string">&#x27;utf-8&#x27;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&#x27;error&#x27;</span>: &#123;   <span class="comment"># 专门用来记错误日志</span></span><br><span class="line">            <span class="string">&#x27;level&#x27;</span>: <span class="string">&#x27;ERROR&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;logging.handlers.RotatingFileHandler&#x27;</span>,  <span class="comment"># 保存到文件，自动切</span></span><br><span class="line">            <span class="string">&#x27;filename&#x27;</span>: os.path.join(BASE_DIR+<span class="string">&#x27;/logs/&#x27;</span>, <span class="string">&quot;error.log&quot;</span>),  <span class="comment"># 日志文件</span></span><br><span class="line">            <span class="string">&#x27;maxBytes&#x27;</span>: <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">50</span>,  <span class="comment"># 日志大小 50M</span></span><br><span class="line">            <span class="string">&#x27;backupCount&#x27;</span>: <span class="number">5</span>,</span><br><span class="line">            <span class="string">&#x27;formatter&#x27;</span>: <span class="string">&#x27;standard&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;encoding&#x27;</span>: <span class="string">&#x27;utf-8&#x27;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&#x27;collect&#x27;</span>: &#123;   <span class="comment"># 专门定义一个收集特定信息的日志</span></span><br><span class="line">            <span class="string">&#x27;level&#x27;</span>: <span class="string">&#x27;INFO&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;class&#x27;</span>: <span class="string">&#x27;logging.handlers.RotatingFileHandler&#x27;</span>,  <span class="comment"># 保存到文件，自动切</span></span><br><span class="line">            <span class="string">&#x27;filename&#x27;</span>: os.path.join(BASE_DIR+<span class="string">&#x27;/logs/&#x27;</span>, <span class="string">&quot;collect.log&quot;</span>),</span><br><span class="line">            <span class="string">&#x27;maxBytes&#x27;</span>: <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">50</span>,  <span class="comment"># 日志大小 50M</span></span><br><span class="line">            <span class="string">&#x27;backupCount&#x27;</span>: <span class="number">5</span>,</span><br><span class="line">            <span class="string">&#x27;formatter&#x27;</span>: <span class="string">&#x27;collect&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;encoding&#x27;</span>: <span class="string">&quot;utf-8&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&#x27;scprits_handler&#x27;</span>: &#123;</span><br><span class="line">            <span class="string">&#x27;level&#x27;</span>:<span class="string">&#x27;DEBUG&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;class&#x27;</span>:<span class="string">&#x27;logging.handlers.RotatingFileHandler&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;filename&#x27;</span>: os.path.join(BASE_DIR+<span class="string">&#x27;/logs/&#x27;</span>, <span class="string">&quot;script.log&quot;</span>),</span><br><span class="line">            <span class="string">&#x27;maxBytes&#x27;</span>: <span class="number">1024</span>*<span class="number">1024</span>*<span class="number">5</span>,</span><br><span class="line">            <span class="string">&#x27;backupCount&#x27;</span>: <span class="number">5</span>,</span><br><span class="line">            <span class="string">&#x27;formatter&#x27;</span>:<span class="string">&#x27;standard&#x27;</span>,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&#x27;loggers&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;django&#x27;</span>: &#123;             <span class="comment"># 默认的logger应用如下配置</span></span><br><span class="line">            <span class="string">&#x27;handlers&#x27;</span>: [<span class="string">&#x27;default&#x27;</span>, <span class="string">&#x27;console&#x27;</span>, <span class="string">&#x27;error&#x27;</span>],  <span class="comment"># 上线之后可以把&#x27;console&#x27;移除</span></span><br><span class="line">            <span class="string">&#x27;level&#x27;</span>: <span class="string">&#x27;DEBUG&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;propagate&#x27;</span>: <span class="literal">True</span>,  <span class="comment"># 向不向更高级别的logger传递</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&#x27;collect&#x27;</span>: &#123;      <span class="comment"># 名为 &#x27;collect&#x27;的logger还单独处理</span></span><br><span class="line">            <span class="string">&#x27;handlers&#x27;</span>: [<span class="string">&#x27;console&#x27;</span>, <span class="string">&#x27;collect&#x27;</span>],</span><br><span class="line">            <span class="string">&#x27;level&#x27;</span>: <span class="string">&#x27;INFO&#x27;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&#x27;scripts&#x27;</span>: &#123;</span><br><span class="line">            <span class="string">&#x27;handlers&#x27;</span>: [<span class="string">&#x27;scprits_handler&#x27;</span>],</span><br><span class="line">            <span class="string">&#x27;level&#x27;</span>: <span class="string">&#x27;INFO&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;propagate&#x27;</span>: <span class="literal">False</span></span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>之后再在需要使用的地方加入如下代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line">logger = logging.getLogger(<span class="string">&#x27;django&#x27;</span>)</span><br><span class="line">logger.info(xxxx)</span><br></pre></td></tr></table></figure>
+
+<p>就可以在文件中看到你想要看到的调试结果了。</p>
+<h3 id="如何在pycharm中远程调试服务器的django项目"><a href="#如何在pycharm中远程调试服务器的django项目" class="headerlink" title="如何在pycharm中远程调试服务器的django项目"></a>如何在pycharm中远程调试服务器的django项目</h3><h3 id="使用Django-Uwsgi-nginx搭建前后端平台"><a href="#使用Django-Uwsgi-nginx搭建前后端平台" class="headerlink" title="使用Django+Uwsgi+nginx搭建前后端平台"></a>使用Django+Uwsgi+nginx搭建前后端平台</h3><p><a target="_blank" rel="noopener" href="https://github.com/jiangnanboy/movie_knowledge_graph_app">jiangnanboy/movie_knowledge_graph_app: 电影知识图谱，主要包括实体识别、实体查询、关系查询以及智能问答等。movie knowledge graph(Entity identification, graph display, and intelligent question and answer) (github.com)</a>作为主要前端参考的github项目。</p>
+<p><a target="_blank" rel="noopener" href="https://neo4j-examples.github.io/paradise-papers-django/%E6%98%AF%E6%95%B4%E4%BD%93%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%8F%82%E8%80%83">https://neo4j-examples.github.io/paradise-papers-django/是整体项目的参考</a></p>
+<h4 id="在django项目中连接到服务器的neo4j数据库"><a href="#在django项目中连接到服务器的neo4j数据库" class="headerlink" title="在django项目中连接到服务器的neo4j数据库"></a>在django项目中连接到服务器的neo4j数据库</h4><p>在<code>settings.py</code>文件中引入了<code>neomodel</code>文件，用于直接在django中连接neo4j数据库。在文件中加入</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.DATABASE_URL = <span class="string">&#x27;bolt://neo4j:neo4j@1.15.187.75:7687&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>关于neomodel包的使用见<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904005060165646%E8%BF%99%E7%AF%87%E6%96%87%E7%AB%A0">https://juejin.cn/post/6844904005060165646这篇文章</a></p>
+<h4 id="配置django的static文件"><a href="#配置django的static文件" class="headerlink" title="配置django的static文件"></a>配置django的static文件</h4><p>首先就遇到了一个问题，如何在nginx+django中搭建管理静态文件的环境。这个问题整整调了三个小时。</p>
+<p>问题描述：在django中用 <code>python manage.py runserver 0.0.0.0:80</code>命令可以成功显示静态文件，但是使用nginx之后就不可以了。</p>
+<p>解决办法：</p>
+<ol>
+<li><p>配置nginx的配置文件：这里需要注意这是django项目目录下的static文件，最后要加上一个“/”</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\自动组卷系统\image-20211020165009512.png" srcset="/img/loading.gif" lazyload alt="image-20211020165009512"></p>
+</li>
+<li><p>在项目中的<code>urls.py</code>中添加如下代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.contrib.staticfiles.views <span class="keyword">import</span> serve</span><br><span class="line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> re_path</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">return_static</span>(<span class="params">request, path, insecure=<span class="literal">True</span>, **kwargs</span>):</span></span><br><span class="line">  <span class="keyword">return</span> serve(request, path, insecure, **kwargs)</span><br><span class="line"> </span><br><span class="line">urlpatterns = [</span><br><span class="line">  ...</span><br><span class="line">  re_path(<span class="string">r&#x27;^static/(?P&lt;path&gt;.*)$&#x27;</span>, return_static, name=<span class="string">&#x27;static&#x27;</span>), <span class="comment"># 添加这行</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure></li>
+<li><p>修改setting.py中的有关static_url中的内容</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">STATIC_URL = <span class="string">&#x27;/static/&#x27;</span></span><br><span class="line"></span><br><span class="line">STATICFILES_DIRS = [</span><br><span class="line">    os.path.join(BASE_DIR, <span class="string">&quot;static&quot;</span>),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">STATIC_ROOT = os.path.join(BASE_DIR, <span class="string">&#x27;collect_static/&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="设置models"><a href="#设置models" class="headerlink" title="设置models"></a>设置models</h4><p>首先在app中新建一个models的文件夹，然后在models中创建所需要的类。</p>
+<p>models是django所用到的数据类型，需要对每个节点的类型都设置一个单独的model。models文件夹的内容如下。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\自动组卷系统\image-20211026220958331.png" srcset="/img/loading.gif" lazyload alt="image-20211026220958331" style="zoom:50%;" />
+
+<p>里面把neo4j数据库中的所有类型的节点都变成以python类的形式存在，方便直接进行节点的调用。为了在首页进行显示的时候区分Class节点和其他类型的知识节点，所以每个节点内都设置了<code>attributes</code>属性，用于区分两者的区别<code>Point.py</code>的具体内容如下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> neomodel <span class="keyword">import</span> (</span><br><span class="line">    StringProperty,</span><br><span class="line">    StructuredNode,</span><br><span class="line">    RelationshipFrom,</span><br><span class="line">    IntegerProperty,</span><br><span class="line">    RelationshipTo,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> .nodeutils <span class="keyword">import</span> NodeUtils</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span>(<span class="params">StructuredNode, NodeUtils</span>):</span></span><br><span class="line">    <span class="built_in">type</span> = <span class="string">&#x27;Point&#x27;</span></span><br><span class="line">    title = StringProperty()</span><br><span class="line">    Difficulty = IntegerProperty()</span><br><span class="line">    Importance = IntegerProperty()</span><br><span class="line">    <span class="built_in">id</span>= IntegerProperty(index=<span class="literal">True</span>)</span><br><span class="line">    <span class="comment"># 下面这两个属性用于生成关系</span></span><br><span class="line">    <span class="comment"># knowledges = RelationshipFrom(&#x27;.Knowledge.Knowledge&#x27;, &#x27;include&#x27;)</span></span><br><span class="line">    tests = RelationshipTo(<span class="string">&#x27;.Test.Test&#x27;</span>, <span class="string">&#x27;relate&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># serialize可以以字典的形式返回数据</span></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">serialize</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&#x27;node_properties&#x27;</span>: &#123;</span><br><span class="line">                <span class="string">&#x27;type&#x27;</span> : self.<span class="built_in">type</span>,</span><br><span class="line">                <span class="string">&#x27;title&#x27;</span>: self.title,</span><br><span class="line">                <span class="string">&#x27;id&#x27;</span>: self.<span class="built_in">id</span>,</span><br><span class="line">                <span class="string">&#x27;attributes&#x27;</span>:&#123;</span><br><span class="line">                    <span class="string">&#x27;Difficulty&#x27;</span>: self.Difficulty,</span><br><span class="line">                    <span class="string">&#x27;Importance&#x27;</span>: self.Importance,</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="comment">#以字典的形式返回所有和该节点连接的节点</span></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">serialize_connections</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&#x27;nodes_type&#x27;</span>: <span class="string">&#x27;Test&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;nodes_related&#x27;</span>: self.serialize_relationships(self.tests.<span class="built_in">all</span>()),</span><br><span class="line">            &#125;,</span><br><span class="line">    ]</span><br></pre></td></tr></table></figure>
+
+<p>在djano的项目中，setting设置连接了neo4j数据库之后，在代码中直接调用这个类就可以直接连接neo4j数据库了。</p>
+<h2 id="真实使用中的问题"><a href="#真实使用中的问题" class="headerlink" title="真实使用中的问题"></a>真实使用中的问题</h2><h3 id="常用命令集合"><a href="#常用命令集合" class="headerlink" title="常用命令集合"></a>常用命令集合</h3><ol>
+<li><p>部分学生由于选课的问题并没有被导入教务系统的名单，需要手动导入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE(n:Student &#123;name:&#39;虞昊泽&#39;, 	gender:1,username:&#39;8204201928&#39;,password:&#39;8204201928&#39;,study_class:&quot;计算机2002&quot;,test_num:0,test_right_num:0&#125;)</span><br></pre></td></tr></table></figure></li>
+<li><p>删除某个学生的相关的边</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">match (n)-[r]-&gt;(m)</span><br><span class="line">where n.name&#x3D;&quot;李扬&quot;</span><br><span class="line">delete r</span><br><span class="line">return n</span><br></pre></td></tr></table></figure></li>
+<li></li>
+</ol>
+<h3 id="部分题目的答案录入出错"><a href="#部分题目的答案录入出错" class="headerlink" title="部分题目的答案录入出错"></a>部分题目的答案录入出错</h3><p>在第一次作业中，有三道题的答案录入出错</p>
+<h3 id="编程题没有办法分开编译错误和程序错误（能不能跑起来和跑起来之后答案对不对）"><a href="#编程题没有办法分开编译错误和程序错误（能不能跑起来和跑起来之后答案对不对）" class="headerlink" title="编程题没有办法分开编译错误和程序错误（能不能跑起来和跑起来之后答案对不对）"></a>编程题没有办法分开编译错误和程序错误（能不能跑起来和跑起来之后答案对不对）</h3>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>自动组卷系统</div>
+      <div>http://example.com/2021/10/11/自动组卷系统/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>sun_zhi_bin</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>October 11, 2021</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>Licensed under</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/22/%E7%BE%A4%E6%99%96%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/" title="群晖使用手册">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">群晖使用手册</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/05/20/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/" title="算法笔记">
+                        <span class="hidden-mobile">算法笔记</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+</body>
+</html>
