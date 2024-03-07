@@ -30,8 +30,10 @@
 <meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/周报汇总/d7cf3ce0584ebd8665a98d2b6ee8c2a.png">
 <meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/周报汇总/image-20230417000658497.png">
 <meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/周报汇总/image-20230604235608459.png">
+<meta property="og:image" content="http://example.com/2021/10/17/images/%E5%91%A8%E6%8A%A5%E6%B1%87%E6%80%BB/image-20230709150109380.png">
+<meta property="og:image" content="http://example.com/2021/10/17/images/%E5%91%A8%E6%8A%A5%E6%B1%87%E6%80%BB/image-20230709152945674.png">
 <meta property="article:published_time" content="2021-10-17T12:29:39.000Z">
-<meta property="article:modified_time" content="2023-07-05T08:32:41.423Z">
+<meta property="article:modified_time" content="2024-03-03T14:11:51.492Z">
 <meta property="article:author" content="sun_zhi_bin">
 <meta property="article:tag" content="周报">
 <meta name="twitter:card" content="summary_large_image">
@@ -228,7 +230,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          24k 字
+          32k 字
         
       </span>
     
@@ -239,7 +241,7 @@
         
         
         
-          203 分钟
+          268 分钟
         
       </span>
     
@@ -1448,6 +1450,413 @@
 <h2 id="下周任务工作计划-56"><a href="#下周任务工作计划-56" class="headerlink" title="下周任务工作计划"></a>下周任务工作计划</h2><ol>
 <li>准备组会</li>
 <li>继续做实验。</li>
+</ol>
+<h1 id="20230703-20230707"><a href="#20230703-20230707" class="headerlink" title="20230703-20230707"></a>20230703-20230707</h1><h2 id="本周工作-57"><a href="#本周工作-57" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>准备教学大纲</p>
+</li>
+<li><p>分析读写混合场景。</p>
+</li>
+</ol>
+<h2 id="工作进度"><a href="#工作进度" class="headerlink" title="工作进度"></a>工作进度</h2><p>目前发现的两个问题分别是减速滞后和加速慢。且都是在没有垃圾回收的情况下。</p>
+<h3 id="减速滞后"><a href="#减速滞后" class="headerlink" title="减速滞后"></a>减速滞后</h3><p><img src="../images/%E5%91%A8%E6%8A%A5%E6%B1%87%E6%80%BB/image-20230709150109380.png" srcset="/img/loading.gif" lazyload alt="image-20230709150109380"></p>
+<ul>
+<li>现象：当从大IO转变为小IO的时候，SSD的吞吐量下降了但是TargetRate并没有下降。outstandingIO增加</li>
+<li>影响：加深SSD的拥塞，导致之后IO的延迟上升。</li>
+<li>原因：更新cpl_rate的阈值很高，小IO没有办法很快累积到这个阈值的值。所以即使SSD处于了过载状态TargetRate的值依旧很大。<strong>这个现象只存在于大IO转变为小IO的情况</strong></li>
+<li>解决思路：<ol>
+<li>将cpl_rate更新的阈值调小</li>
+<li>更改cpl_rate的更新方式，采用更精准和更灵活的cpl_rate更新方式</li>
+</ol>
+</li>
+</ul>
+<h3 id="加速慢"><a href="#加速慢" class="headerlink" title="加速慢"></a>加速慢</h3><p><img src="../images/%E5%91%A8%E6%8A%A5%E6%B1%87%E6%80%BB/image-20230709152945674.png" srcset="/img/loading.gif" lazyload alt="image-20230709152945674"></p>
+<ul>
+<li>现象：当注入流的速率从小变大的时候，TargetRate增速很慢，SSD的吞吐量也就很慢。</li>
+<li>影响：SSD会丢吞吐率。</li>
+<li>原因：当IO的延迟高于thresh_min，小于thresh_cur的时候，SSD会被gimbal识别为拥塞避免状态，TargetRate增加一个IO大小。加速太慢。<ul>
+<li>低利用率状态识别的不合理(thresh_min设置的不合理)：thresh_min按论文指导设置为单个4KB读IO的延迟。但是通过降低每个IO之间的间隔增加发送速率，当SSD吞吐量最大，每个IO延迟最低的时候，不同大小的IO会有不同的延迟。所以如果按照指导值就会有即使没有被识别为低利用率状态但是SSD的吞吐量还是很低的情况。</li>
+<li>拥塞避免状态TargetRate增速过慢。每次TargetRate增加一个IOSize，这个值太小了。</li>
+</ul>
+</li>
+<li>解决思路：<ul>
+<li>优化状态识别的算法</li>
+<li>优化TargetRate的增速算法</li>
+</ul>
+</li>
+</ul>
+<h1 id="20230710-20230714"><a href="#20230710-20230714" class="headerlink" title="20230710-20230714"></a>20230710-20230714</h1><h2 id="本周工作-58"><a href="#本周工作-58" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li>Python考试判卷</li>
+<li>补充论文background中和gimbal相关的部分</li>
+<li>和师兄讨论初步的方案</li>
+<li>发现在读写转换的场景中target_rate的滞后调节不是很明显</li>
+</ol>
+<h2 id="下周工作计划"><a href="#下周工作计划" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>继续写论文</li>
+<li>完善方案，补充实验</li>
+</ol>
+<h1 id="20230904-20230908"><a href="#20230904-20230908" class="headerlink" title="20230904-20230908"></a>20230904-20230908</h1><h2 id="本周工作-59"><a href="#本周工作-59" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li>Python考试B卷</li>
+<li>更新完PSCC论文第4章设计部分。论文剩下第五章实验结果分析和参考文献。</li>
+<li>整理Understanding Host Interconnect Congestion论文细节。文章主要研究的是：从NIC到CPU/DRAM的速率小于网络端到NIC的速率。导致了NIC中缓冲区被填满，出现丢包和包延迟增大的问题。</li>
+</ol>
+<h2 id="下周工作计划-1"><a href="#下周工作计划-1" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>完成PSCC论文参考文献部分，协助师兄修改论文。</li>
+<li>整理RS的PPT和论文。找到一个能尽快上手的地方。</li>
+<li>整理完Understanding Host Interconnect Congestion论文细节</li>
+</ol>
+<h1 id="20230918-20230922"><a href="#20230918-20230922" class="headerlink" title="20230918-20230922"></a>20230918-20230922</h1><h2 id="本周工作-60"><a href="#本周工作-60" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li>读<strong>Towards User-Defined SLA in Cloud Flash Storage</strong>这篇文章</li>
+<li>读RS的研究生毕业论文</li>
+<li>调查分布式数据库相关内容。</li>
+</ol>
+<h2 id="工作内容"><a href="#工作内容" class="headerlink" title="工作内容"></a>工作内容</h2><p>整理当前的三个方向(一个是RS，两个是舒然老师提到的)</p>
+<ol>
+<li><p>RS方向</p>
+<p>RS主要由两部分组成：分布式调节 <em>TOS</em> 模块，接收端驱动发送机制。</p>
+<p>TOS可以看作是每个服务器的服务阈值，由于服务器性能不断变化，所以TOS值需要设置为动态的。</p>
+<p>通过服务器端返回的TOS和OSK比较大小来判断是否将键值操作调度给服务器。注意：<strong>这对于客户端来说是一个被动的过程</strong>。如果该服务器还能服务，就在客户端的公共队列中寻找对应的键值操作调度给服务器。所以这相当于是基于接收端服务器键值响应的调度。</p>
+<ul>
+<li>高并发突发流场景下，如果客户端时主动地选择服务器，热点服务器的操作会被集中调度给下一个服务器，所以热点转移了，并没有被解决。而RS中客户端是根据服务器的反馈信息被动发送键值操作，能解决这个问题。</li>
+</ul>
+<p>ceph的github里面有结合nvme-of使用的版本。</p>
+<p>如果要用cassandra，还需要自己配置和修改cassandra的代码，实现nvme-of的效果。</p>
+</li>
+<li><p>SLA方向</p>
+<p>本文提供了Regulator，用户自定义SLA，云开发商据此提供服务。Regulator将SLA转换为了SLA曲线(能反映吞吐量和延迟的需求)。并将不同用户的SLA曲线组合，提高flash利用率，同时保证用户的SLA。</p>
+</li>
+<li><p>流混合方向</p>
+<p>不同类型的I/O流混合能不能达到更好的效果。比如说400MBps的带宽，如何分给不同类型的I/O(随机/顺序 读/写)能够达到更好地效果(加起来的带宽超过400MBps)。</p>
+</li>
+</ol>
+<h2 id="下周工作计划-2"><a href="#下周工作计划-2" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>重新思考RS的问题定义</li>
+<li>再理解SLA这篇文章</li>
+</ol>
+<h1 id="20231009-20231013"><a href="#20231009-20231013" class="headerlink" title="20231009-20231013"></a>20231009-20231013</h1><h2 id="本周工作-61"><a href="#本周工作-61" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li>调研分布式存储工作，目前的优化大多数都是数据存储的优化，关于数据读取的副本选择优化不多</li>
+<li>调研ceph工作<ol>
+<li>ceph能够通过Crimson结合SPDK实现NVMe-oF的开发</li>
+<li>ceph目前的读操作都是从主OSD进行的，当前开发了Read balance确保每个设备获得公平的主 OSD 份额</li>
+<li>ceph的每个服务器使用BlueStore作为存储后端，通过RocksDB管理元数据</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-3"><a href="#下周工作计划-3" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>确定可以着手的题目<ol>
+<li>在分布式存储系统(ceph等)中结合nvme-oF做副本选择算法(还需要调研分布式存储系统如何结合副本进行读操作的，是否和键值存储中一样，可能需要看ceph源码)</li>
+<li>在分布式存储系统中是否存在多个客户端的公平性问题。如果结合了nvme-oF，那么nvme-oF中的公平性问题和分布式存储系统中的公平i性问题是否是同一个</li>
+</ol>
+</li>
+</ol>
+<h1 id="20231016-20231020"><a href="#20231016-20231020" class="headerlink" title="20231016-20231020"></a>20231016-20231020</h1><h2 id="本周工作-62"><a href="#本周工作-62" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>调研分布式存储和分布式键值存储工作，当前的问题有</p>
+<ol>
+<li>分布式存储系统(例如ceph)集成了nvme-oF的操作，但做的都是系统相关的写同步和存储分配的问题。做读操作副本选择的问题较少。<strong>预测源码应该没有对读操作进行解耦，实现副本选择算法实际操作可能会比较困难</strong></li>
+<li>分布式键值存储数据库(Cassandra)有对副本选择算法的集成，但是并没有结合nvme-oF。</li>
+</ol>
+</li>
+<li><p>LEED论文是一个分布式键值存储数据库，基于SPDK实现，集成了nvme-oF操作。主要解决的是SmartNIC的特性问题，还没有仔细看是否涉及副本选择算法。</p>
+</li>
+<li><p>调研nvme SSD的公平性问题</p>
+<ol>
+<li>部分论文是对Linux内核中的I/O调度器进行优化</li>
+<li>部分论文是优化的块设备驱动</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-4"><a href="#下周工作计划-4" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>总结NVMe SSD的公平性问题，总结Linux文件系统的框架和分布式框架以及nvme-oF框架，每个论文的方法都是如何部署的，部署在哪一层。</li>
+<li>读LEED论文</li>
+</ol>
+<h1 id="20231023-20231027"><a href="#20231023-20231027" class="headerlink" title="20231023-20231027"></a>20231023-20231027</h1><h2 id="本周工作-63"><a href="#本周工作-63" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>调研nvme SSD的公平性问题，主要有三个</p>
+<ol>
+<li>读写公平。写操作延迟高，会影响读操作</li>
+<li>租户之间的公平。根据租户的权重分配带宽</li>
+<li>垃圾回收的公平。垃圾回收发生的时候，如何在租户之间分配SSD性能</li>
+</ol>
+</li>
+<li><p>调研SSD方法部署</p>
+<ol>
+<li>Linux内核的I/O调度器中</li>
+<li>主机端的存储设备驱动中</li>
+<li>用户端的软件设计</li>
+</ol>
+</li>
+<li><p>初步熟悉Linux内核存储架构</p>
+</li>
+</ol>
+<h2 id="下周工作计划-5"><a href="#下周工作计划-5" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>总结公平性文章。当前的公平性问题大多是只是涉及到一台机器的场景。</li>
+<li>找到可以入手的公平性问题。感觉当前结合nvme-oF的设计很少，</li>
+</ol>
+<h1 id="20231030-20231103"><a href="#20231030-20231103" class="headerlink" title="20231030-20231103"></a>20231030-20231103</h1><h2 id="本周工作-64"><a href="#本周工作-64" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li>调研公平性问题并汇报</li>
+</ol>
+<h2 id="下周工作计划-6"><a href="#下周工作计划-6" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>总结R2B，LPNS，和SLA三篇租户隔离，提供用户性能保障的文章</li>
+<li>调研目前研究关于多租户性能保障的研究：IOPS保障，延迟保障</li>
+</ol>
+<h1 id="20231106-20231110"><a href="#20231106-20231110" class="headerlink" title="20231106-20231110"></a>20231106-20231110</h1><h2 id="本周工作-65"><a href="#本周工作-65" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>调研性能保障的四篇文章：LPNS、R2B、UserSLA、Justitia</p>
+</li>
+<li><p>对如何提供租户的性能保障有初步了解</p>
+<ol>
+<li>根据租户不同的需求定义SLA</li>
+<li>根据不同需求的SLA定义I/O类型</li>
+<li>对不同类型的I/O提供性能保障</li>
+</ol>
+</li>
+<li><p>当前初步想法</p>
+<ol>
+<li>根据用户不同的延迟SLA需求提供不同优先级的I/O</li>
+<li>基于spdk访问SSD的路径，在用户层进行I/O优先级调度。</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-7"><a href="#下周工作计划-7" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>调研Aequitas这篇文章，其中关于优先级升降的方法或许能借鉴</li>
+<li>总结每篇文章是如何定义SLA的，用户需要输入的参数是什么，文章是如何对不同需求的I/O进行分类的</li>
+<li>完善ppt，介绍每篇文章，形成可汇报内容</li>
+</ol>
+<h1 id="20231113-20231117"><a href="#20231113-20231117" class="headerlink" title="20231113-20231117"></a>20231113-20231117</h1><h2 id="本周工作-66"><a href="#本周工作-66" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p><strong>当前的motivation</strong>：由于当前云提供商分配SSD方式的限制，往往会根据用户的SLA过多配置SSD资源，造成资源的浪费。当前在一个SSD上进行租户隔离的方法只涉及一个方面的SLA（延迟或者带宽），如何在用户即提出延迟SLA和吞吐量SLA的时候继续宁性能隔离。</p>
+</li>
+<li><p><strong>用到的方法</strong>：</p>
+<ol>
+<li>结合租户的带宽SLA和延迟SLA，**<u>初步</u>**判断该租户能否与其他租户一起共享SSD</li>
+<li>共享SSD之后，使用探测的方式或者直接服务，来判断该SSD是否能服务所有的租户。</li>
+<li>根据不同用户的SLA设置优先级，使用调度算法，实现租户隔离，并根据租户移除算法(可能方案：当一个租户经常处于某种特定优先级的时候，就证明SSD服务能力不足了)，选择合适的租户移动到别的SSD，或者扩大该SSD容量</li>
+</ol>
+</li>
+<li><p>目前还存在的问题</p>
+<ol>
+<li>租户是如何定义带宽SLA和延迟SLA的</li>
+<li>如何初步判断该租户能够共享SSD</li>
+<li>是否要区分读写操作的不同以及是否结合SSD中写操作很容易影响读操作的特性</li>
+<li>如何结合SSD垃圾回收的性能</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-8"><a href="#下周工作计划-8" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>准备组会</li>
+<li>准备开题ppt</li>
+</ol>
+<h1 id="20231127-20231201"><a href="#20231127-20231201" class="headerlink" title="20231127-20231201"></a>20231127-20231201</h1><h2 id="本周工作-67"><a href="#本周工作-67" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>看D2FQ和Aequitas论文方法</p>
+<ol>
+<li><p>D2FQ是一种利用NVMe加权轮询(WRR)仲裁的公平排队I/O调度程序。</p>
+<p>用虚拟时间来调整每个租户的优先级，更偏重租户之间的加权公平</p>
+</li>
+<li><p>Aequitas一个发送方驱动的准入控制方案，通过新的QoS降级机制并使用WFQ来保证rpc级别的网络延迟slo</p>
+<p>在RPC级别利用租户的延迟反馈信息，根据租户的SLO进行动态优先级调度</p>
+</li>
+</ol>
+</li>
+<li><p>整理ppt中的问题定义部分</p>
+<ol>
+<li>用数学符号表示问题</li>
+<li>重新画架构图，完善输入输出</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-9"><a href="#下周工作计划-9" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>继续完善ppt</li>
+<li>思考问题定义中还有哪些挑战</li>
+<li>思考我们的优先级调度方法能否结合D2FQ或者Aequitas的思想</li>
+</ol>
+<h1 id="20231204-20231208"><a href="#20231204-20231208" class="headerlink" title="20231204-20231208"></a>20231204-20231208</h1><h2 id="本周工作-68"><a href="#本周工作-68" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>整理开题PPT</p>
+<ol>
+<li>大概整理框架，构思了初步的方案和设计</li>
+<li>目前还差代码的具体框架</li>
+</ol>
+</li>
+<li><p>12月19日早晨8:30在信息楼416 集中开题答辩</p>
+<ol>
+<li>排序第三，开题组长鲁鸣鸣老师，副组长覃立波老师和郁松老师</li>
+</ol>
+</li>
+<li><p>12月15日之前在系统提交开题报告</p>
+</li>
+</ol>
+<h2 id="下周工作计划-10"><a href="#下周工作计划-10" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>完善ppt中的代码架构</li>
+<li>看看网络演算的部分能不能利用</li>
+<li>写开题报告</li>
+</ol>
+<h1 id="20231211-20231215"><a href="#20231211-20231215" class="headerlink" title="20231211-20231215"></a>20231211-20231215</h1><h2 id="本周工作-69"><a href="#本周工作-69" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li>完成开题PPT<ol>
+<li>完善性能保障的方案，将延迟和带宽分开处理。</li>
+</ol>
+</li>
+<li>完成开题报告</li>
+</ol>
+<h2 id="下周工作计划-11"><a href="#下周工作计划-11" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>开题汇报</li>
+<li>完善资源分配中如何选择合适的租户进行资源再分配的方案</li>
+<li>开始实验</li>
+</ol>
+<h1 id="20231218-20231222"><a href="#20231218-20231222" class="headerlink" title="20231218-20231222"></a>20231218-20231222</h1><h2 id="本周工作-70"><a href="#本周工作-70" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li>开题答辩</li>
+<li>完成开题报告</li>
+<li>主要思考性能保障的思路<ol>
+<li>同时满足带宽SLO和延迟SLO：先满足延迟SLO，再逐渐满足带宽SLO</li>
+<li>通过判断在一段时间内的延迟SLO和带宽SLO的满足情况来对租户的存储资源进行粗粒度的反馈调节。</li>
+<li>通过集中减少一个租户的存储资源(不满足SLO)来满足更多租户的SLO</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-12"><a href="#下周工作计划-12" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>开始实验或者仿真(但是MQSim又不能真正的模拟盘的性能)，在实验中验证方案。</li>
+<li>思考如何选择合适的租户减少他的存储资源</li>
+</ol>
+<h1 id="20231225-20231229"><a href="#20231225-20231229" class="headerlink" title="20231225-20231229"></a>20231225-20231229</h1><h2 id="本周工作-71"><a href="#本周工作-71" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>陪家里人在长沙逛了一下</p>
+</li>
+<li><p>结合实例描述问题</p>
+<ol>
+<li>性能保障的问题1：不考虑SLO时，有限的资源会按照到达速率分配给租户，随着租户的增多，每个租户的性能都没有办法得到保障</li>
+<li>性能保障的问题2：延迟敏感型租户和带宽敏感型租户共享SSD的时候，会出现延迟敏感型租户的延迟SLO无法满足的情况</li>
+<li>资源分配的问题：云厂商给每一个租户配置一个盘的方法会造成存储资源浪费。Regulator静态配置的方法无法很好适应租户请求和SSD性能发生的变化</li>
+</ol>
+</li>
+<li><p>性能保障的方案思路</p>
+<ol>
+<li>先满足延迟SLO，再满足带宽SLO</li>
+<li>通过调整并发IO的个数平衡租户的服务延迟和SSD吞吐量</li>
+<li>通过调整租户的优先级来给不同租户分配SSD带宽同时保障租户的排队延迟</li>
+<li>思考能否利用网络演算描述清楚延迟SLO和服务延迟、排队延迟、租户优先级的关系</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-13"><a href="#下周工作计划-13" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li><p>开始仿真，在仿真中体现问题和验证方案。</p>
+</li>
+<li><p>结合问题完善方案的细节</p>
+</li>
+</ol>
+<h1 id="20240102-20240105"><a href="#20240102-20240105" class="headerlink" title="20240102-20240105"></a>20240102-20240105</h1><h2 id="本周工作-72"><a href="#本周工作-72" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li>性能保障的motivation：延迟敏感型租户(延迟SLO更严格，带宽SLO不严格)和带宽敏感型租户(延迟SLO不严格，带宽SLO严格)共享SSD的时候，会出现延迟敏感型租户的延迟SLO无法满足的情况。<ol>
+<li>当前遇到的问题是理想状态无法确定。简单的问题场景，理想状态很容易达到，方案很简单。复杂的问题场景，理想状态难确定，满足延迟SLO就无法满足带宽SLO。</li>
+</ol>
+</li>
+<li>可以用网络演算的方式指导方案设计中的参数变化<ol>
+<li>网络演算主要用于计算排队延迟，服务曲线和到达曲线的水平距离，就是该请求的排队延迟。</li>
+<li>每个队列都有自己的服务曲线和到达曲线。服务曲线斜率之和等于SSD的处理速率(和SSD的请求并发程度相关，所以也决定服务延迟)。</li>
+<li>每个队列按照队列的权重分配SSD处理速率，得到自己队列的服务曲线。</li>
+<li>根据队列中的租户计算该队列的到达曲线(这里有一个问题：是每个租户一个到达曲线还是一个队列一个到达曲线)</li>
+<li>根据服务曲线和到达曲线可以预测每个租户的请求排队延迟。期望是让该值加服务延迟满足每个租户的延迟SLO</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-14"><a href="#下周工作计划-14" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>整理在延迟敏感型租户和带宽敏感型租户共享SSD情境下，理想分配存储资源遇到的问题和解决方法。</li>
+<li>结合问题完善方案的细节</li>
+</ol>
+<h1 id="20240108-20240112"><a href="#20240108-20240112" class="headerlink" title="20240108-20240112"></a>20240108-20240112</h1><h2 id="本周工作-73"><a href="#本周工作-73" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>完善方案和例子</p>
+<ol>
+<li>使用NVMe中WRR机制提供的队列(H、M、L)进行租户的调度</li>
+<li>先根据租户的带宽SLO来选择合适的队列：带宽SLO更高的租户进入H队列，带宽SLO低的租户进入M队列。L队列服务不需要满足SLO的租户</li>
+<li>根据租户的延迟SLO满足情况来调整所在队列的权重：当某一个队列中所有租户的延迟SLO和带宽SLO都被满足，降低该队列的权重。如果该租户的延迟SLO没有被满足，增加权重。如果存在租户的带宽SLO没有满足但是延迟SLO满足了，权重不变。<br>未解决问题：如果一个队列中有多个租户，多个租户之间的SLO满足情况出现了冲突(有的需要权重增加，有的需要权重降低)，该队列的权重如何变化？是否要给租户换队列。</li>
+<li>在何时以及通过什么样的方式选择合适的租户进入L队列<ol>
+<li>对延迟SLO严格的租户分配的带宽要满足该租户的到达速率，对带宽SLO严格的租户分配的带宽需要满足该租户的带宽SLO。</li>
+<li>何时：当延迟SLO严格的租户的到达速率之和 加 带宽SLO严格的租户的带宽SLO之和大于SSD能提供的带宽的时候，就要选择合适的租户进入L队列了</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>总结该研究内容和Aequitas以及D2FQ的关系</p>
+<ol>
+<li><p>D2FQ</p>
+<ol>
+<li>D2FQ在一段时间内通过给租户分配不同权重的队列，实现租户之间的吞吐量权重公平。并通过改变队列的权重在公平和低权重队列的尾延迟之间实现权衡。(为什么不给租户固定队列，然后只通过改变队列的权重实现公平呢)</li>
+<li>我们的目标是实现SLO的公平。在存储资源足够的情况下固定了租户的权重，通过更改每个队列的权重实现租户的SLO。(如果没有满足带宽SLO，排队延迟会增加，队列的权重会增加。)</li>
+</ol>
+</li>
+<li><p>Aeuqitas</p>
+<ol>
+<li>Aequitas在网络资源不够用的时候通过给RPC降级来实现在有限的网络资源中最大化满足RPC的延迟SLO。每个QoS类(队列)维护了一个准入概率，当一个RPC初始化的时候，需要通过它对应的QoS类的准入概率来判断该RPC是进入该队列还是直接降级。如果该队列中完成的RPC满足了其延迟SLO，就增加准入概率，否则就减少。准入概率的初始值和增加幅度与该QoS类的延迟SLO相关</li>
+<li>我们的目标是在资源够用的时候公平使用资源，资源不够用再去选择合适的降级。Aequitas的方法只适用于RPC很多，网络资源不够用的情况。</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-15"><a href="#下周工作计划-15" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>完善在何时以及通过什么样的方式选择合适的租户进入L队列的方案</li>
+<li>思考多个租户的情况下应该如何分配队列以及满足SLO</li>
+</ol>
+<h1 id="20240115-20240119"><a href="#20240115-20240119" class="headerlink" title="20240115-20240119"></a>20240115-20240119</h1><h2 id="本周工作-74"><a href="#本周工作-74" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li>结合Aequitas和D2FQ思考方案的设计原则<ol>
+<li>D2FQ在一段时间内通过给租户分配不同权重的队列，实现租户之间的吞吐量权重公平。并通过改变队列的权重在公平和低权重队列的尾延迟之间实现权衡。</li>
+<li>Aequitas通过在网络资源出现瓶颈的时候根据延迟SLO和延迟SLO满足情况对租户进行降级来满足更多租户的延迟SLO</li>
+<li>方案原则<ul>
+<li>通过控制IO并发程度来控制IO的服务延迟。保障服务延迟小于延迟SLO</li>
+<li>根据 (到达速率-带宽SLO)/延迟SLO的计算值来预测该租户的排队延迟，给租户分类。</li>
+<li>优先保障排队延迟严格租户的延迟SLO，然后保障租户的带宽SLO</li>
+<li>当存储资源出现瓶颈的时候选择SLO最宽松，且SLO满足情况最少的租户进行降级</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>完善方案的细节：具体的调整公式</li>
+<li>在MQSim中整理代码框架<ol>
+<li>在每个流创建的时候需要在scheduler中注册。</li>
+<li>每个流的请求不再放进waiting queue，而是放到scheduler的WFQ中。</li>
+<li>从scheduler的WFQ中取出命令提交</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-16"><a href="#下周工作计划-16" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>完善仿真代码和方案的细节</li>
+<li>初步完成一个仿真结果</li>
+</ol>
+<h1 id="20240122-20240126"><a href="#20240122-20240126" class="headerlink" title="20240122-20240126"></a>20240122-20240126</h1><h2 id="本周工作-75"><a href="#本周工作-75" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li>按照论文思路重新整理ppt框架，包括Introduction、Background and Related Work、Motivation、Design部分<ol>
+<li>Background and Related work 介绍云存储平台的存储介质(NVMe)以及租户如何使用云存储平台；SLO保障中在内核的IO调度策略、延迟SLO保障以及带宽SLO保障；网络演算定理</li>
+<li>Motivation介绍SSD的性能是不断变化的、等待延迟和服务延迟的关系、吞吐量和服务延迟在IO并发度上是矛盾的、随着租户数目增多，租户SLO都无法满足。</li>
+<li>Design介绍方法，先介绍overview，再介绍每个参数含义，再介绍方法细节</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-17"><a href="#下周工作计划-17" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>完善ppt的细节内容</li>
+<li>完善仿真代码</li>
+</ol>
+<h1 id="20240227-20240301"><a href="#20240227-20240301" class="headerlink" title="20240227-20240301"></a>20240227-20240301</h1><h2 id="本周工作-76"><a href="#本周工作-76" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>重新整理PPT架构</p>
+<ol>
+<li><p>背景和相关工作部分</p>
+<ol>
+<li>当前云存储的计价方式，用户关心吞吐量和延迟这两个指标，但计价方式做不到。因为现在基于NVMe SSD的云存储服务器不能提供稳定的吞吐量和延迟</li>
+<li>NVMe 存储：NVMe特征，提供高吞吐和低延迟，在不同状态下体现不同的性能。基于NVMe的Linux内核存储栈流程</li>
+<li>相关工作是如何在Linux内核存储栈中保障延迟和吞吐量的</li>
+</ol>
+</li>
+<li><p>动机</p>
+<ol>
+<li>由于SSD的存储资源有限，当不进行调度的时候，存储资源按照租户的流量到达速率分配，随着租户数量增加，可能会出现SLO无法满足的情况</li>
+<li>吞吐量SLO和延迟SLO的关系(在SSD服务速率固定的情况下是否是竞争的，还没想好)。如果SSD速率固定，如果租户想增加吞吐量，就会增加发送速率，那么排队延迟就可能会增加。</li>
+<li>租户的到达速率不会严格按照吞吐量SLO，所以如果只按照吞吐量SLO分配资源给租户会导致延迟SLO上升</li>
+</ol>
+</li>
+<li><p>基本想法</p>
+<ol>
+<li>在租户数量增多，存储资源不够用的时候，需要选择合适的租户降级。</li>
+<li>根据是否容易破坏延迟SLO的情况，对租户进行H和M的分类。</li>
+<li>在租户发送速率发生变化的时候，对H和M的权重进行动态调整。调度租户的请求，满足所有租户的SLO</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-18"><a href="#下周工作计划-18" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>完善ppt的细节内容</li>
+<li>思考在只考虑排队延迟的情况下吞吐量SLO和延迟SLO的关系。</li>
+<li>以及这两者和租户到达速率的关系</li>
+<li>思考如何在方案中更好地体现对吞吐量SLO的保障</li>
 </ol>
 
                 
