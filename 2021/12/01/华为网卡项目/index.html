@@ -18,9 +18,9 @@
   
     <meta name="description" content="title: 华为网卡项目date: 2021-12-01 11:30:15tags:华为项目 DPDK和SPDKDPDK(Data Plane Development Kit)简单说，DPDK应用程序运行在操作系统的User Space，利用自身提供的数据面库进行收发包处理，绕过了Linux内核态协议栈，以提升报文处理效率。 DPDK是一组lib库和工具包的集合。最简单的架构描述如下图所示：">
 <meta property="og:type" content="article">
-<meta property="og:title" content="sun&#39;s blog">
+<meta property="og:title" content="Bruce Sun&#39;s blog">
 <meta property="og:url" content="http://example.com/2021/12/01/%E5%8D%8E%E4%B8%BA%E7%BD%91%E5%8D%A1%E9%A1%B9%E7%9B%AE/index.html">
-<meta property="og:site_name" content="sun&#39;s blog">
+<meta property="og:site_name" content="Bruce Sun&#39;s blog">
 <meta property="og:description" content="title: 华为网卡项目date: 2021-12-01 11:30:15tags:华为项目 DPDK和SPDKDPDK(Data Plane Development Kit)简单说，DPDK应用程序运行在操作系统的User Space，利用自身提供的数据面库进行收发包处理，绕过了Linux内核态协议栈，以提升报文处理效率。 DPDK是一组lib库和工具包的集合。最简单的架构描述如下图所示：">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://pic3.zhimg.com/80/v2-f4b703475096e19c669d6cfc7128311e_1440w.jpg">
@@ -63,14 +63,14 @@
 <meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20220122194215743.png">
 <meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20220519154020368.png">
 <meta property="article:published_time" content="2021-12-01T03:30:15.129Z">
-<meta property="article:modified_time" content="2022-10-25T01:35:39.301Z">
+<meta property="article:modified_time" content="2024-03-07T15:53:57.801Z">
 <meta property="article:author" content="sun_zhi_bin">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://pic3.zhimg.com/80/v2-f4b703475096e19c669d6cfc7128311e_1440w.jpg">
   
   
   
-  <title>sun&#39;s blog</title>
+  <title>Bruce Sun&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -134,7 +134,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>Bruce Sun的博客网站</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -270,7 +270,7 @@
         
         
         
-          101 分钟
+          100 分钟
         
       </span>
     
@@ -371,7 +371,7 @@
 <p>本次下载的版本如下图所示</p>
 <p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211204131059622.png" srcset="/img/loading.gif" lazyload alt="image-20211204131059622"></p>
 <p>之后进入驱动的目录进行安装。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;mlnxofedinstall --force</span><br></pre></td></tr></table></figure>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli"><span class="hljs-string">./mlnxofedinstall</span> <span class="hljs-params">--force</span><br></code></pre></td></tr></table></figure>
 
 <p>重新加载驱动</p>
 <p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211204101116532.png" srcset="/img/loading.gif" lazyload alt="image-20211204101116532"></p>
@@ -383,10 +383,10 @@
 <p>发现网卡的类型是EN，仅支持Ethernet模式。所以如果要在交换机上使用RDMA的话需要安装RoCE。但是本次实验是两个机子直连的，所以直接使用Ethernet模式就可以了。</p>
 <h2 id="测试及驱动使用说明"><a href="#测试及驱动使用说明" class="headerlink" title="测试及驱动使用说明"></a>测试及驱动使用说明</h2><p>两个机子都安装好驱动以后</p>
 <p>一台机子作为服务器端，运行命令</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ib_send_bw -a -c UD -d mlx4_0 -i 1</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">ib_send_bw -a -c UD -d mlx4_0 -i 1<br></code></pre></td></tr></table></figure>
 
 <p>另一台机子作为客户端，运行命令</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ib_send_bw -a -c UD -d mlx4_0 -i 1 172.16.0.102</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">ib_send_bw -a -c UD -d mlx4_0 -i 1 172.16.0.102<br></code></pre></td></tr></table></figure>
 
 <p>ib_send命令是测试 RDMA 发送处理确定带宽</p>
 <p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211207144656527.png" srcset="/img/loading.gif" lazyload alt="image-20211207144656527"></p>
@@ -399,7 +399,7 @@
 <li><p>ib_send_bw：Bandwith and latency test using send transactions.</p>
 <p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211209085626412.png" srcset="/img/loading.gif" lazyload alt="image-20211209085626412"></p>
 <p>参数说明：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">ib_send_bw [-p TCP_port][-d device][-i IB_port][-c RC|UC|UD][-m mtu] [-s size][-a][-t tdepth][g][-r rdepth][-n iters][-I size][-b][-V][-e] [-N][-F][IP_address]</span><br><span class="line"></span><br><span class="line">where:</span><br><span class="line"></span><br><span class="line">TCP_port is the TCP port.(本次实验不怎么用到)</span><br><span class="line">device is the InfiniBand device.</span><br><span class="line">IB_port is the InfiniBand port.</span><br><span class="line">mtu is the size of the MTU.</span><br><span class="line">size is the size of the messages.</span><br><span class="line">tdepth is the size of the TX queue.</span><br><span class="line">rdepth is the size of the RX queue.</span><br><span class="line">iters is the number of message exchanges.</span><br><span class="line">IP_address is the IP address of the remote node host</span><br><span class="line"></span><br><span class="line">RC:面向连接的可靠服务</span><br><span class="line">UC:面向连接的不可靠服务</span><br><span class="line">UD:面向数据报的不可靠服务</span><br><span class="line">RD：面向非连接（类似UDP）的可靠服务</span><br><span class="line">面向连接 vs 面向数据报</span><br><span class="line">相同点：两者的通信均包括双方QP对的参与</span><br><span class="line">不同点：面向连接的通信若有N个节点与之通信，本机需要N个QP对;面向数据报的通信可以做到N个节点与之通信，本机仅需一个QP队.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs inform7">ib_send_bw <span class="hljs-comment">[-p TCP_port]</span><span class="hljs-comment">[-d device]</span><span class="hljs-comment">[-i IB_port]</span><span class="hljs-comment">[-c RC|UC|UD]</span><span class="hljs-comment">[-m mtu]</span> <span class="hljs-comment">[-s size]</span><span class="hljs-comment">[-a]</span><span class="hljs-comment">[-t tdepth]</span><span class="hljs-comment">[g]</span><span class="hljs-comment">[-r rdepth]</span><span class="hljs-comment">[-n iters]</span><span class="hljs-comment">[-I size]</span><span class="hljs-comment">[-b]</span><span class="hljs-comment">[-V]</span><span class="hljs-comment">[-e]</span> <span class="hljs-comment">[-N]</span><span class="hljs-comment">[-F]</span><span class="hljs-comment">[IP_address]</span><br><br>where:<br><br>TCP_port <span class="hljs-keyword">is</span> the TCP port.(本次实验不怎么用到)<br>device <span class="hljs-keyword">is</span> the InfiniBand device.<br>IB_port <span class="hljs-keyword">is</span> the InfiniBand port.<br>mtu <span class="hljs-keyword">is</span> the size <span class="hljs-keyword">of</span> the MTU.<br>size <span class="hljs-keyword">is</span> the size <span class="hljs-keyword">of</span> the messages.<br>tdepth <span class="hljs-keyword">is</span> the size <span class="hljs-keyword">of</span> the TX queue.<br>rdepth <span class="hljs-keyword">is</span> the size <span class="hljs-keyword">of</span> the RX queue.<br>iters <span class="hljs-keyword">is</span> the number <span class="hljs-keyword">of</span> message exchanges.<br>IP_address <span class="hljs-keyword">is</span> the IP address <span class="hljs-keyword">of</span> the remote node host<br><br>RC:面向连接的可靠服务<br>UC:面向连接的不可靠服务<br>UD:面向数据报的不可靠服务<br>RD：面向非连接（类似UDP）的可靠服务<br>面向连接 vs 面向数据报<br>相同点：两者的通信均包括双方QP对的参与<br>不同点：面向连接的通信若有N个节点与之通信，本机需要N个QP对;面向数据报的通信可以做到N个节点与之通信，本机仅需一个QP队.<br><br></code></pre></td></tr></table></figure>
 
 <p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211207161755180.png" srcset="/img/loading.gif" lazyload alt="image-20211207161755180"></p>
 <p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211207161827345.png" srcset="/img/loading.gif" lazyload alt="image-20211207161827345"></p>
@@ -407,26 +407,26 @@
 </li>
 <li></li>
 </ol>
-<h2 id="实验具体配置"><a href="#实验具体配置" class="headerlink" title="实验具体配置"></a>实验具体配置</h2><h4 id="卸载驱动"><a href="#卸载驱动" class="headerlink" title="卸载驱动"></a>卸载驱动</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;usr&#x2F;sbin&#x2F;ofed_uninstall.sh</span><br></pre></td></tr></table></figure>
+<h2 id="实验具体配置"><a href="#实验具体配置" class="headerlink" title="实验具体配置"></a>实验具体配置</h2><h4 id="卸载驱动"><a href="#卸载驱动" class="headerlink" title="卸载驱动"></a>卸载驱动</h4><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-regexp">/usr/</span>sbin/ofed_uninstall.sh<br></code></pre></td></tr></table></figure>
 
 
 
-<h2 id="配置ip地址"><a href="#配置ip地址" class="headerlink" title="配置ip地址"></a>配置ip地址</h2><h3 id="ubuntu"><a href="#ubuntu" class="headerlink" title="ubuntu"></a>ubuntu</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim &#x2F;etc&#x2F;network&#x2F;interfaces</span><br></pre></td></tr></table></figure>
+<h2 id="配置ip地址"><a href="#配置ip地址" class="headerlink" title="配置ip地址"></a>配置ip地址</h2><h3 id="ubuntu"><a href="#ubuntu" class="headerlink" title="ubuntu"></a>ubuntu</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">sudo vim <span class="hljs-regexp">/etc/</span>network/interfaces<br></code></pre></td></tr></table></figure>
 
 <p>在文件中添加如下内容：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">auto enp1s0</span><br><span class="line">iface enp1s0 inet static</span><br><span class="line">address 172.16.0.104</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">broadcast 172.16.0.255</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">auto</span> enp<span class="hljs-number">1</span>s<span class="hljs-number">0</span><br><span class="hljs-attribute">iface</span> enp<span class="hljs-number">1</span>s<span class="hljs-number">0</span> inet static<br><span class="hljs-attribute">address</span> <span class="hljs-number">172.16.0.104</span><br><span class="hljs-attribute">netmask</span> <span class="hljs-number">255.255.255.0</span><br><span class="hljs-attribute">broadcast</span> <span class="hljs-number">172.16.0.255</span><br></code></pre></td></tr></table></figure>
 
 <p>enp1s0是网卡名称，通过ifconfig查看，address是要给infiniband网卡配置的ip地址。</p>
 <p>重启网络服务：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service networking restart</span><br></pre></td></tr></table></figure>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">sudo service networking restart</span><br></code></pre></td></tr></table></figure>
 
-<h3 id="Centos"><a href="#Centos" class="headerlink" title="Centos"></a>Centos</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim &#x2F;etc&#x2F;sysconfig&#x2F;network-scripts&#x2F;ifcfg-ib0</span><br></pre></td></tr></table></figure>
+<h3 id="Centos"><a href="#Centos" class="headerlink" title="Centos"></a>Centos</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">sudo vim <span class="hljs-regexp">/etc/</span>sysconfig<span class="hljs-regexp">/network-scripts/i</span>fcfg-ib0<br></code></pre></td></tr></table></figure>
 
 <p>添加如下内容：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DEVICE&#x3D;ib0</span><br><span class="line">BOOTPROTO&#x3D;static</span><br><span class="line">IPADDR&#x3D;172.16.0.104</span><br><span class="line">NETMASK&#x3D;255.255.255.0</span><br><span class="line">BROADCAST&#x3D;172.16.0.255</span><br><span class="line">NETWORK&#x3D;172.16.0.0</span><br><span class="line">ONBOOT&#x3D;yes</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">DEVICE</span>=ib0<br><span class="hljs-attr">BOOTPROTO</span>=static<br><span class="hljs-attr">IPADDR</span>=<span class="hljs-number">172.16</span>.<span class="hljs-number">0.104</span><br><span class="hljs-attr">NETMASK</span>=<span class="hljs-number">255.255</span>.<span class="hljs-number">255.0</span><br><span class="hljs-attr">BROADCAST</span>=<span class="hljs-number">172.16</span>.<span class="hljs-number">0.255</span><br><span class="hljs-attr">NETWORK</span>=<span class="hljs-number">172.16</span>.<span class="hljs-number">0.0</span><br><span class="hljs-attr">ONBOOT</span>=<span class="hljs-literal">yes</span><br><br></code></pre></td></tr></table></figure>
 
 <p>重启网口：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo ifdown ib0</span><br><span class="line">sudo ifup ib0</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">sudo</span> ifdown ib<span class="hljs-number">0</span><br><span class="hljs-attribute">sudo</span> ifup ib<span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
 
 
 
@@ -462,7 +462,7 @@
 
 <img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211230185100624.png" srcset="/img/loading.gif" lazyload alt="image-20211230185100624" style="zoom:50%;" />
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">上面这两个图一个来自OverView（第二个图），一个来自specification(第一个图)，感觉有点冲突。</span><br></pre></td></tr></table></figure>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs isbl">上面这两个图一个来自<span class="hljs-variable">OverView</span>（第二个图），一个来自<span class="hljs-function"><span class="hljs-title">specification</span>(第一个图)，感觉有点冲突。</span><br></code></pre></td></tr></table></figure>
 
 <p>在向 NVMe over Fabrics 设备发送复杂消息时，capsules允许将多条小消息作为一条消息发送，从而提高传输效率并减少延迟。 capsules是一个提交队列条目(submission queue entry)或一个完成队列条目(completion queue entry)，结合了一定数量的数据、元数据或 Scatter-Gather Lists (SGLs)。 元素的内容与本地 NVMe 协议相同，但capsules是一种将它们打包在一起以提高效率的方式。下图是capsules的具体架构。</p>
 <p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211230190840475.png" srcset="/img/loading.gif" lazyload alt="image-20211230190840475"></p>
@@ -543,20 +543,20 @@
 <h1 id="实验的相关命令和具体参数"><a href="#实验的相关命令和具体参数" class="headerlink" title="实验的相关命令和具体参数"></a>实验的相关命令和具体参数</h1><h2 id="抓包工具"><a href="#抓包工具" class="headerlink" title="抓包工具"></a>抓包工具</h2><h3 id="ibdump"><a href="#ibdump" class="headerlink" title="ibdump"></a>ibdump</h3><h2 id="性能测试工具"><a href="#性能测试工具" class="headerlink" title="性能测试工具"></a>性能测试工具</h2><h3 id="ib-send-bw"><a href="#ib-send-bw" class="headerlink" title="ib_send_bw"></a>ib_send_bw</h3><p>具体内容可以看gitlab网页<a target="_blank" rel="noopener" href="https://github.com/linux-rdma/perftest">https://github.com/linux-rdma/perftest</a></p>
 <ol>
 <li><p>服务器端运行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ib_send_bw -a -c UD -d mlx5_0 -i 1 -z</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">ib_send_bw</span> -a -c UD -d mlx<span class="hljs-number">5</span>_<span class="hljs-number">0</span> -i <span class="hljs-number">1</span> -z<br></code></pre></td></tr></table></figure></li>
 <li><p>客户端运行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ib_send_bw -a -c UD -d mlx5_0 -i 1 -z 172.16.0.106</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">ib_send_bw</span> -a -c UD -d mlx<span class="hljs-number">5</span>_<span class="hljs-number">0</span> -i <span class="hljs-number">1</span> -z <span class="hljs-number">172.16.0.106</span><br></code></pre></td></tr></table></figure></li>
 </ol>
 <p>重点解释一下<code>-z</code>这个参数是什么意思：Communicate with rdma_cm module to exchange data - use regular QPs</p>
 <h1 id="分流访问NVMe-SSD"><a href="#分流访问NVMe-SSD" class="headerlink" title="分流访问NVMe SSD"></a>分流访问NVMe SSD</h1><h2 id="SPDK-NVMe-oF的介绍"><a href="#SPDK-NVMe-oF的介绍" class="headerlink" title="SPDK NVMe-oF的介绍"></a>SPDK NVMe-oF的介绍</h2><p>NVMe over Fabrics (NVMe-oF) 协议在 RDMA（iWARP、RoCE、InfiniBand™）、光纤通道和 TCP 等网络结构上扩展了 NVM Express* (NVMe) 块协议的并行性和效率。SPDK 提供用户空间 NVMe-oF 的target和initiator，可通过网络扩展 SPDK 堆栈其余部分的软件效率。SPDK NVMe-oF 的target使用 SPDK user-space, polled-mode NVMe driver 向 NVMe 设备提交和完成 I/O 请求，从而减少软件处理开销。 同样，它将连接固定到 CPU 内核以避免同步和缓存抖动，以便这些连接的数据尽可能靠近 CPU 缓存。</p>
 <p>SPDK NVMe-oF target and initiator 使用 Infiniband/RDMA verbs API 来访问支持RDMA的NIC。目前只针对ROCEV2进行了测试。与 SPDK NVMe 驱动程序类似，SPDK 提供了一个user-space, lockless, polled-mode的 NVMe-oF  initiator。host使用initiator建立连接并向 NVMe-oF target内的 NVMe 子系统提交 I/O 请求。NVMe 子系统包含namespace，每个namespace都映射到通过 SPDK 的 bdev 层公开的单个块设备。SPDK 的 bdev 层是块设备抽象层和通用块存储堆栈，在许多操作系统都有类似实现。使用 bdev 接口将存储介质与用于访问存储的前端协议完全解耦。用户可以构建自己的虚拟 bdev，提供复杂的存储服务，并将它们与 SPDK NVMe-oF  target集成，无需额外的代码更改。 NVMe-oF target中可能有许多子系统，每个子系统可能包含许多namespace。子系统和namespace可以通过 JSON-RPC 接口动态配置。</p>
 <h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ol>
 <li><p>查看nvme ssd具体有哪几个</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvme list</span><br></pre></td></tr></table></figure>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">nvme list</span><br></code></pre></td></tr></table></figure>
 
 <p>可以查看所有连接到当前系统的nvme设备：名称，序列号，大小，LBA 和 serial。</p>
 <p>使用该命令的话可以在host机器上可以查看到target的ssd（前提是target的ssd挂载到了spdk中）</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">通过spdk查看每个硬盘的pcie地址</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">#</span><span class="bash">通过spdk查看每个硬盘的pcie地址</span><br></code></pre></td></tr></table></figure>
 
 <p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20220519154020368.png" srcset="/img/loading.gif" lazyload alt="image-20220519154020368"></p>
 </li>
@@ -572,7 +572,7 @@
 <p>定义发布给文件的I/O模式，读、写、顺序、随机或者是否使用buffer.</p>
 <ul>
 <li><p>direct=bool</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">If value is true, use non-buffered I&#x2F;O. Default: false.</span><br></pre></td></tr></table></figure>
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vhdl"><span class="hljs-keyword">If</span> value <span class="hljs-keyword">is</span> <span class="hljs-literal">true</span>, <span class="hljs-keyword">use</span> non-buffered I/O. <span class="hljs-keyword">Default</span>: <span class="hljs-literal">false</span>.<br></code></pre></td></tr></table></figure>
 
 <p>这个值决定是否使用non-buffered I/O。</p>
 <p>buffered IO指的是在内核和用户程序之间设置了一层缓冲区，用来提高IO读写的效率；</p>
@@ -580,12 +580,12 @@
 <p>写回：用户程序—&gt;<strong>用户缓冲区</strong>—&gt;内核缓冲区—&gt;硬盘</p>
 </li>
 <li><p>atomic=bool</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">If value is true, attempt to use atomic direct I&#x2F;O. Atomic writes are guaranteed to be stable once acknowledged by the operating system. </span><br></pre></td></tr></table></figure>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">If</span> <span class="hljs-keyword">value</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">true</span>, attempt <span class="hljs-keyword">to</span> use atomic direct I/O. Atomic writes are guaranteed <span class="hljs-keyword">to</span> be <span class="hljs-keyword">stable</span> once acknowledged <span class="hljs-keyword">by</span> the operating <span class="hljs-keyword">system</span>. <br></code></pre></td></tr></table></figure>
 
 <p>如果值为 true，则尝试使用原子 I/O。原子I/O的写入是稳定的</p>
 </li>
 <li><p>readwrite=str，rw=str</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Type of I&#x2F;O pattern.</span><br><span class="line">read;write;trim;randread;randwrite;readwrite;randrw;trimwrite</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs fortran"><span class="hljs-keyword">Type</span> of I/O pattern.<br>read;<span class="hljs-built_in">write</span>;<span class="hljs-built_in">trim</span>;randread;randwrite;<span class="hljs-keyword">readwrite</span>;randrw;trimwrite<br></code></pre></td></tr></table></figure></li>
 </ul>
 </li>
 <li><p>Block size</p>
@@ -593,10 +593,10 @@
 <ul>
 <li><p>blocksize=int[,int][,int]</p>
 <p>单个值适用于read、write和trim。 可以为read、write和trim指定逗号分隔的值。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The block size in bytes used for I&#x2F;O units. Default: 4096. A single value applies to reads, writes, and trims. Comma-separated values may be specified for reads, writes, and trims. A value not terminated in a comma applies to subsequent types.</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">The block size <span class="hljs-keyword">in</span> <span class="hljs-keyword">bytes</span> used <span class="hljs-keyword">for</span> I/O units. Default: <span class="hljs-number">4096.</span> A single <span class="hljs-built_in">value</span> applies <span class="hljs-built_in">to</span> reads, writes, <span class="hljs-keyword">and</span> trims. Comma-separated values may be specified <span class="hljs-keyword">for</span> reads, writes, <span class="hljs-keyword">and</span> trims. A <span class="hljs-built_in">value</span> <span class="hljs-keyword">not</span> terminated <span class="hljs-keyword">in</span> <span class="hljs-keyword">a</span> <span class="hljs-literal">comma</span> applies <span class="hljs-built_in">to</span> subsequent types.<br></code></pre></td></tr></table></figure></li>
 <li><p>blocksize_range=irange[,irange][,irange], bsrange=irange[,irange][,irange]</p>
 <p>I/O 单元的一系列块大小（以字节为单位）。 除非设置了 blocksize_unaligned，否则发出的 I/O 单元将始终是最小大小的倍数。<strong>bsrange=1k-4k,2k-8k.</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A range of block sizes in bytes for I&#x2F;O units. The issued I&#x2F;O unit will always be a multiple of the minimum size, unless blocksize_unaligned is set.</span><br><span class="line"></span><br><span class="line">Comma-separated ranges may be specified for reads, writes, and trims as described in blocksize.</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">A range <span class="hljs-keyword">of</span> block sizes <span class="hljs-keyword">in</span> bytes <span class="hljs-keyword">for</span> I/O units. The issued I/O unit will <span class="hljs-keyword">always</span> be a multiple <span class="hljs-keyword">of</span> the minimum size, unless blocksize_unaligned <span class="hljs-keyword">is</span> <span class="hljs-keyword">set</span>.<br><br>Comma-separated ranges may be specified <span class="hljs-keyword">for</span> reads, writes, <span class="hljs-keyword">and</span> trims <span class="hljs-keyword">as</span> described <span class="hljs-keyword">in</span> blocksize.<br></code></pre></td></tr></table></figure></li>
 </ul>
 </li>
 <li><p>I/O size</p>
@@ -669,9 +669,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/01/02/NVMe%E6%A6%82%E8%BF%B0/" title="NVMe概述">
+                      <a href="/2022/07/25/nvme_fio/" title="">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">NVMe概述</span>
+                        <span class="hidden-mobile"></span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
