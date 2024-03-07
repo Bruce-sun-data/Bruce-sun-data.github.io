@@ -16,12 +16,12 @@
   <meta name="author" content="sun_zhi_bin">
   <meta name="keywords" content="">
   
-    <meta name="description" content="title: 华为网卡项目date: 2021-12-01 11:30:15tags:华为项目 DPDK和SPDKDPDK(Data Plane Development Kit)简单说，DPDK应用程序运行在操作系统的User Space，利用自身提供的数据面库进行收发包处理，绕过了Linux内核态协议栈，以提升报文处理效率。 DPDK是一组lib库和工具包的集合。最简单的架构描述如下图所示：">
+    <meta name="description" content="DPDK和SPDKDPDK(Data Plane Development Kit)简单说，DPDK应用程序运行在操作系统的User Space，利用自身提供的数据面库进行收发包处理，绕过了Linux内核态协议栈，以提升报文处理效率。 DPDK是一组lib库和工具包的集合。最简单的架构描述如下图所示：  DPDK由于做用户态polling mode，需要对线程模型、内存管理等系统级的资源做定制的管理">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Bruce Sun&#39;s blog">
+<meta property="og:title" content="华为网卡项目">
 <meta property="og:url" content="http://example.com/2021/12/01/%E5%8D%8E%E4%B8%BA%E7%BD%91%E5%8D%A1%E9%A1%B9%E7%9B%AE/index.html">
 <meta property="og:site_name" content="Bruce Sun&#39;s blog">
-<meta property="og:description" content="title: 华为网卡项目date: 2021-12-01 11:30:15tags:华为项目 DPDK和SPDKDPDK(Data Plane Development Kit)简单说，DPDK应用程序运行在操作系统的User Space，利用自身提供的数据面库进行收发包处理，绕过了Linux内核态协议栈，以提升报文处理效率。 DPDK是一组lib库和工具包的集合。最简单的架构描述如下图所示：">
+<meta property="og:description" content="DPDK和SPDKDPDK(Data Plane Development Kit)简单说，DPDK应用程序运行在操作系统的User Space，利用自身提供的数据面库进行收发包处理，绕过了Linux内核态协议栈，以提升报文处理效率。 DPDK是一组lib库和工具包的集合。最简单的架构描述如下图所示：  DPDK由于做用户态polling mode，需要对线程模型、内存管理等系统级的资源做定制的管理">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://pic3.zhimg.com/80/v2-f4b703475096e19c669d6cfc7128311e_1440w.jpg">
 <meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211207153558432.png">
@@ -62,15 +62,16 @@
 <meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20220122194819302.png">
 <meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20220122194215743.png">
 <meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20220519154020368.png">
-<meta property="article:published_time" content="2021-12-01T03:30:15.129Z">
-<meta property="article:modified_time" content="2024-03-07T15:53:57.801Z">
+<meta property="article:published_time" content="2021-12-01T03:30:15.000Z">
+<meta property="article:modified_time" content="2024-03-07T16:00:09.776Z">
 <meta property="article:author" content="sun_zhi_bin">
+<meta property="article:tag" content="华为项目">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://pic3.zhimg.com/80/v2-f4b703475096e19c669d6cfc7128311e_1440w.jpg">
   
   
   
-  <title>Bruce Sun&#39;s blog</title>
+  <title>华为网卡项目 - Bruce Sun&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -236,7 +237,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text=""></span>
+            <span id="subtitle" data-typed-text="华为网卡项目"></span>
           
         </div>
 
@@ -307,13 +308,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header"></h1>
+            <h1 id="seo-header">华为网卡项目</h1>
             
             
               <div class="markdown-body">
                 
-                <p>title: 华为网卡项目<br>date: 2021-12-01 11:30:15<br>tags:华为项目</p>
-<h1 id="DPDK和SPDK"><a href="#DPDK和SPDK" class="headerlink" title="DPDK和SPDK"></a>DPDK和SPDK</h1><h2 id="DPDK-Data-Plane-Development-Kit"><a href="#DPDK-Data-Plane-Development-Kit" class="headerlink" title="DPDK(Data Plane Development Kit)"></a>DPDK(Data Plane Development Kit)</h2><p>简单说，DPDK应用程序运行在操作系统的User Space，利用自身提供的数据面库进行收发包处理，绕过了Linux内核态协议栈，以提升报文处理效率。</p>
+                <h1 id="DPDK和SPDK"><a href="#DPDK和SPDK" class="headerlink" title="DPDK和SPDK"></a>DPDK和SPDK</h1><h2 id="DPDK-Data-Plane-Development-Kit"><a href="#DPDK-Data-Plane-Development-Kit" class="headerlink" title="DPDK(Data Plane Development Kit)"></a>DPDK(Data Plane Development Kit)</h2><p>简单说，DPDK应用程序运行在操作系统的User Space，利用自身提供的数据面库进行收发包处理，绕过了Linux内核态协议栈，以提升报文处理效率。</p>
 <p>DPDK是一组lib库和工具包的集合。最简单的架构描述如下图所示：</p>
 <p><img src="https://pic3.zhimg.com/80/v2-f4b703475096e19c669d6cfc7128311e_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
 <p>DPDK由于做用户态polling mode，需要对线程模型、内存管理等系统级的资源做定制的管理。例如dpdk中通过使用cpu的亲和性对thread和core做绑定，单个thread独享一个cpu core。再例如dpdk所使用的大页内存等等。这些基础资源的管理都是为用户态polling mode服务。</p>
@@ -616,6 +616,13 @@
               <div class="post-metas my-3">
   
   
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8D%8E%E4%B8%BA%E9%A1%B9%E7%9B%AE/" class="print-no-link">#华为项目</a>
+      
+    </div>
+  
 </div>
 
 
@@ -624,7 +631,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div></div>
+      <div>华为网卡项目</div>
       <div>http://example.com/2021/12/01/华为网卡项目/</div>
     </div>
     <div class="license-meta">
