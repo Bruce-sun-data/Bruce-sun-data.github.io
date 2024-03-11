@@ -13,7 +13,7 @@ hexo可以很好的结合Typora进行博客文章的插图处理，就只需要�
 
 打开`格式(O)-图像-设置图片根目录`，选择`source`文件夹（就是`_posts`上一级），确定，这时候回到文件中，可以看到在文章头部出现了这么一行字：
 
-![设置图片根目录](/images/hexo更换主题/image-20210513163932292.png)
+![设置图片根目录](./images/hexo更换主题/image-20210513163932292.png)
 
 ## Typora配置
 
@@ -21,7 +21,7 @@ hexo可以很好的结合Typora进行博客文章的插图处理，就只需要�
 
 打开`格式(O)-图像-全局图像设置`，在“插入图片时…”选择**复制到指定路径**，然后在下面写入`../images/${filename}`（`$`中的参数是以文件名命名的文件夹），并勾选“优先使用相对路径”。
 
-![typora更改路径](/images/hexo更换主题/image-20210513164424278.png)
+![typora更改路径](./images/hexo更换主题/image-20210513164424278.png)
 
 完成上面这两个步骤就可以在自己hexo的主页中看到自己上传的图片了。
 
@@ -39,7 +39,7 @@ git clone https://github.com/iissnan/hexo-theme-next themes/next
 
 git结果如下图
 
-![下载主题](/images/hexo更换主题/image-20210513184904009.png)
+![下载主题](./images/hexo更换主题/image-20210513184904009.png)
 
 ## 设置主题
 
@@ -57,7 +57,7 @@ hexo d -g
 
 但是出现了如下错误 `{% extends ‘_layout.swig‘ %} {% import ‘_macro/post.swig‘ as post_template %}`
 
-![next出错](/images/hexo更换主题/image-20210513192500960.png)
+![next出错](./images/hexo更换主题/image-20210513192500960.png)
 
 
 
@@ -69,7 +69,7 @@ npm install hexo-renderer-swig --save
 
 之后就可以看到next的主题风格了。
 
-![next主页](/images/hexo更换主题/image-20210513194508921.png)
+![next主页](./images/hexo更换主题/image-20210513194508921.png)
 
 ## 修改网站中的配置文件
 
