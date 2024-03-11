@@ -1,0 +1,813 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="sun_zhi_bin">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本人目前大三在读，为了对考研的机试做好准备，特此写博客对算法进行总结。本博客主要是根据《算法笔记》这本书进行复习。并且作者已经有了C语言的一定基础。 算法笔记-第一章算法笔记第一章主要就是介绍了本书使用的题目来源分别是PAT 计算机程序设计能力考试 (patest.cn)和酷哒学习平台 (codeup.cn)并介绍了主要使用的语言是C和C++。 好像目前codeup没有办法使用了，所以找到了华中科">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法笔记">
+<meta property="og:url" content="http://example.com/2021/05/20/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Bruce Sun&#39;s blog">
+<meta property="og:description" content="本人目前大三在读，为了对考研的机试做好准备，特此写博客对算法进行总结。本博客主要是根据《算法笔记》这本书进行复习。并且作者已经有了C语言的一定基础。 算法笔记-第一章算法笔记第一章主要就是介绍了本书使用的题目来源分别是PAT 计算机程序设计能力考试 (patest.cn)和酷哒学习平台 (codeup.cn)并介绍了主要使用的语言是C和C++。 好像目前codeup没有办法使用了，所以找到了华中科">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210520104750931.png">
+<meta property="og:image" content="http://example.com/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210526192254889.png">
+<meta property="og:image" content="http://example.com/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210526192324752.png">
+<meta property="og:image" content="http://example.com/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210527201122751.png">
+<meta property="og:image" content="http://example.com/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210527210523447.png">
+<meta property="og:image" content="http://example.com/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210527211947169.png">
+<meta property="article:published_time" content="2021-05-20T01:35:52.000Z">
+<meta property="article:modified_time" content="2021-09-06T15:10:23.466Z">
+<meta property="article:author" content="sun_zhi_bin">
+<meta property="article:tag" content="算法 复习 算法笔记">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210520104750931.png">
+  
+  
+  
+  <title>算法笔记 - Bruce Sun&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Bruce Sun的博客网站</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="算法笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-05-20 09:35" pubdate>
+          2021年5月20日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          13k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          108 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">算法笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>本人目前大三在读，为了对考研的机试做好准备，特此写博客对算法进行总结。本博客主要是根据《算法笔记》这本书进行复习。并且作者已经有了C语言的一定基础。</p>
+<h1 id="算法笔记-第一章"><a href="#算法笔记-第一章" class="headerlink" title="算法笔记-第一章"></a>算法笔记-第一章</h1><p>算法笔记第一章主要就是介绍了本书使用的题目来源分别是<a target="_blank" rel="noopener" href="https://www.patest.cn/">PAT 计算机程序设计能力考试 (patest.cn)</a>和<a target="_blank" rel="noopener" href="https://www.codeup.cn/">酷哒学习平台 (codeup.cn)</a>并介绍了主要使用的语言是C和C++。</p>
+<p>好像目前codeup没有办法使用了，所以找到了<a target="_blank" rel="noopener" href="http://codeup.hustoj.com/">华中科技大学的题目备份网站</a>在里面可以进行算法笔记相关题目的练习。</p>
+<p>由于本人有一定的C语言基础，所以对第二章就不做过多的介绍了</p>
+<h1 id="算法笔记-第三章：入门模拟"><a href="#算法笔记-第三章：入门模拟" class="headerlink" title="算法笔记-第三章：入门模拟"></a>算法笔记-第三章：入门模拟</h1><p>入门模拟主要用来熟悉一下编辑环境还有两个网站的风格，所以还是决定试一试。</p>
+<h2 id="简单模拟"><a href="#简单模拟" class="headerlink" title="简单模拟"></a>简单模拟</h2><p>两个简单的模拟熟悉一下风格</p>
+<blockquote>
+<p><strong><a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/994805260223102976/problems/994805325918486528">1001 害死人不偿命的(3n+1)猜想</a></strong></p>
+<p>卡拉兹(Callatz)猜想：</p>
+<p>对任何一个正整数 <em>n</em>，如果它是偶数，那么把它砍掉一半；如果它是奇数，那么把 (3<em>n</em>+1) 砍掉一半。这样一直反复砍下去，最后一定在某一步得到 <em>n</em>=1。卡拉兹在 1950 年的世界数学家大会上公布了这个猜想，传说当时耶鲁大学师生齐动员，拼命想证明这个貌似很傻很天真的命题，结果闹得学生们无心学业，一心只证 (3<em>n</em>+1)，以至于有人说这是一个阴谋，卡拉兹是在蓄意延缓美国数学界教学与科研的进展……</p>
+<p>我们今天的题目不是证明卡拉兹猜想，而是对给定的任一不超过 1000 的正整数 <em>n</em>，简单地数一下，需要多少步（砍几下）才能得到 <em>n</em>=1？</p>
+<h3 id="输入格式："><a href="#输入格式：" class="headerlink" title="输入格式："></a>输入格式：</h3><p>每个测试输入包含 1 个测试用例，即给出正整数 <em>n</em> 的值。</p>
+<h3 id="输出格式："><a href="#输出格式：" class="headerlink" title="输出格式："></a>输出格式：</h3><p>输出从 <em>n</em> 计算到 1 需要的步数。</p>
+<h3 id="输入样例："><a href="#输入样例：" class="headerlink" title="输入样例："></a>输入样例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3</span><br></pre></td></tr></table></figure>
+
+<h3 id="输出样例："><a href="#输出样例：" class="headerlink" title="输出样例："></a>输出样例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>首先就Visual Studio的环境就配置了挺久的，重点是记得一定要在项目的源文件里创建cpp文件，不要乱搞。</p>
+<p><img src="/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210520104750931.png" srcset="/img/loading.gif" lazyload alt="image-20210520104750931"></p>
+<p>并且在Visual Studio2019中，使用scanf可能回出现问题，所以需要在文件首行加上<code>#define _CRT_SECURE_NO_WARNINGS</code></p>
+<p>具体代码如下。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="comment">//#include &lt;cstdio&gt;</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">	<span class="comment">//读入输入的数据</span></span><br><span class="line">	<span class="keyword">int</span> n;</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>,&amp;n);</span><br><span class="line">	<span class="comment">//轮次记录</span></span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; n != <span class="number">1</span>; i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (n % <span class="number">2</span> == <span class="number">0</span>) &#123;</span><br><span class="line">			n = n / <span class="number">2</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			n = (<span class="number">3</span> * n + <span class="number">1</span>) / <span class="number">2</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>, i);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/994805260223102976/problems/994805289432236032">1032 挖掘机技术哪家强</a>*</p>
+<p>为了用事实说明挖掘机技术到底哪家强，PAT 组织了一场挖掘机技能大赛。现请你根据比赛结果统计出技术最强的那个学校。</p>
+<h3 id="输入格式：-1"><a href="#输入格式：-1" class="headerlink" title="输入格式："></a>输入格式：</h3><p>输入在第 1 行给出不超过 105 的正整数 <em>N</em>，即参赛人数。随后 <em>N</em> 行，每行给出一位参赛者的信息和成绩，包括其所代表的学校的编号（从 1 开始连续编号）、及其比赛成绩（百分制），中间以空格分隔。</p>
+<h3 id="输出格式：-1"><a href="#输出格式：-1" class="headerlink" title="输出格式："></a>输出格式：</h3><p>在一行中给出总得分最高的学校的编号、及其总分，中间以空格分隔。题目保证答案唯一，没有并列。</p>
+<h3 id="输入样例：-1"><a href="#输入样例：-1" class="headerlink" title="输入样例："></a>输入样例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">6</span><br><span class="line">3 65</span><br><span class="line">2 80</span><br><span class="line">1 100</span><br><span class="line">2 70</span><br><span class="line">3 40</span><br><span class="line">3 0</span><br></pre></td></tr></table></figure>
+
+<h3 id="输出样例：-1"><a href="#输出样例：-1" class="headerlink" title="输出样例："></a>输出样例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2 150</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>解决代码如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">	<span class="comment">//记录所有得分的数组</span></span><br><span class="line">	<span class="keyword">int</span> S[<span class="number">100010</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	<span class="comment">//记录最高得分</span></span><br><span class="line">	<span class="keyword">int</span> max_score = <span class="number">-1</span>;</span><br><span class="line">	<span class="comment">//记录最高的单位</span></span><br><span class="line">	<span class="keyword">int</span> max = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">//输入的行数</span></span><br><span class="line">	<span class="keyword">int</span> N;</span><br><span class="line">	<span class="comment">//记录目前输入</span></span><br><span class="line">	<span class="keyword">int</span> t = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">int</span> t_score = <span class="number">0</span>;</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;N);</span><br><span class="line">	<span class="keyword">while</span> (N != <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="built_in">scanf</span>(<span class="string">&quot;%d %d&quot;</span>, &amp;t, &amp;t_score);</span><br><span class="line">		S[t] = S[t] + t_score;</span><br><span class="line">		<span class="keyword">if</span> (S[t] &gt; max_score)</span><br><span class="line">		&#123;</span><br><span class="line">			max = t;</span><br><span class="line">			max_score = S[t];</span><br><span class="line">		&#125;</span><br><span class="line">		N--;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%d %d&quot;</span>,max, S[max]);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h2><p>通常查找较多元素的时候使用二分法，下面例题用于训练二分法查找。由于书中的例子是遍历查找的，所以将下面的例子换成了PAT中的二分查找的例子</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/994805342720868352/problems/994805432256675840"><strong>1048 Find Coins</strong></a><br>Eva loves to collect coins from all over the universe, including some other planets like Mars. One day she visited a universal shopping mall which could accept all kinds of coins as payments. However, there was a special requirement of the payment: for each bill, she could only use exactly two coins to pay the exact amount. Since she has as many as 105 coins with her, she definitely needs your help. You are supposed to tell her, for any given amount of money, whether or not she can find two coins to pay for it.</p>
+<h2 id="输入"><a href="#输入" class="headerlink" title="输入"></a>输入</h2><p>Each input file contains one test case. For each case, the first line contains 2 positive numbers: <em>N</em> (≤$10^5$, the total number of coins) and <em>M</em> (≤$10^3$, the amount of money Eva has to pay). The second line contains <em>N</em> face values of the coins, which are all positive numbers no more than 500. All the numbers in a line are separated by a space.</p>
+<h2 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h2><p>For each test case, print in one line the two face values $V_1$ and $V_2$ (separated by a space) such that  $V_1$ + $V_2$ =M and  $V_1$ ≤$V_2$. If such a solution is not unique, output the one with the smallest  $V_1$ . If there is no solution, output <code>No Solution</code> instead.</p>
+<h2 id="样例输入"><a href="#样例输入" class="headerlink" title="样例输入"></a>样例输入</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">8 15</span><br><span class="line">1 2 8 7 2 4 11 15</span><br></pre></td></tr></table></figure>
+
+<h2 id="样例输出"><a href="#样例输出" class="headerlink" title="样例输出"></a>样例输出</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4 11</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>此题目就是给出n个硬币面额，还有一个目标金额m，如果n个硬币面额中存在两个n1 + n2 = m，则输出n1最小的n1、n2组合。如果不存在则输出No Solution。</p>
+<blockquote>
+<h3 id="二分法"><a href="#二分法" class="headerlink" title="二分法"></a>二分法</h3><p>先将所有硬币从小到大排序，然后逐个选择作为第一个硬币x，令第二个硬币y=m-x，如果y比500大说明这种情况不可以，如果y比500小则在当前硬币之后的所有硬币中二分查找是否存在数值为y的硬币，如果存在则输出并退出循环，如果不存在则输出No solution。</p>
+</blockquote>
+<p>解决代码如下,其中，二分查找的方法是经常用的，这里使用的是递归的方法进行二分查找。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_NUM 100010</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="comment">//递归实现二分查找</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">bi_find</span><span class="params">(<span class="keyword">int</span> left, <span class="keyword">int</span> coins[],<span class="keyword">int</span> right,<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> mid;</span><br><span class="line">	<span class="keyword">if</span> (left &gt; right) &#123; <span class="keyword">return</span> <span class="literal">false</span>; &#125;</span><br><span class="line">	mid = (left + right) / <span class="number">2</span>;</span><br><span class="line">	<span class="keyword">if</span> (coins[mid] == x) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	<span class="keyword">if</span> (coins[mid] &gt; x) &#123; <span class="keyword">return</span>(<span class="built_in">bi_find</span>(left, coins, mid - <span class="number">1</span>, x)); &#125;</span><br><span class="line">	<span class="keyword">if</span> (coins[mid] &lt; x) &#123; <span class="keyword">return</span>(<span class="built_in">bi_find</span>(mid + <span class="number">1</span>, coins, right, x)); &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">	<span class="comment">//n是需要输入的所有硬币的个数，m是需要组成的钱</span></span><br><span class="line">	<span class="keyword">int</span> n, m;</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%d %d&quot;</span>, &amp;n, &amp;m);</span><br><span class="line">	<span class="keyword">int</span> i;</span><br><span class="line">	<span class="comment">//硬币数组</span></span><br><span class="line">	<span class="keyword">int</span> coins[MAX_NUM];</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">		<span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;coins[i]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//从小到大，对coins进行排序</span></span><br><span class="line">	<span class="built_in">sort</span>(coins, coins + n);</span><br><span class="line">	<span class="comment">//输出结果 v1,v2</span></span><br><span class="line">	<span class="keyword">int</span> v1 = <span class="number">-1</span>;</span><br><span class="line">	<span class="keyword">int</span> v2 = <span class="number">-1</span>;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">		v1 = coins[i];</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">bi_find</span>(i+<span class="number">1</span>, coins,n<span class="number">-1</span>,m-v1)) &#123;</span><br><span class="line">			v2 = m - v1;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (v2 != <span class="number">-1</span>) &#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;%d %d&quot;</span>, v1, v2);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (v2 == <span class="number">-1</span>) &#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;No Solution&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="图形输出"><a href="#图形输出" class="headerlink" title="图形输出"></a>图形输出</h2><p>在有些题目中，题目会给定一些规则，需要考生根据规则来进行画图。所谓图形，其实是由若干字符组成的，因此只需要弄清楚规则就能编写代码。这种题目的做法–般有两种:</p>
+<ol>
+<li>通过规律直接输出</li>
+<li>通过二维字符数组输出</li>
+</ol>
+<p>下面是PAT中的一个例子。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/994805260223102976/problems/994805285812551680"><strong>1036 跟奥巴马一起编程</strong></a> </p>
+<p>美国总统奥巴马不仅呼吁所有人都学习编程，甚至以身作则编写代码，成为美国历史上首位编写计算机代码的总统。2014 年底，为庆祝“计算机科学教育周”正式启动，奥巴马编写了很简单的计算机代码：在屏幕上画一个正方形。现在你也跟他一起画吧！</p>
+<h3 id="输入格式：-2"><a href="#输入格式：-2" class="headerlink" title="输入格式："></a>输入格式：</h3><p>输入在一行中给出正方形边长 <em>N</em>（3≤<em>N</em>≤20）和组成正方形边的某种字符 C，间隔一个空格。</p>
+<h3 id="输出格式：-2"><a href="#输出格式：-2" class="headerlink" title="输出格式："></a>输出格式：</h3><p>输出由给定字符 C 画出的正方形。但是注意到行间距比列间距大，所以为了让结果看上去更像正方形，我们输出的行数实际上是列数的 50%（四舍五入取整）。</p>
+<h3 id="输入样例：-2"><a href="#输入样例：-2" class="headerlink" title="输入样例："></a>输入样例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10 a</span><br></pre></td></tr></table></figure>
+
+<h3 id="输出样例：-2"><a href="#输出样例：-2" class="headerlink" title="输出样例："></a>输出样例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">aaaaaaaaaa</span><br><span class="line">a        a</span><br><span class="line">a        a</span><br><span class="line">a        a</span><br><span class="line">aaaaaaaaaa</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>就是一个简单的输出正方形的题，这里我感觉比较重要的是需要学会用c++，来进行四舍五入的判断。首先需要导入的是<code>math.h</code>包，之后使用<code>round(n / 2.0)</code>运算对值进行四舍五入，其中最重要一点是除数需要是<strong>2.0</strong>，即一个小数，这样n是整型的话才可以。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;math.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ll long long</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">	<span class="comment">//输入正方形边长</span></span><br><span class="line">	<span class="keyword">int</span> n;</span><br><span class="line">	<span class="comment">//输入字符c</span></span><br><span class="line">	<span class="keyword">char</span> c;</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%d %c&quot;</span>, &amp;n,&amp;c);</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">//这里用于对行数进行四舍五入取整</span></span><br><span class="line">	<span class="keyword">int</span> row = <span class="number">0</span>;</span><br><span class="line">	row = <span class="built_in">round</span>(n / <span class="number">2.0</span>);</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; row; i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (i == <span class="number">0</span> || i==row<span class="number">-1</span>) &#123;</span><br><span class="line">			<span class="keyword">for</span> ( j = <span class="number">0</span>; j &lt; n; j++)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>,c);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; n; j++)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">if</span> (j == <span class="number">0</span> || j== n<span class="number">-1</span>) &#123; <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, c); &#125;</span><br><span class="line">				<span class="keyword">else</span> &#123; <span class="built_in">printf</span>(<span class="string">&quot; &quot;</span>); &#125;</span><br><span class="line">				<span class="keyword">if</span> (j == n - <span class="number">1</span>) &#123; <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>); &#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="日期问题"><a href="#日期问题" class="headerlink" title="日期问题"></a>日期问题</h2><p>日期问题主要还是需要对闰年进行判断。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://codeup.hustoj.com/problem.php?cid=100000578&pid=0">日期差值</a></p>
+<p>有两个日期，求两个日期之间的天数，如果两个日期是连续的我们规定他们之间的天数为两天。</p>
+<h2 id="输入格式"><a href="#输入格式" class="headerlink" title="输入格式"></a>输入格式</h2><p>有多组数据，每组数据有两行，分别表示两个日期，形式为YYYYMMDD</p>
+<h2 id="输出格式"><a href="#输出格式" class="headerlink" title="输出格式"></a>输出格式</h2><p>每组数据输出一行，即日期差值</p>
+<h3 id="输入样例：-3"><a href="#输入样例：-3" class="headerlink" title="输入样例："></a>输入样例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">20130101</span><br><span class="line">20130105</span><br></pre></td></tr></table></figure>
+
+<h3 id="输出样例：-3"><a href="#输出样例：-3" class="headerlink" title="输出样例："></a>输出样例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>这种求日期之间相差天数的题目有一一个很直接的思路，即令日期不断加1天，直到第一个日期等于第二个日期为止，即可统计出答案。具体处理时，如果当加了一天之后天数d 等于当前月份m所拥有的天数加1，那么就令月份m加1、同时置天数d为1号(即把日期变于当前月份m所拥有的天数加1，那么就令月份m加1、同时置天数d为1号(即把日期变为下一个月的1号);如果此时月份m变为了13，那么就令年份y加1、同时置月份m为1月(即把日期变为下一年的1月)。<br>为了方便直接取出每个月的天数，不妨给定一个二维数组<code>int month[13][2]</code>, 用来存放每个月的天数，其中第二维为0时表示平年，为1时表示闰年。<br>注意:如果想要加快速度，只需要先把第-一个 日期的年份不断加1，直到与第二个日期的年份相差1为止(想一想为什么不能直接加到等于第二个日期的年份时才停止? )， 期间根据平年或是闰年来累加365天或者366天即可。之后再进行不断令天数加1的操作。</p>
+<p>代码如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;math.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ll long long</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> month[<span class="number">13</span>][<span class="number">2</span>] = &#123; &#123;<span class="number">0</span>, <span class="number">0</span>&#125;,&#123;<span class="number">31</span>, <span class="number">31</span>&#125;,&#123;<span class="number">28</span>, <span class="number">29</span>&#125;,&#123;<span class="number">31</span>, <span class="number">31</span>&#125;,&#123;<span class="number">30</span>, <span class="number">30</span>&#125;,&#123;<span class="number">31</span>, <span class="number">31</span>&#125;,&#123;<span class="number">30</span>, <span class="number">30</span>&#125;,&#123;<span class="number">31</span>, <span class="number">31</span>&#125;,&#123;<span class="number">31</span>, <span class="number">31</span>&#125;,&#123;<span class="number">30</span>, <span class="number">30</span>&#125;,&#123;<span class="number">31</span>, <span class="number">31</span>&#125;,&#123;<span class="number">30</span>, <span class="number">30</span>&#125;,&#123;<span class="number">31</span>, <span class="number">31</span>&#125; &#125;;</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isLeap</span><span class="params">(<span class="keyword">int</span> year)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span>((year % <span class="number">4</span> == <span class="number">0</span> &amp;&amp; year % <span class="number">100</span> != <span class="number">0</span>) || year % <span class="number">400</span> == <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="comment">//编号是1的存储更大的日期</span></span><br><span class="line">	<span class="keyword">int</span> time1, time2;</span><br><span class="line">	<span class="keyword">int</span> year1, year2, month1, month2, day1, day2;</span><br><span class="line">	<span class="comment">//对输入进行取值</span></span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%d %d&quot;</span>, &amp;time1, &amp;time2);</span><br><span class="line">	<span class="keyword">if</span> (time1 &lt; time2) &#123;</span><br><span class="line">		<span class="keyword">int</span> time = time1;</span><br><span class="line">		time1 = time2;</span><br><span class="line">		time2 = time;</span><br><span class="line">	&#125;</span><br><span class="line">	year1 = time1 / <span class="number">10000</span>;</span><br><span class="line">	year2 = time2 / <span class="number">10000</span>;</span><br><span class="line">	month1 = time1 % <span class="number">10000</span> / <span class="number">100</span>;</span><br><span class="line">	month2 = time2 % <span class="number">10000</span> / <span class="number">100</span>;</span><br><span class="line">	day1 = time1 % <span class="number">100</span>;</span><br><span class="line">	day2 = time2 % <span class="number">100</span>;</span><br><span class="line">	<span class="keyword">int</span> day = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">int</span> isleap = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span> (year2 != year1 || month2 != month1 || day2 != day1) &#123;</span><br><span class="line">		<span class="keyword">if</span> (day2 == month[month2][<span class="built_in">isLeap</span>(year2)]) &#123;</span><br><span class="line">			day2 = <span class="number">0</span>;</span><br><span class="line">			month2++;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (month2 == <span class="number">13</span>) &#123;</span><br><span class="line">			year2++;</span><br><span class="line">			month2 = <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		day2++;</span><br><span class="line">		day++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>, day);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="算法笔记-第四章：算法初步"><a href="#算法笔记-第四章：算法初步" class="headerlink" title="算法笔记-第四章：算法初步"></a>算法笔记-第四章：算法初步</h1><p>第三章的内容作为入手所以基本每一个题目都上手敲了一遍，第四章的内容就只会捡着重点敲一下了。</p>
+<h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><h3 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h3><p><strong>算法逻辑</strong>：总共需要进行$n(1\le i \le n)$趟操作,每趟操作选出待排序部分$[i,n]$中最小的元素，令其与$A[i]$交换。复杂度是$O(n^2)$.</p>
+<h3 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h3><p>关于插入排序的内容，看下面的几个图就可以了。</p>
+<p><img src="/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210526192254889.png" srcset="/img/loading.gif" lazyload alt="image-20210526192254889"></p>
+<p><img src="/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210526192324752.png" srcset="/img/loading.gif" lazyload alt="image-20210526192324752"></p>
+<h3 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h3><p>介绍一下书中没有提到的快速排序的问题。</p>
+<p>快速排序算法是一种基于交换的高效的排序算法，它采用了<strong>分治法</strong>的思想：</p>
+<ol>
+<li>从数列中取出一个数作为基准数（枢轴，pivot）。 </li>
+<li>将数组进行划分(partition)，将比基准数大的元素都移至枢轴右边，将小于等于基准数的元素都移至枢轴左边。</li>
+<li>再对左右的子区间重复第二步的划分操作，直至每个子区间只有一个元素。</li>
+</ol>
+<p>代码如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">partition</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span>  <span class="comment">//找基准数 划分</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = left + <span class="number">1</span> ;</span><br><span class="line">    <span class="keyword">int</span> j = right;</span><br><span class="line">    <span class="keyword">int</span> temp = arr[left];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(i &lt;= j)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span> (arr[i] &lt; temp)</span><br><span class="line">        &#123;</span><br><span class="line">            i++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (arr[j] &gt; temp )</span><br><span class="line">        &#123;</span><br><span class="line">            j--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (i &lt; j)</span><br><span class="line">            <span class="built_in">swap</span>(arr[i++], arr[j--]);</span><br><span class="line">        <span class="keyword">else</span> i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">swap</span>(arr[j], arr[left]);</span><br><span class="line">    <span class="keyword">return</span> j;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">quick_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (left &gt; right)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="built_in">partition</span>(arr, left, right);</span><br><span class="line">    <span class="built_in">quick_sort</span>(arr, left, j - <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">quick_sort</span>(arr, j + <span class="number">1</span>, right);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="排序题与sort函数的应用"><a href="#排序题与sort函数的应用" class="headerlink" title="排序题与sort函数的应用"></a>排序题与sort函数的应用</h3><p>在笔试的过程中常常会涉及到对各种不同的结构体进行排序的情况，这个时候就需要自己完成sort函数的排序规则即<strong>自己完成cmp函数</strong>的定义。sort函数是C++中的一个库，可以很方便的进行调用。下面看一个PAT的例子。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/994805342720868352/problems/994805474338127872"><strong>1025 PAT Ranking</strong></a></p>
+<p>Programming Ability Test (PAT) is organized by the College of Computer Science and Technology of Zhejiang University. Each test is supposed to run simultaneously in several places, and the ranklists will be merged immediately after the test. Now it is your job to write a program to correctly merge all the ranklists and generate the final rank.</p>
+<h3 id="Input-Specification"><a href="#Input-Specification" class="headerlink" title="Input Specification:"></a>Input Specification:</h3><p>Each input file contains one test case. For each case, the first line contains a positive number <em>N</em> (≤100), the number of test locations. Then <em>N</em> ranklists follow, each starts with a line containing a positive integer <em>K</em> (≤300), the number of testees, and then <em>K</em> lines containing the registration number (a 13-digit number) and the total score of each testee. All the numbers in a line are separated by a space.</p>
+<h3 id="Output-Specification"><a href="#Output-Specification" class="headerlink" title="Output Specification:"></a>Output Specification:</h3><p>For each test case, first print in one line the total number of testees. Then print the final ranklist in the following format:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">registration_number final_rank location_number local_rank</span><br></pre></td></tr></table></figure>
+
+<p>The locations are numbered from 1 to <em>N</em>. The output must be sorted in nondecreasing order of the final ranks. The testees with the same score must have the same rank, and the output must be sorted in nondecreasing order of their registration numbers.</p>
+<h3 id="Sample-Input"><a href="#Sample-Input" class="headerlink" title="Sample Input:"></a>Sample Input:</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">2</span><br><span class="line">5</span><br><span class="line">1234567890001 95</span><br><span class="line">1234567890005 100</span><br><span class="line">1234567890003 95</span><br><span class="line">1234567890002 77</span><br><span class="line">1234567890004 85</span><br><span class="line">4</span><br><span class="line">1234567890013 65</span><br><span class="line">1234567890011 25</span><br><span class="line">1234567890014 100</span><br><span class="line">1234567890012 85</span><br></pre></td></tr></table></figure>
+
+<h3 id="Sample-Output"><a href="#Sample-Output" class="headerlink" title="Sample Output:"></a>Sample Output:</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">9</span><br><span class="line">1234567890005 1 1 1</span><br><span class="line">1234567890014 1 2 1</span><br><span class="line">1234567890001 3 1 2</span><br><span class="line">1234567890003 3 1 2</span><br><span class="line">1234567890004 5 1 4</span><br><span class="line">1234567890012 5 2 2</span><br><span class="line">1234567890002 7 1 5</span><br><span class="line">1234567890013 8 2 3</span><br><span class="line">1234567890011 9 2 4</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>该题目需要注意的点如下：</p>
+<ol>
+<li>自己创建结构类型，熟悉结构类型的操作</li>
+<li>c++中的sort函数以及自定义比较大小的方法</li>
+<li>由于用户id是13位的，所以使用<code>long long int</code>的类型</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;math.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_NUM 30010</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Student</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	ll <span class="keyword">int</span> registration_number;</span><br><span class="line">	<span class="keyword">int</span> final_rank;</span><br><span class="line">	<span class="keyword">int</span> location_number;</span><br><span class="line">	<span class="keyword">int</span> local_rank;</span><br><span class="line">	<span class="keyword">int</span> score;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//自定义比较大小</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">cmp</span><span class="params">(Student a, Student b)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (a.score != b.score) &#123; <span class="keyword">return</span> a.score &gt; b.score; &#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> a.registration_number &lt; b.registration_number;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	Student stu[MAX_NUM];</span><br><span class="line">	<span class="comment">//输入地址个数</span></span><br><span class="line">	<span class="keyword">int</span> N;</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;N);</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">//记录学生总数</span></span><br><span class="line">	<span class="keyword">int</span> s = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">		<span class="keyword">int</span> s1 = s;</span><br><span class="line">		<span class="keyword">int</span> K = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">		<span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;K);</span><br><span class="line">		<span class="comment">//读入学生信息</span></span><br><span class="line">		<span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; K; j++) &#123;</span><br><span class="line">			stu[s].location_number = i+<span class="number">1</span>;</span><br><span class="line">			<span class="built_in">scanf</span>(<span class="string">&quot;%lld %d&quot;</span>, &amp;stu[s].registration_number, &amp;stu[s].score);</span><br><span class="line">			s++;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">int</span> s2 = s;</span><br><span class="line">		<span class="comment">//对这一个地区的进行排序</span></span><br><span class="line">		<span class="built_in">sort</span>(stu + s1, stu + s2,cmp);</span><br><span class="line">		<span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; K; j++) &#123;</span><br><span class="line">			<span class="keyword">if</span> (j!=<span class="number">0</span> &amp;&amp; stu[s1 + j].score == stu[s1 + j - <span class="number">1</span>].score) &#123; stu[s1 + j].local_rank = stu[s1 + j - <span class="number">1</span>].local_rank; &#125;</span><br><span class="line">			<span class="keyword">else</span> &#123; stu[s1 + j].local_rank = j + <span class="number">1</span>; &#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//对所有学生总排序，然后记录排名</span></span><br><span class="line">	<span class="built_in">sort</span>(stu, stu + s, cmp);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, s);</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; s; i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (i != <span class="number">0</span> &amp;&amp; stu[i].score == stu[i<span class="number">-1</span>].score) &#123; stu[i].final_rank = stu[i - <span class="number">1</span>].final_rank; &#125;</span><br><span class="line">		<span class="keyword">else</span> &#123; stu[i].final_rank = i + <span class="number">1</span>; &#125;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;%lld %d %d %d\n&quot;</span>,stu[i].registration_number,stu[i].final_rank,stu[i].location_number,stu[i].local_rank);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用以上代码进行提交的时候，发现最后一个例子总是过不去，所以将用户id的类型改写成了字符串的类型，重点记得要修改字符串比较大小的方式。最后成功通过。</p>
+<h2 id="散列——Hash"><a href="#散列——Hash" class="headerlink" title="散列——Hash"></a>散列——Hash</h2><h3 id="hash的定义与整数散列"><a href="#hash的定义与整数散列" class="headerlink" title="hash的定义与整数散列"></a>hash的定义与整数散列</h3><p><strong>思路</strong>：<u>创建hashTable用空间换取时间，那就是直接把输入的数作为数组的下标来对这个数的性质进行统计</u>。散列：“将元素通过一个函数转换为整数，使得该整数可以尽量唯一 地代表这个元素”。</p>
+<p>常用的散列函数有：</p>
+<ol>
+<li>直接定址法。</li>
+<li>平方取中法。</li>
+<li>除留余数法。</li>
+</ol>
+<p>如何解决散列的地址冲突问题：</p>
+<ul>
+<li>线性探查法</li>
+<li>平方探查法</li>
+<li>链地址法</li>
+</ul>
+<h3 id="字符串hash初步"><a href="#字符串hash初步" class="headerlink" title="字符串hash初步"></a>字符串hash初步</h3><p>hash中的key不是整数，而是字符串的时候。</p>
+<p><img src="/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210527201122751.png" srcset="/img/loading.gif" lazyload alt="image-20210527201122751"></p>
+<h2 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h2><h3 id="分治"><a href="#分治" class="headerlink" title="分治"></a>分治</h3><p>分治法的三个步骤：</p>
+<ol>
+<li>分解：将原问题分解为若干和原问题拥有相同或相似结构的子问题。</li>
+<li>解决：递归求解所有子问题。如果存在子问题的规模小到可以直接解决，就直接解决它。</li>
+<li>合并：将子问题的解合并为原问题的解。</li>
+</ol>
+<p>需要指出的是，分治法分解出的子问题应当是相互独立、没有交叉的。如果存在两个子问题有相交部分，那么不应当使用分治法解决。</p>
+<h3 id="递归-1"><a href="#递归-1" class="headerlink" title="递归"></a>递归</h3><p>递归逻辑中有两个重要的概念：</p>
+<ol>
+<li>递归边界</li>
+<li>递归式</li>
+</ol>
+<p>递归的经典问题：</p>
+<ol>
+<li>全排列</li>
+<li>八皇后</li>
+</ol>
+<h2 id="贪心"><a href="#贪心" class="headerlink" title="贪心"></a>贪心</h2><h3 id="简单贪心"><a href="#简单贪心" class="headerlink" title="简单贪心"></a>简单贪心</h3><p>贪心法是求解一类最优化问题的方法， 它总是考虑在当前状态下局部最优（或较优）的策略，来使全局的结果达到最优(或较优)。显然，如果采取较优而非最优的策略（最优策略）。</p>
+<p>下面是贪心算法的例题。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://pintia.cn/problem-sets/994805260223102976/problems/994805298269634560"><strong>1023 组个最小数</strong></a></p>
+<p>给定数字 0-9 各若干个。你可以以任意顺序排列这些数字，但必须全部使用。目标是使得最后得到的数尽可能小（注意 0 不能做首位）。例如：给定两个 0，两个 1，三个 5，一个 8，我们得到的最小的数就是 10015558。</p>
+<p>现给定数字，请编写程序输出能够组成的最小的数。</p>
+<h3 id="输入格式：-3"><a href="#输入格式：-3" class="headerlink" title="输入格式："></a>输入格式：</h3><p>输入在一行中给出 10 个非负整数，顺序表示我们拥有数字 0、数字 1、……数字 9 的个数。整数间用一个空格分隔。10 个数字的总个数不超过 50，且至少拥有 1 个非 0 的数字。</p>
+<h3 id="输出格式：-3"><a href="#输出格式：-3" class="headerlink" title="输出格式："></a>输出格式：</h3><p>在一行中输出能够组成的最小的数。</p>
+<h3 id="输入样例：-4"><a href="#输入样例：-4" class="headerlink" title="输入样例："></a>输入样例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2 2 0 0 0 3 0 0 1 0</span><br></pre></td></tr></table></figure>
+
+<h3 id="输出样例：-4"><a href="#输出样例：-4" class="headerlink" title="输出样例："></a>输出样例：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10015558</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>不是很难，所以直接贴代码了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _CRT_SECURE_NO_WARNINGS</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;math.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ll long long</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_NUM 60</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> nums[<span class="number">10</span>] = &#123;&#125;;</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">char</span> ans[MAX_NUM] = &#123;&#125;;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">		<span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;nums[i]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (nums[i] != <span class="number">0</span>) &#123;</span><br><span class="line">			ans[j] = i + <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">			j++;</span><br><span class="line">			nums[i]--;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">		<span class="keyword">while</span>(nums[i] != <span class="number">0</span>) &#123;</span><br><span class="line">			ans[j] = i + <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">			j++;</span><br><span class="line">			nums[i]--;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>, ans);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="区间贪心"><a href="#区间贪心" class="headerlink" title="区间贪心"></a>区间贪心</h3><p>书中的描述蛮有意思的。</p>
+<p><img src="/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210527210523447.png" srcset="/img/loading.gif" lazyload alt="image-20210527210523447"></p>
+<h2 id="二分"><a href="#二分" class="headerlink" title="二分"></a>二分</h2><h3 id="二分查找"><a href="#二分查找" class="headerlink" title="二分查找"></a>二分查找</h3><p>关于二分查找的知识点在上文提到过了，所以不再赘述。</p>
+<p><img src="/images/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/image-20210527211947169.png" srcset="/img/loading.gif" lazyload alt="image-20210527211947169"></p>
+<h3 id="二分法拓展"><a href="#二分法拓展" class="headerlink" title="二分法拓展"></a>二分法拓展</h3><blockquote>
+<p>求多条边组成的凸边形的外接圆的最大半径</p>
+<h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>给定 N 个线段的长度，试将它们头尾相接（顺序任意）地组合成一个凸多边形，使得凸多边形的外接圆的半径最大，求该最大半径。其中 N 不超过 105 ，线段长度均不超过 100 ，要求算法中不涉及坐标的计算。</p>
+<h3 id="考查内容"><a href="#考查内容" class="headerlink" title="考查内容"></a>考查内容</h3><p>二分算法的本质就是通过不断迭代使left 和 right 在固定条件下逐渐靠近真实值，符合一定误差，所以实际上把该题放在二分扩展里面，这个所谓的最大半径的“最大”是不在求解中的，最大应该算题干，先组成一个有外接圆的凸多边形，然后求其半径即可。不要误入歧途在“最大”上绞尽脑汁。</p>
+</blockquote>
+<h3 id="快速幂"><a href="#快速幂" class="headerlink" title="快速幂"></a>快速幂</h3><h1 id="算法笔记-第五章：数学问题"><a href="#算法笔记-第五章：数学问题" class="headerlink" title="算法笔记-第五章：数学问题"></a>算法笔记-第五章：数学问题</h1><h2 id="简单数学"><a href="#简单数学" class="headerlink" title="简单数学"></a>简单数学</h2><h1 id="算法笔记-第七章：提高篇-1-–数据结构专题（1）"><a href="#算法笔记-第七章：提高篇-1-–数据结构专题（1）" class="headerlink" title="算法笔记-第七章：提高篇(1)–数据结构专题（1）"></a>算法笔记-第七章：提高篇(1)–数据结构专题（1）</h1><h2 id="栈的应用"><a href="#栈的应用" class="headerlink" title="栈的应用"></a>栈的应用</h2>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E7%AE%97%E6%B3%95-%E5%A4%8D%E4%B9%A0-%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/" class="print-no-link">#算法 复习 算法笔记</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>算法笔记</div>
+      <div>http://example.com/2021/05/20/算法笔记/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>sun_zhi_bin</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年5月20日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/10/11/%E8%87%AA%E5%8A%A8%E7%BB%84%E5%8D%B7%E7%B3%BB%E7%BB%9F/" title="自动组卷系统">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">自动组卷系统</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/05/13/hexo%E6%9B%B4%E6%8D%A2%E4%B8%BB%E9%A2%98/" title="hexo更换主题">
+                        <span class="hidden-mobile">hexo更换主题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

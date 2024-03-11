@@ -1,0 +1,958 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="sun_zhi_bin">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="DPDK和SPDKDPDK(Data Plane Development Kit)简单说，DPDK应用程序运行在操作系统的User Space，利用自身提供的数据面库进行收发包处理，绕过了Linux内核态协议栈，以提升报文处理效率。 DPDK是一组lib库和工具包的集合。最简单的架构描述如下图所示：  DPDK由于做用户态polling mode，需要对线程模型、内存管理等系统级的资源做定制的管理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="华为网卡项目">
+<meta property="og:url" content="http://example.com/2021/12/01/%E5%8D%8E%E4%B8%BA%E7%BD%91%E5%8D%A1%E9%A1%B9%E7%9B%AE/index.html">
+<meta property="og:site_name" content="Bruce Sun&#39;s blog">
+<meta property="og:description" content="DPDK和SPDKDPDK(Data Plane Development Kit)简单说，DPDK应用程序运行在操作系统的User Space，利用自身提供的数据面库进行收发包处理，绕过了Linux内核态协议栈，以提升报文处理效率。 DPDK是一组lib库和工具包的集合。最简单的架构描述如下图所示：  DPDK由于做用户态polling mode，需要对线程模型、内存管理等系统级的资源做定制的管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-f4b703475096e19c669d6cfc7128311e_1440w.jpg">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211207153558432.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211202130806588.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211209191906546.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211202130940305.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211202131719170.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211202131923397.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211202092739555.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211204100538405.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211204131059622.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211204101116532.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211204101209872.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211204102717723.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211207144656527.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211207150754499.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211209085626412.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211207161755180.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211207161827345.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211230163244922.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211230170745869.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211230170818645.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211230171628666.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211230172937194.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211230193645449.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211230195604296.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211230201734587.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20220725111730264.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211230192640428.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20211230185100624.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20211230190840475.png">
+<meta property="og:image" content="https://img-blog.csdn.net/20180417100139590">
+<meta property="og:image" content="https://img-blog.csdn.net/20180417100922685">
+<meta property="og:image" content="https://img-blog.csdn.net/20180417101200769">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20220725111306065.png">
+<meta property="og:image" content="https://pic4.zhimg.com/v2-adaad1b3a14e2fa115fe0472c8b0955f_r.jpg">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20220725112852892.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source/_posts/images/华为网卡项目/image-20220122194819302.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20220122194215743.png">
+<meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/华为网卡项目/image-20220519154020368.png">
+<meta property="article:published_time" content="2021-12-01T03:30:15.000Z">
+<meta property="article:modified_time" content="2024-03-07T16:00:09.776Z">
+<meta property="article:author" content="sun_zhi_bin">
+<meta property="article:tag" content="华为项目">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic3.zhimg.com/80/v2-f4b703475096e19c669d6cfc7128311e_1440w.jpg">
+  
+  
+  
+  <title>华为网卡项目 - Bruce Sun&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Bruce Sun的博客网站</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="华为网卡项目"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-12-01 11:30" pubdate>
+          2021年12月1日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          100 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">华为网卡项目</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="DPDK和SPDK"><a href="#DPDK和SPDK" class="headerlink" title="DPDK和SPDK"></a>DPDK和SPDK</h1><h2 id="DPDK-Data-Plane-Development-Kit"><a href="#DPDK-Data-Plane-Development-Kit" class="headerlink" title="DPDK(Data Plane Development Kit)"></a>DPDK(Data Plane Development Kit)</h2><p>简单说，DPDK应用程序运行在操作系统的User Space，利用自身提供的数据面库进行收发包处理，绕过了Linux内核态协议栈，以提升报文处理效率。</p>
+<p>DPDK是一组lib库和工具包的集合。最简单的架构描述如下图所示：</p>
+<p><img src="https://pic3.zhimg.com/80/v2-f4b703475096e19c669d6cfc7128311e_1440w.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>DPDK由于做用户态polling mode，需要对线程模型、内存管理等系统级的资源做定制的管理。例如dpdk中通过使用cpu的亲和性对thread和core做绑定，单个thread独享一个cpu core。再例如dpdk所使用的大页内存等等。这些基础资源的管理都是为用户态polling mode服务。</p>
+<h2 id="SPDK（Storage-Performance-Development-Kit）"><a href="#SPDK（Storage-Performance-Development-Kit）" class="headerlink" title="SPDK（Storage Performance Development Kit）"></a>SPDK（Storage Performance Development Kit）</h2><p>关于SPDK的介绍<a target="_blank" rel="noopener" href="https://www.cnblogs.com/vlhn/p/7727141.html">https://www.cnblogs.com/vlhn/p/7727141.html</a></p>
+<p>SPDK(存储性能开发套件)为<strong>编写用户态存储应用</strong>提供了一套工具和库函数。</p>
+<p>SPDK的基石是一个运行在用户空间的、采用轮询模式的、异步的、无锁的NVMe驱动。用户空间应用程序可直接访问SSD盘，而且是零拷贝、高度并行地访问SSD盘。</p>
+<p>spdk和dpdk的区别在于，spdk主要针对存储性能的提高，关键是nvme驱动。dpdk主要针对网络性能的提高。核心思想spdk和dpdk大致相同。因此也需要对系统资源做独特的管理，这点和dpdk一样。为了资源复用，spdk在EAL这一层统一采用dpdk的实现。无须再去自己实现一套内存管理、thread模型等底层机制。</p>
+<h1 id="RDMA相关的基础知识"><a href="#RDMA相关的基础知识" class="headerlink" title="RDMA相关的基础知识"></a>RDMA相关的基础知识</h1><p>这里有一篇汇总的博客记录RDMA的相关文档和相关知识<a target="_blank" rel="noopener" href="https://blog.csdn.net/bandaoyu/article/details/112861368">https://blog.csdn.net/bandaoyu/article/details/112861368</a></p>
+<p>还有这一篇<a target="_blank" rel="noopener" href="https://blog.csdn.net/t1506376703/article/details/106911631/?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-0.opensearchhbase&amp;spm=1001.2101.3001.4242.1">https://blog.csdn.net/t1506376703/article/details/106911631/?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-0.opensearchhbase&amp;spm=1001.2101.3001.4242.1</a></p>
+<h2 id="实现RDMA的技术"><a href="#实现RDMA的技术" class="headerlink" title="实现RDMA的技术"></a>实现RDMA的技术</h2><p>目前，有三种支持RDMA的技术：IB(InfiniBand)、RoCE(RDMA over Converged Ethernet)、以太网iWARP(the Internet Wide Area RDMA Protocol)。这三种技术使用同一API，但它们有着不同的物理层和链路层。</p>
+<p>IB: 原生支持RDMA，它从硬件级别保证可靠传输；</p>
+<p>iWARP: 基于 以太网之上的TCP or SCTP 做 RDMA，利用 TCP or SCTP 达到可靠传输，对网络设备的要求比较少；</p>
+<p>RoCE: 基于以太网做 RDMA，消耗的资源比 iWARP 少，支持的特性比 iWARP 多，需要额外做可靠传输。</p>
+<p>在以太网解决方案中，RoCE相对于iWARP来说有着明显的优势，这些优势体现在延时、吞吐率和 CPU负载。<br><img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211207153558432.png" srcset="/img/loading.gif" lazyload alt="image-20211207153558432" style="zoom:50%;" /></p>
+<h2 id="OFED"><a href="#OFED" class="headerlink" title="OFED"></a>OFED</h2><p>Linux Drivers Mellanox OpenFabrics Enterprise Distribution for Linux (MLNX_OFED)是一个单独的VPI(Virtual Protocol Interconnect，虚拟协议互联)软件栈。是网卡的驱动</p>
+<h2 id="infiniband和Ethernet的区别"><a href="#infiniband和Ethernet的区别" class="headerlink" title="infiniband和Ethernet的区别"></a>infiniband和Ethernet的区别</h2><p>InfiniBand是一种开放标准的高带宽，低时延，高可靠的<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E7%BD%91%E7%BB%9C%E4%BA%92%E8%81%94%E6%8A%80%E6%9C%AF&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22article%22,%22sourceId%22:163104439%7D">网络互联技术</a>。</p>
+<p>对于Ethernet毋庸多言，和IP技术构成了目前世界上整个互联网络大厦的基石，所有人与智能设备皆依靠Ethernet实现万物互联，这与其设计初衷就是为了能够实现更好的兼容有关，能让不同的系统可以更好的互连互通，这样使得Ethernet自诞生之初就具有非常强的适应性，经过数十年的发展成为互联网中事实上的标准。</p>
+<p>而InfiniBand，作为标准制定的初衷是为了解决高性能计算场景中突破集群中数据传输瓶颈痛点应运而生的一种互连标准，从制定之初就定位为高端应用，互连互通不是主要矛盾，高性能通信才是主要切入点，所以，相对于<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=Ethernet%E6%8A%80%E6%9C%AF&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22article%22,%22sourceId%22:163104439%7D">Ethernet技术</a>而言，由于定位的差异导致InfiniBand与生俱来就有很多和Ethernet的不同，主要表现在带宽、时延、网络可靠性、和组网方式上。</p>
+<p><strong>InfiniBand就是使用了RDMA技术</strong>。</p>
+<p>实验室的网卡是ConnectX® -5 EN Card，是没有办法进行模式选择的，也就是说没有办法在以太网和IB中间进行选择，只可以使用以太网。而在以太网中如果要跑RDMA的话，需要使用RoCE技术。</p>
+<h2 id="RDMA客户端和服务器端交流的几个方式"><a href="#RDMA客户端和服务器端交流的几个方式" class="headerlink" title="RDMA客户端和服务器端交流的几个方式"></a>RDMA客户端和服务器端交流的几个方式</h2><ol>
+<li><p>send &amp; recieve</p>
+<p>跟TCP/IP的send/recv是类似的，不同的是RDMA是基于消息的数据传输协议（而不是基于字节流的传输协议），所有数据包的组装都在RDMA硬件上完成的，也就是说OSI模型中的下面4层(传输层，网络层，数据链路层，物理层)都在RDMA硬件上完成。</p>
+</li>
+<li><p>read</p>
+<p>RDMA读操作本质上就是Pull操作, 把<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E8%BF%9C%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22article%22,%22sourceId%22:55142557%7D">远程系统内存</a>里的数据拉回到本地系统的内存里。</p>
+</li>
+<li><p>write</p>
+</li>
+</ol>
+<h2 id="RoCE"><a href="#RoCE" class="headerlink" title="RoCE"></a>RoCE</h2><h1 id="基础的对比实验"><a href="#基础的对比实验" class="headerlink" title="基础的对比实验"></a>基础的对比实验</h1><p>在RDMA技术中，由于在RDMA中运用了锁争夺的机制，导致在线程增多的情况下，锁机制的延展性会出现问题。即线程增加会导致系统的吞吐量下降。基础的对照实验就是要体现出上述的问题。即跑出来下图的效果</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211202130806588.png" srcset="/img/loading.gif" lazyload alt="image-20211202130806588"></p>
+<p>论文中对这一块的描述是</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211209191906546.png" srcset="/img/loading.gif" lazyload alt="image-20211209191906546"></p>
+<h2 id="基础流程"><a href="#基础流程" class="headerlink" title="基础流程"></a>基础流程</h2><ol>
+<li>安装机器，完成网卡的插入。（√）</li>
+<li>找到直连光纤，完成两个机器的直连，线没有问题的话网卡会亮黄灯。（√）</li>
+<li>安装驱动，设置网卡的静态ip，完成两个机器的连通。</li>
+</ol>
+<p>搭机子，通过交换机进行联通。</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211202130940305.png" srcset="/img/loading.gif" lazyload alt="image-20211202130940305"></p>
+<p>使用驱动检查网卡的性能和使用情况。查看两台机器的连通性。</p>
+<p>按照下图设置实验数据</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211202131719170.png" srcset="/img/loading.gif" lazyload alt="image-20211202131719170"></p>
+<p>图中cycle的定义如下</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211202131923397.png" srcset="/img/loading.gif" lazyload alt="image-20211202131923397"></p>
+<p>每个线程发送4KB大小的文件，每个线程和远程机之间创建了1000个连接，每一个cycle代表把一个4kb的数据通过这1000个连接发到远端的主机</p>
+<h2 id="硬件"><a href="#硬件" class="headerlink" title="硬件"></a>硬件</h2><p>在两台机子上进行操作，每台机子的配置如下</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211202092739555.png" srcset="/img/loading.gif" lazyload alt="image-20211202092739555"></p>
+<h2 id="装卡"><a href="#装卡" class="headerlink" title="装卡"></a>装卡</h2><p>分别将两个网卡插到对应的两个机子上。然后用光纤和光模块对两个机子的网卡进行连接，网卡会闪黄灯。如果没有闪黄灯的话，一定是光纤或者光模块出现了问题</p>
+<h2 id="安装驱动"><a href="#安装驱动" class="headerlink" title="安装驱动"></a>安装驱动</h2><h3 id="环境检测"><a href="#环境检测" class="headerlink" title="环境检测"></a>环境检测</h3><p>千万注意：要先进行环境的检测，检测你的环境是否安装了IB卡！</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211204100538405.png" srcset="/img/loading.gif" lazyload alt="image-20211204100538405"></p>
+<h3 id="下载驱动安装包"><a href="#下载驱动安装包" class="headerlink" title="下载驱动安装包"></a>下载驱动安装包</h3><p>驱动的下载网站<a target="_blank" rel="noopener" href="https://blog.csdn.net/ljlfather/article/details/102930454">https://blog.csdn.net/ljlfather/article/details/102930454</a></p>
+<p>进入这个网址<a target="_blank" rel="noopener" href="https://www.mellanox.com/page/products_dyn?product_family=26&amp;mtag=linux_sw_drivers%EF%BC%8C%E6%89%BE%E5%88%B0%E5%92%8C%E8%87%AA%E5%B7%B1%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%AF%B9%E5%BA%94%E7%9A%84%E9%A9%B1%E5%8A%A8%E8%BF%9B%E8%A1%8C%E4%B8%8B%E8%BD%BD%E3%80%82%E6%AF%94%E5%A6%82%EF%BC%8C%E6%88%91%E5%B0%B1%E5%85%88%E4%B8%8B%E8%BD%BD%E5%88%B0%E4%BA%86mlnx-en-3.3-1.0.0.0.tgz">https://www.mellanox.com/page/products_dyn?product_family=26&amp;mtag=linux_sw_drivers，找到和自己的系统对应的驱动进行下载。比如，我就先下载到了mlnx-en-3.3-1.0.0.0.tgz</a>, 装上后TCP正常工作没问题，RDMA不能用。然后从各种官网的网页里面的各种方法乱试，又找到一个MLNX_OFED_LINUX-3.3-1.0.4.0-ubuntu14.04-x86_64.tgz, 这个才对了。</p>
+<p>本次下载的版本如下图所示</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211204131059622.png" srcset="/img/loading.gif" lazyload alt="image-20211204131059622"></p>
+<p>之后进入驱动的目录进行安装。</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli"><span class="hljs-string">./mlnxofedinstall</span> <span class="hljs-params">--force</span><br></code></pre></td></tr></table></figure>
+
+<p>重新加载驱动</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211204101116532.png" srcset="/img/loading.gif" lazyload alt="image-20211204101116532"></p>
+<p>之后使用命令<code>ibstatus</code>你就可以看到网卡对应的接口的信息了</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211204101209872.png" srcset="/img/loading.gif" lazyload alt="image-20211204101209872"></p>
+<p>可以发现，这里的link_layer是Ethernet，代表当前的模式是以太网。</p>
+<p>在想把模式改成IB的时候，使用命令<code>mlxconfig -d /dev/mst/mt4119_pciconf0 query</code>查看网卡的基本信息</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211204102717723.png" srcset="/img/loading.gif" lazyload alt="image-20211204102717723"></p>
+<p>发现网卡的类型是EN，仅支持Ethernet模式。所以如果要在交换机上使用RDMA的话需要安装RoCE。但是本次实验是两个机子直连的，所以直接使用Ethernet模式就可以了。</p>
+<h2 id="测试及驱动使用说明"><a href="#测试及驱动使用说明" class="headerlink" title="测试及驱动使用说明"></a>测试及驱动使用说明</h2><p>两个机子都安装好驱动以后</p>
+<p>一台机子作为服务器端，运行命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">ib_send_bw -a -c UD -d mlx4_0 -i 1<br></code></pre></td></tr></table></figure>
+
+<p>另一台机子作为客户端，运行命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">ib_send_bw -a -c UD -d mlx4_0 -i 1 172.16.0.102<br></code></pre></td></tr></table></figure>
+
+<p>ib_send命令是测试 RDMA 发送处理确定带宽</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211207144656527.png" srcset="/img/loading.gif" lazyload alt="image-20211207144656527"></p>
+<p>代表测试成功</p>
+<h3 id="相关命令的使用说明"><a href="#相关命令的使用说明" class="headerlink" title="相关命令的使用说明"></a>相关命令的使用说明</h3><ol>
+<li><p>如果要使用srq，就在命令行的最后加上 <strong>–use-srq</strong></p>
+</li>
+<li><p>ibstatus：查看网卡的基本信息</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211207150754499.png" srcset="/img/loading.gif" lazyload alt="image-20211207150754499" style="zoom:80%;" /></li>
+<li><p>ib_send_bw：Bandwith and latency test using send transactions.</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211209085626412.png" srcset="/img/loading.gif" lazyload alt="image-20211209085626412"></p>
+<p>参数说明：</p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs inform7">ib_send_bw <span class="hljs-comment">[-p TCP_port]</span><span class="hljs-comment">[-d device]</span><span class="hljs-comment">[-i IB_port]</span><span class="hljs-comment">[-c RC|UC|UD]</span><span class="hljs-comment">[-m mtu]</span> <span class="hljs-comment">[-s size]</span><span class="hljs-comment">[-a]</span><span class="hljs-comment">[-t tdepth]</span><span class="hljs-comment">[g]</span><span class="hljs-comment">[-r rdepth]</span><span class="hljs-comment">[-n iters]</span><span class="hljs-comment">[-I size]</span><span class="hljs-comment">[-b]</span><span class="hljs-comment">[-V]</span><span class="hljs-comment">[-e]</span> <span class="hljs-comment">[-N]</span><span class="hljs-comment">[-F]</span><span class="hljs-comment">[IP_address]</span><br><br>where:<br><br>TCP_port <span class="hljs-keyword">is</span> the TCP port.(本次实验不怎么用到)<br>device <span class="hljs-keyword">is</span> the InfiniBand device.<br>IB_port <span class="hljs-keyword">is</span> the InfiniBand port.<br>mtu <span class="hljs-keyword">is</span> the size <span class="hljs-keyword">of</span> the MTU.<br>size <span class="hljs-keyword">is</span> the size <span class="hljs-keyword">of</span> the messages.<br>tdepth <span class="hljs-keyword">is</span> the size <span class="hljs-keyword">of</span> the TX queue.<br>rdepth <span class="hljs-keyword">is</span> the size <span class="hljs-keyword">of</span> the RX queue.<br>iters <span class="hljs-keyword">is</span> the number <span class="hljs-keyword">of</span> message exchanges.<br>IP_address <span class="hljs-keyword">is</span> the IP address <span class="hljs-keyword">of</span> the remote node host<br><br>RC:面向连接的可靠服务<br>UC:面向连接的不可靠服务<br>UD:面向数据报的不可靠服务<br>RD：面向非连接（类似UDP）的可靠服务<br>面向连接 vs 面向数据报<br>相同点：两者的通信均包括双方QP对的参与<br>不同点：面向连接的通信若有N个节点与之通信，本机需要N个QP对;面向数据报的通信可以做到N个节点与之通信，本机仅需一个QP队.<br><br></code></pre></td></tr></table></figure>
+
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211207161755180.png" srcset="/img/loading.gif" lazyload alt="image-20211207161755180"></p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211207161827345.png" srcset="/img/loading.gif" lazyload alt="image-20211207161827345"></p>
+<p>为了体现多端的拥塞，本次实验多是使用的RC</p>
+</li>
+<li></li>
+</ol>
+<h2 id="实验具体配置"><a href="#实验具体配置" class="headerlink" title="实验具体配置"></a>实验具体配置</h2><h4 id="卸载驱动"><a href="#卸载驱动" class="headerlink" title="卸载驱动"></a>卸载驱动</h4><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-regexp">/usr/</span>sbin/ofed_uninstall.sh<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="配置ip地址"><a href="#配置ip地址" class="headerlink" title="配置ip地址"></a>配置ip地址</h2><h3 id="ubuntu"><a href="#ubuntu" class="headerlink" title="ubuntu"></a>ubuntu</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">sudo vim <span class="hljs-regexp">/etc/</span>network/interfaces<br></code></pre></td></tr></table></figure>
+
+<p>在文件中添加如下内容：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">auto</span> enp<span class="hljs-number">1</span>s<span class="hljs-number">0</span><br><span class="hljs-attribute">iface</span> enp<span class="hljs-number">1</span>s<span class="hljs-number">0</span> inet static<br><span class="hljs-attribute">address</span> <span class="hljs-number">172.16.0.104</span><br><span class="hljs-attribute">netmask</span> <span class="hljs-number">255.255.255.0</span><br><span class="hljs-attribute">broadcast</span> <span class="hljs-number">172.16.0.255</span><br></code></pre></td></tr></table></figure>
+
+<p>enp1s0是网卡名称，通过ifconfig查看，address是要给infiniband网卡配置的ip地址。</p>
+<p>重启网络服务：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">sudo service networking restart</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="Centos"><a href="#Centos" class="headerlink" title="Centos"></a>Centos</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">sudo vim <span class="hljs-regexp">/etc/</span>sysconfig<span class="hljs-regexp">/network-scripts/i</span>fcfg-ib0<br></code></pre></td></tr></table></figure>
+
+<p>添加如下内容：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">DEVICE</span>=ib0<br><span class="hljs-attr">BOOTPROTO</span>=static<br><span class="hljs-attr">IPADDR</span>=<span class="hljs-number">172.16</span>.<span class="hljs-number">0.104</span><br><span class="hljs-attr">NETMASK</span>=<span class="hljs-number">255.255</span>.<span class="hljs-number">255.0</span><br><span class="hljs-attr">BROADCAST</span>=<span class="hljs-number">172.16</span>.<span class="hljs-number">0.255</span><br><span class="hljs-attr">NETWORK</span>=<span class="hljs-number">172.16</span>.<span class="hljs-number">0.0</span><br><span class="hljs-attr">ONBOOT</span>=<span class="hljs-literal">yes</span><br><br></code></pre></td></tr></table></figure>
+
+<p>重启网口：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">sudo</span> ifdown ib<span class="hljs-number">0</span><br><span class="hljs-attribute">sudo</span> ifup ib<span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="安装RoCE"><a href="#安装RoCE" class="headerlink" title="安装RoCE"></a>安装RoCE</h2><h2 id="NVMe-oF概述"><a href="#NVMe-oF概述" class="headerlink" title="NVMe-oF概述"></a>NVMe-oF概述</h2><p>NVMe-oF全称是：Non-Volatile Memory Express over Fabrics。中文的意思是：基于Fabrics的非易失性存储标准。我将Fabric理解为网络架构，RDMA Fabric就有Infiniband，iWARP，RoCEv1，RoCEv2等多种传输协议。</p>
+<h3 id="NVMe-oF和NVMe的关系"><a href="#NVMe-oF和NVMe的关系" class="headerlink" title="NVMe-oF和NVMe的关系"></a>NVMe-oF和NVMe的关系</h3><p>NVMe是什么：NVMe传输是一种抽象协议层，旨在提供可靠的NVMe命令和数据传输，是有关访问非易失性储存（通常是 SSD 磁盘）的接口标准。本质是上建立了多个计算机与存储设备的通路，提高搬运数据的速度。</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211230163244922.png" srcset="/img/loading.gif" lazyload alt="image-20211230163244922"></p>
+<p>当前数据中心中的存储网络架构通常使用的是存储区域网络 (Storage Area Network, SAN) ，SAN 是一种基于块的存储，利用高速架构将服务器与其逻辑磁盘单元 (Logical Disk Unit, LUN) 相连。当前的SAN通常使用采用FC（Fibre Channel）光纤通道或者Ethernet进行远距离传输。其中SAN网络环境中，因采用存储设备类型的不同又可以分为FC-SAN(采用光纤通道存储产品)和IP-SAN(采用ISCSI存储设备)。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211230170745869.png" srcset="/img/loading.gif" lazyload alt="image-20211230170745869" style="zoom:50%;" />
+
+<p><strong>NVMe-oF的目的就是利用现有成熟的Fabric来跑NVMe，实现NVMe标准在PCIe总线上的扩展也就是把本地高速访问的优势暴露给远端应用。</strong>NVMe-oF可以实现ISCISI的功能，甚至可以更好。在长时间内，NVMe-oF和iSCSI还是长期并存的局面。iSCSI目前已经非常成熟，而NVMe-oF则刚刚开始发展，需要不断地完善，并且借鉴iSCSI协议的一些功能，以支持更多的功能。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211230170818645.png" srcset="/img/loading.gif" lazyload alt="image-20211230170818645" style="zoom:50%;" />
+
+<h3 id="NVMe-oF"><a href="#NVMe-oF" class="headerlink" title="NVMe-oF"></a>NVMe-oF</h3><p>2016年发布的 NVMe-oF 1.0 规范描述了两种Fabric，光纤通道(Fibre Channel)和远程直接内存访问 (RDMA) 。下图是NVME和各种Fabric的关系。可以看到NVMe-oF是在Fabric之上的。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211230171628666.png" srcset="/img/loading.gif" lazyload alt="image-20211230171628666" style="zoom:50%;" />
+
+<p>上图可以更好的展示为，左侧三个灰色框架代表的是NVMe在一个机器内的操作，右边是通过NVMe-oF把NVMe扩展到数据中心中。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211230172937194.png" srcset="/img/loading.gif" lazyload alt="image-20211230172937194" style="zoom:50%;" />
+
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211230193645449.png" srcset="/img/loading.gif" lazyload alt="image-20211230193645449" style="zoom:67%;" />
+
+<p>NVMe-oF的协议栈如下</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211230195604296.png" srcset="/img/loading.gif" lazyload alt="image-20211230195604296" style="zoom:50%;" />
+
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211230201734587.png" srcset="/img/loading.gif" lazyload alt="image-20211230201734587" style="zoom:50%;" />
+
+<p>NVMeoF协议栈访问流程</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20220725111730264.png" srcset="/img/loading.gif" lazyload alt="image-20220725111730264"></p>
+<h3 id="NVMe-Transport-Mapping（NVME传输映射）"><a href="#NVMe-Transport-Mapping（NVME传输映射）" class="headerlink" title="NVMe Transport Mapping（NVME传输映射）"></a>NVMe Transport Mapping（NVME传输映射）</h3><p><strong>NVMe over Fabrics 需要底层 NVMe 传输来提供可靠的 NVMe 命令和数据传输。</strong></p>
+<p>在本地 NVMe 实现中，NVMe 命令和响应通过 PCIe 接口映射到主机中的共享内存。然而，fabric 是建立在发送和接收消息的概念之上的，在端之间没有共享内存。NVMe fabric消息传输旨在通过使用包含一个或多个 NVMe 命令或响应的“capsules”将 NVMe 命令和响应封装到基于消息的系统中。 capsules或capsules与数据的组合独立于特定的fabric，并通过所需fabric发送和接收。就是说<strong>NVMe和Fabric之间没有指定的关系，是松耦合的</strong>。 <strong>NVMe 传输是独立于任何物理互连属性的抽象协议层。</strong></p>
+<p> 在NVMe over Fabrics中，整个 NVMe 多队列模型得到维护，使用普通的 NVMe 提交队列(submission queues)和完成队列(completion queues)，但封装在基于消息的传输上。 NVMe I/O 队列对(submission and completion)是为多核 CPU 设计的，这种低延迟的高效设计在 NVMe over Fabrics 中得到维护。</p>
+<p> 下图显示了 NVMe 传输的分类和示例。 NVMe 传输包含内存模型、消息模型或两者的组合。 内存模型是一种通过执行显式内存读写操作在结构节点之间传输命令、响应和数据的模型，而消息模型是一种仅在结构节点之间发送包含命令capsules、响应capsules和数据的消息。 消息/内存模型使用消息和显式内存读写操作的组合在结构节点之间传输命令包、响应包和数据。 数据可以选择性地包含在命令包和响应包中。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211230192640428.png" srcset="/img/loading.gif" lazyload alt="image-20211230192640428" style="zoom:40%;" />
+
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20211230185100624.png" srcset="/img/loading.gif" lazyload alt="image-20211230185100624" style="zoom:50%;" />
+
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs isbl">上面这两个图一个来自<span class="hljs-variable">OverView</span>（第二个图），一个来自<span class="hljs-function"><span class="hljs-title">specification</span>(第一个图)，感觉有点冲突。</span><br></code></pre></td></tr></table></figure>
+
+<p>在向 NVMe over Fabrics 设备发送复杂消息时，capsules允许将多条小消息作为一条消息发送，从而提高传输效率并减少延迟。 capsules是一个提交队列条目(submission queue entry)或一个完成队列条目(completion queue entry)，结合了一定数量的数据、元数据或 Scatter-Gather Lists (SGLs)。 元素的内容与本地 NVMe 协议相同，但capsules是一种将它们打包在一起以提高效率的方式。下图是capsules的具体架构。</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20211230190840475.png" srcset="/img/loading.gif" lazyload alt="image-20211230190840475"></p>
+<h3 id="NVMe"><a href="#NVMe" class="headerlink" title="NVMe"></a>NVMe</h3><p>NVMe是什么：NVMe是一种Host与SSD之间通讯的协议，它在协议栈中隶属高层。</p>
+<p><img src="https://img-blog.csdn.net/20180417100139590" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>NVMe制定了Host与SSD之间通讯的命令，以及命令如何执行的。</p>
+<p>NVMe有两种命令，一种叫Admin Command，用以Host管理和控制SSD；另外一种就是I/O Command，用以Host和SSD之间数据的传输。</p>
+<p>NVMe有三种队列：Submission Queue （SQ），Completion Queue（CQ）和Doorbell Register （DB）。 SQ和CQ位于Host的内存中，DB则位于SSD的控制器内部。如下图所示：</p>
+<p><img src="https://img-blog.csdn.net/20180417100922685" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>SQ位于Host内存中，Host要发送命令时，先把准备好的命令放在SQ中，然后通知SSD来取；CQ也是位于Host内存中，一个命令执行完成，成功或失败，SSD总会往CQ中写入命令完成状态。DB则是在Host发送命令时，不是直接往SSD中发送命令的，而是把命令准备好放在自己的内存中，Host就是通过写SSD端的DB寄存器来告知SSD命令已经处理完毕，可以前来检阅。流程如下图所示：</p>
+<p><img src="https://img-blog.csdn.net/20180417101200769" srcset="/img/loading.gif" lazyload alt="img"></p>
+<ol>
+<li>Host写命令到SQ，此时的命令在host的内存中；</li>
+<li>Host写DB，通知NVMe Controller取命令。通过更新在Controller内部的寄存器SQ Tail Doorbell来完成。</li>
+<li>Controller收到通知，于是从SQ中取命令。取走命令之后，需要在Controller内部的SQ Head Pointer寄存器中更新Head所在的位置。NVMe没有规定Command存入队列的执行顺序，Controller可以一次取出多个Command进行批量处理。</li>
+<li>Controller执行命令。执行Read/Wirte Command时，这个过程也会与Host Memory进行数据传递。</li>
+<li>命令执行完成，Controller往CQ中写指令执行结果。此时，Controller需要更新内部的CQ Tail Pointer寄存器。</li>
+<li>Controller发短信通知Host指令完成。Controller通过发送一个中断信息告知Host。</li>
+<li>收到短信，Host处理CQ，查看命令完成状态；</li>
+<li>Host处理完CQ中的命令需要告知controller。Host更新Controller内部的CQ Head Doorbell。</li>
+</ol>
+<p>四个寄存器全部放在Controller内存中。也就是说Controller知道这SQ Tail/Head和CQ Tail/Head的全部信息。</p>
+<p>而Host仅仅知道自己更新的两个信息SQ Tail和CQ Head。Controller把SQ Head和CQ Tail的信息写入Completion报文中，通知给host。</p>
+<p>NVMe 访存路径</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20220725111306065.png" srcset="/img/loading.gif" lazyload alt="image-20220725111306065"></p>
+<h4 id="NVMe-Controller-Memory-Buffer-控制器内存缓冲区"><a href="#NVMe-Controller-Memory-Buffer-控制器内存缓冲区" class="headerlink" title="NVMe Controller Memory Buffer(控制器内存缓冲区)"></a>NVMe Controller Memory Buffer(控制器内存缓冲区)</h4><p>controller通过将 CAP.CMBS 设置为“1”来指示对 CMB 的支持。 host通过将 CMBMSC.CRE 设置为“1”来表示使用 CMB 的意图。 一旦该位设置为“1”，controller就会通过 CMBLOC 和 CMBSZ 属性指示 CMB 的属性.</p>
+<p>CMB 可用于多种用途。 controller通过在 CMBSZ 属性中设置支持标志来指示内存可用于哪些目的。</p>
+<h3 id="NVMe-over-ROCE"><a href="#NVMe-over-ROCE" class="headerlink" title="NVMe over ROCE"></a>NVMe over ROCE</h3><p>NVMe over RoCE 调用关系如下图所示，内核 nvme_rdma 模块相当于胶水层，连接 rdma stack 和 nvme core接口，即 NVMe 队列接口可以对接 RDMA 队列接口，进而调用下层 rdma stack 中 verbs 传输接口。</p>
+<img src="https://pic4.zhimg.com/v2-adaad1b3a14e2fa115fe0472c8b0955f_r.jpg" srcset="/img/loading.gif" lazyload alt="preview" style="zoom:50%;" />
+
+<h4 id="NVMeoF队列结构"><a href="#NVMeoF队列结构" class="headerlink" title="NVMeoF队列结构"></a>NVMeoF队列结构</h4><p>NVMeoF将NVMe队列映射到RDMA队列上。</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20220725112852892.png" srcset="/img/loading.gif" lazyload alt="image-20220725112852892"></p>
+<p>Host端RNIC将NVMe SQE封装成网络命令包，作为RDMA报文内容（payload），通过RDMA传输到target端，Target端的RNIC解包之后，将SQE和数据放入target端主机的内存中，随后Target处理NVMe命令和数据；处理完之后，将NVMe CQE封装成RDMA响应包(Response)，放入RDMA完成队列中，返回给Host。</p>
+<h2 id="XRC（扩展可靠连接技术）网卡模式"><a href="#XRC（扩展可靠连接技术）网卡模式" class="headerlink" title="XRC（扩展可靠连接技术）网卡模式"></a>XRC（扩展可靠连接技术）网卡模式</h2><p>使用SRQ虽然能够大大减少进程的接收缓冲区数目，但是它仍然需要在每个进程之间都建立连接。</p>
+<p>在多核系统上， 一个节点内往往运行多个进程，这就会使得单个节点上的连接数目成倍增加，内存开销也会成倍增加。为了解决这个问题，扩展可靠连接(Extended Reliable Connection，简称 XRC)技术被引入到了InfiniBand传输服务中。</p>
+<img src="D:\Sun1999\MyHexoBlogs\myblogs\source\_posts\images\华为网卡项目\image-20220122194819302.png" srcset="/img/loading.gif" lazyload alt="image-20220122194819302" style="zoom:50%;" />
+
+<p>允许发送方在发送工作请求里指定远端接收队列。如果使用了SRQ，这意味着消息发送者可以指定消息在达到目的节点后由哪个SRQ来接收，因为SRQ是独立于连接之外能够被多个QP所共享的资源，所以XRC相当于变相地支持了一个本地QP可以向多个远端QP发送消息，也就是说，通过XRC一个进程只需要一条连接或者一个QP即可向远端节点上的所有进程发送消息。</p>
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20220122194215743.png" srcset="/img/loading.gif" lazyload alt="image-20220122194215743"></p>
+<p>XRC 在请求方(requester)的操作与 RC 类似，在响应方(responder)与 RD 类似。由于这种不对称性，XRC 传输服务中的传输对象有一些独特的特征。</p>
+<ol>
+<li>XRC INI QP 与常规 RC QP 类似，但没有响应端</li>
+<li>XRC TGT QP 类似于 RD EEC，但没有请求方</li>
+<li>XRC SRQ 类似于 RD QP，但没有请求方 </li>
+</ol>
+<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">XRC</td>
+<td>eXtended Reliable Connected transport service</td>
+</tr>
+<tr>
+<td align="left">XRC INI QP</td>
+<td>XRC Initiator QP。这是 XRC 操作的发起者队列。 XRC INI QP 用于发出 XRC 传出请求，并且没有响应(responder)方。 XRC 传入请求将由 XRC TGT QP 处理</td>
+</tr>
+<tr>
+<td align="left">XRC TGT QP</td>
+<td>XRC Target QP。这是 XRC 操作的响应者。 XRC TGT QP（与 XRC SRQ 一起）用于处理传入的 XRC 请求。 XRC TGT QP 没有请求方。 XRC 传出请求通过 XRC INI QP 发出</td>
+</tr>
+<tr>
+<td align="left">XRC SRQ</td>
+<td>这是为传入的 XRC 请求 post Receive WQE 的Receive Queue。 XRC 请求数据包在扩展标头 (XRCETH) 中携带目标 XRC SRQ 编号，如果需要，将从该编号中获取接收 WQE</td>
+</tr>
+<tr>
+<td align="left">XRC Domain</td>
+<td>用于关联 XRC TGT QP 和 XRC SRQ 的属性。 XRC 数据包只能以与它们的目的地 XRC TGT QP 相同的 XRC Domain中的 XRC SRQ 为目标</td>
+</tr>
+<tr>
+<td align="left">XRCETH</td>
+<td>XRC Extended Transport Header. Present in XRC request packets.</td>
+</tr>
+</tbody></table>
+<h1 id="实验的相关命令和具体参数"><a href="#实验的相关命令和具体参数" class="headerlink" title="实验的相关命令和具体参数"></a>实验的相关命令和具体参数</h1><h2 id="抓包工具"><a href="#抓包工具" class="headerlink" title="抓包工具"></a>抓包工具</h2><h3 id="ibdump"><a href="#ibdump" class="headerlink" title="ibdump"></a>ibdump</h3><h2 id="性能测试工具"><a href="#性能测试工具" class="headerlink" title="性能测试工具"></a>性能测试工具</h2><h3 id="ib-send-bw"><a href="#ib-send-bw" class="headerlink" title="ib_send_bw"></a>ib_send_bw</h3><p>具体内容可以看gitlab网页<a target="_blank" rel="noopener" href="https://github.com/linux-rdma/perftest">https://github.com/linux-rdma/perftest</a></p>
+<ol>
+<li><p>服务器端运行</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">ib_send_bw</span> -a -c UD -d mlx<span class="hljs-number">5</span>_<span class="hljs-number">0</span> -i <span class="hljs-number">1</span> -z<br></code></pre></td></tr></table></figure></li>
+<li><p>客户端运行</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">ib_send_bw</span> -a -c UD -d mlx<span class="hljs-number">5</span>_<span class="hljs-number">0</span> -i <span class="hljs-number">1</span> -z <span class="hljs-number">172.16.0.106</span><br></code></pre></td></tr></table></figure></li>
+</ol>
+<p>重点解释一下<code>-z</code>这个参数是什么意思：Communicate with rdma_cm module to exchange data - use regular QPs</p>
+<h1 id="分流访问NVMe-SSD"><a href="#分流访问NVMe-SSD" class="headerlink" title="分流访问NVMe SSD"></a>分流访问NVMe SSD</h1><h2 id="SPDK-NVMe-oF的介绍"><a href="#SPDK-NVMe-oF的介绍" class="headerlink" title="SPDK NVMe-oF的介绍"></a>SPDK NVMe-oF的介绍</h2><p>NVMe over Fabrics (NVMe-oF) 协议在 RDMA（iWARP、RoCE、InfiniBand™）、光纤通道和 TCP 等网络结构上扩展了 NVM Express* (NVMe) 块协议的并行性和效率。SPDK 提供用户空间 NVMe-oF 的target和initiator，可通过网络扩展 SPDK 堆栈其余部分的软件效率。SPDK NVMe-oF 的target使用 SPDK user-space, polled-mode NVMe driver 向 NVMe 设备提交和完成 I/O 请求，从而减少软件处理开销。 同样，它将连接固定到 CPU 内核以避免同步和缓存抖动，以便这些连接的数据尽可能靠近 CPU 缓存。</p>
+<p>SPDK NVMe-oF target and initiator 使用 Infiniband/RDMA verbs API 来访问支持RDMA的NIC。目前只针对ROCEV2进行了测试。与 SPDK NVMe 驱动程序类似，SPDK 提供了一个user-space, lockless, polled-mode的 NVMe-oF  initiator。host使用initiator建立连接并向 NVMe-oF target内的 NVMe 子系统提交 I/O 请求。NVMe 子系统包含namespace，每个namespace都映射到通过 SPDK 的 bdev 层公开的单个块设备。SPDK 的 bdev 层是块设备抽象层和通用块存储堆栈，在许多操作系统都有类似实现。使用 bdev 接口将存储介质与用于访问存储的前端协议完全解耦。用户可以构建自己的虚拟 bdev，提供复杂的存储服务，并将它们与 SPDK NVMe-oF  target集成，无需额外的代码更改。 NVMe-oF target中可能有许多子系统，每个子系统可能包含许多namespace。子系统和namespace可以通过 JSON-RPC 接口动态配置。</p>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><ol>
+<li><p>查看nvme ssd具体有哪几个</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">nvme list</span><br></code></pre></td></tr></table></figure>
+
+<p>可以查看所有连接到当前系统的nvme设备：名称，序列号，大小，LBA 和 serial。</p>
+<p>使用该命令的话可以在host机器上可以查看到target的ssd（前提是target的ssd挂载到了spdk中）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">#</span><span class="bash">通过spdk查看每个硬盘的pcie地址</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="D:\Sun1999\MyHexoBlogs\myblogs\source_posts\images\华为网卡项目\image-20220519154020368.png" srcset="/img/loading.gif" lazyload alt="image-20220519154020368"></p>
+</li>
+</ol>
+<p>注意spdk驱动和nvme驱动的问题</p>
+<p>配置完target在配置host</p>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><p>如果使用modprobe nvme_rdma出错。大概率问题出现在rdma驱动中</p>
+<h2 id="FIO工具介绍"><a href="#FIO工具介绍" class="headerlink" title="FIO工具介绍"></a>FIO工具介绍</h2><p>FIO 工具是一款用于测试硬件存储性能的辅助工具，兼具灵活性、可靠性从而从众多性能测试工具中脱颖而出。磁盘的 I/O 是衡量硬件性能的最重要的指标之一，而 FIO 工具通过模拟 I/O负载对存储介质进行压力测试，并将存储介质的 I/O 数据直观的呈现出来。</p>
+<p>f关于io介绍的网站：<a target="_blank" rel="noopener" href="https://fio.readthedocs.io/en/latest/fio_doc.html#how-fio-works">https://fio.readthedocs.io/en/latest/fio_doc.html#how-fio-works</a></p>
+<h3 id="fio操作"><a href="#fio操作" class="headerlink" title="fio操作"></a>fio操作</h3><p>让 fio 模拟所需的 I/O 工作负载的第一步是编写一个描述该特定设置的作业文件(job file)。 作业文件中可以定义要模拟的线程或者文件，通过共享参数定义全局部分，也可以定义每一线程的单独参数。运行时，fio 会解析此文件并按照描述设置所有内容。</p>
+<h3 id="fio文件配置介绍"><a href="#fio文件配置介绍" class="headerlink" title="fio文件配置介绍"></a>fio文件配置介绍</h3><ol>
+<li><p>I/O type</p>
+<p>定义发布给文件的I/O模式，读、写、顺序、随机或者是否使用buffer.</p>
+<ul>
+<li><p>direct=bool</p>
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vhdl"><span class="hljs-keyword">If</span> value <span class="hljs-keyword">is</span> <span class="hljs-literal">true</span>, <span class="hljs-keyword">use</span> non-buffered I/O. <span class="hljs-keyword">Default</span>: <span class="hljs-literal">false</span>.<br></code></pre></td></tr></table></figure>
+
+<p>这个值决定是否使用non-buffered I/O。</p>
+<p>buffered IO指的是在内核和用户程序之间设置了一层缓冲区，用来提高IO读写的效率；</p>
+<p>读取：硬盘—&gt;内核缓冲区—&gt;<strong>用户缓冲区</strong>—&gt;用户程序</p>
+<p>写回：用户程序—&gt;<strong>用户缓冲区</strong>—&gt;内核缓冲区—&gt;硬盘</p>
+</li>
+<li><p>atomic=bool</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">If</span> <span class="hljs-keyword">value</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">true</span>, attempt <span class="hljs-keyword">to</span> use atomic direct I/O. Atomic writes are guaranteed <span class="hljs-keyword">to</span> be <span class="hljs-keyword">stable</span> once acknowledged <span class="hljs-keyword">by</span> the operating <span class="hljs-keyword">system</span>. <br></code></pre></td></tr></table></figure>
+
+<p>如果值为 true，则尝试使用原子 I/O。原子I/O的写入是稳定的</p>
+</li>
+<li><p>readwrite=str，rw=str</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs fortran"><span class="hljs-keyword">Type</span> of I/O pattern.<br>read;<span class="hljs-built_in">write</span>;<span class="hljs-built_in">trim</span>;randread;randwrite;<span class="hljs-keyword">readwrite</span>;randrw;trimwrite<br></code></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>Block size</p>
+<p>发出I/O的块大小，可以是单个值，也可以是个范围</p>
+<ul>
+<li><p>blocksize=int[,int][,int]</p>
+<p>单个值适用于read、write和trim。 可以为read、write和trim指定逗号分隔的值。</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">The block size <span class="hljs-keyword">in</span> <span class="hljs-keyword">bytes</span> used <span class="hljs-keyword">for</span> I/O units. Default: <span class="hljs-number">4096.</span> A single <span class="hljs-built_in">value</span> applies <span class="hljs-built_in">to</span> reads, writes, <span class="hljs-keyword">and</span> trims. Comma-separated values may be specified <span class="hljs-keyword">for</span> reads, writes, <span class="hljs-keyword">and</span> trims. A <span class="hljs-built_in">value</span> <span class="hljs-keyword">not</span> terminated <span class="hljs-keyword">in</span> <span class="hljs-keyword">a</span> <span class="hljs-literal">comma</span> applies <span class="hljs-built_in">to</span> subsequent types.<br></code></pre></td></tr></table></figure></li>
+<li><p>blocksize_range=irange[,irange][,irange], bsrange=irange[,irange][,irange]</p>
+<p>I/O 单元的一系列块大小（以字节为单位）。 除非设置了 blocksize_unaligned，否则发出的 I/O 单元将始终是最小大小的倍数。<strong>bsrange=1k-4k,2k-8k.</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">A range <span class="hljs-keyword">of</span> block sizes <span class="hljs-keyword">in</span> bytes <span class="hljs-keyword">for</span> I/O units. The issued I/O unit will <span class="hljs-keyword">always</span> be a multiple <span class="hljs-keyword">of</span> the minimum size, unless blocksize_unaligned <span class="hljs-keyword">is</span> <span class="hljs-keyword">set</span>.<br><br>Comma-separated ranges may be specified <span class="hljs-keyword">for</span> reads, writes, <span class="hljs-keyword">and</span> trims <span class="hljs-keyword">as</span> described <span class="hljs-keyword">in</span> blocksize.<br></code></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>I/O size</p>
+<p>要读写的数据总量</p>
+<ul>
+<li>size=int</li>
+</ul>
+</li>
+<li></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8D%8E%E4%B8%BA%E9%A1%B9%E7%9B%AE/" class="print-no-link">#华为项目</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>华为网卡项目</div>
+      <div>http://example.com/2021/12/01/华为网卡项目/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>sun_zhi_bin</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年12月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/07/04/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%AD%A6%E4%B9%A0/" title="微信小程序学习">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">微信小程序学习</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/11/22/%E7%BE%A4%E6%99%96%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/" title="群晖使用手册">
+                        <span class="hidden-mobile">群晖使用手册</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
