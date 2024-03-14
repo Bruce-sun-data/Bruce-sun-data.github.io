@@ -71,11 +71,11 @@ sudo mount -t ext4 test.img ./mnt/
 
 将数据写入nvme的三种方式
 
-1. 在应用层，用提供出来的接口操作nvme
+### 在应用层，用提供出来的接口操作nvme
 
-    首先根据上面的方法1，在nvme磁盘中创建一个img，然后把该img进行挂载.在dev中会多出来loop。可以使用.
+直接对裸盘进行分区，不进行文件系统操作。然后使用命令`dd if=/dev/zero of=/dev/nvme1n1p1`将该盘数据清空。
 
-   
+   用下面的代码可以直接在应用层对没有文件系统的裸进行 操作
 
    ```c
    //nvme.c   gcc -o nvme nvme.c 
@@ -89,7 +89,7 @@ sudo mount -t ext4 test.img ./mnt/
    
    int main(){
    
-   	int fd = open("/dev/loop30",O_RDWR);
+   	int fd = open("/dev/nvme1n1p1",O_RDWR);
    	if(fd<0)
    		return -1;
    	char *buffer = malloc(4096);
@@ -120,13 +120,23 @@ sudo mount -t ext4 test.img ./mnt/
    }
    ```
 
-   使用`cat /dev/loop30`可以查看写入内容
+   使用`cat /dev/nvme1n1p1`可以查看写入内容
 
    因为之前给/dev/loop30/挂载的时候分配过文件系统，所以会显示乱码
 
-2. 在内核里读写nvme
+### 在内核里读写nvme
 
-3. 用SPDK
+需要写的文件不能用main，因为main是应用程序。
+
+要实现一个内核的模块
+
+并且需要写一个内核模块的Makefile，进行编译
+
+
+
+### 用SPDK
+
+
 
 ## SPDK作用
 
