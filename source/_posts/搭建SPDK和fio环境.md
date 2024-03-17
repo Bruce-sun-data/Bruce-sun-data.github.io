@@ -82,5 +82,64 @@ path_to_fio/fio u_path/psync.fio
 
 # SPDK
 
-## 安装
+## 安装SPDK
+
+先查看我们系统的环境
+
+```shell
+cat /proc/version
+Linux version 5.4.0-144-generic (buildd@lcy02-amd64-069) (gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04)) #161~18.04.1-Ubuntu SMP Fri Feb 10 15:55:22 UTC 2023
+```
+
+然后从github下载spdk，如果遇到了网络问题，可以手动修改github的dns映射，参考https://www.cnblogs.com/melodyjerry/p/13031571.html
+
+```shell
+# 下载
+$ git clone https://github.com/spdk/spdk
+$ cd spdk
+# 安装子模块.
+$ git submodule update --init
+#如果安装的慢，可以将.gitmodules文件中的路径改成国内镜像的：hub.fastgit.org(只能用作镜像，不可访问)
+# 安装依赖。有可能需要给pip换源，最好使用清华源
+$ sudo ./scripts/pkgdep.sh
+#编译
+$ ./configure
+$ make
+```
+
+安装依赖的时候报错
+
+```
+无法定位软件包 libfuse3-dev
+```
+
+安装的spdk版本出错，应该安装22.05
+
+```shell
+git clone --branch v22.05.x https://github.com/spdk/spdk.git
+```
+
+应该在可以翻墙的Linux系统中安装。连子组件安装完之后一起上传到服务器。
+
+
+
+为了方便操作，我们使用vscode连接远程的服务器.注意，Host的命名不能加括号
+
+```shell
+Host 14#内网
+    HostName 192.168.xxx.xxx
+    User username
+```
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -98,6 +98,102 @@ POSIX是什么
 >
 > 第二个问题是信息如何在不同的应用程序之间共享
 
+## PAIO in a Nutshell
+
+PAIO是一个框架，使系统设计人员能够构建定制的SDS数据平面步骤。在数据平面步骤中使用的PAIO服务于给定user-level层的workflows，支持对请求进行分类和区分，并根据用户定义的存储策略实施不同的存储机制。此类策略的示例可以简单到限制贪婪租户的速率以实现资源公平，也可以复杂到协调具有不同优先级的工作流以确保持续的尾部延迟。PAIO的设计基于五个核心原则。
+
+#### 普遍适用性
+
+为了确保不同I/O层之间的适用性，PAIO的步骤从内部系统逻辑中分离出来。
+
+#### 可编程构件
+
+PAIO遵循解耦设计，将I/O机制与管理I/O的策略分开，并提供抽象，用于构建新的存储优化以应用于请求。
+
+#### 细粒度的I/O控制
+
+PAIO对不同粒度级别的I/O请求进行分类、区分和强制执行。支持在I/O堆栈上应用一组广泛的策略。
+
+#### 步骤协调
+
+为了确保步骤之间能够协调地获取资源，PAIO公开了一个控制接口，使控制平面能够动态地使每个步骤适应新的策略和工作负载变化
+
+#### 低修改性
+
+在I/O层上使用PAIO只需要很少的修改
+
+### PAIO中的抽象
+
+#### Enforcement object
+
+Enforcement object是一种自包含的、单一用途的机制，它对传入的I/O请求应用自定义I/O逻辑。这种机制的例子包括：性能控制和资源管理(令牌桶和缓存)，数据转换(压缩和加密)，数据管理(数据预取、分层)。该抽象为系统设计人员提供了开发新机制(专门用于特定存储策略)的灵活性和可扩展性。
+
+#### Channel
+
+Channel是请求流通过的抽象。每一个channel有一个或者多个Enforcement object(对同一组请求应用不同的机制)
+
+以及将请求映射到要enforced的相应Enforcement object的differentiation rule 
+
+#### Context object
+
+Context object包括描述请求特征的原信息。它包括一组元素(分类器)l例如流ID(例如thread-ID)，请求类型(例如read, open, put, get)，请求大小和请求context.请求context用于描述请求的附加信息，比如确定其起源、背景等。对于每一个请求，PAIO会生成相关的Context object用于在各自的I/O机制上对请求进行分类、区分和强制执行
+
+#### Rule
+
+在PAIO中，一条rule表示控制数据平面步骤状态的操作。rules由控制平面提交，分为三种类型：housekeeping rules管理内部步骤组织，differentiation rules分类和区分I/O请求，enforcement rules 根据工作负载变化调整enforcement object。
+
+###  High-level Architecture
+
+图二展示了PAIO的高层架构。它遵循一种解耦设计，将在外部控制平面实现的策略与在数据平面阶段实现的执行策略的机制分离开来。PAIO的目标是用户级的I/O层。步骤嵌入在层中，拦截所有的I/O请求然后强制执行用户定义的规则。为了达到这个目标，PAIO由四个主要部分组成。
+
+![image-20240317195418962](/images/PAIO总结/image-20240317195418962.png)
+
+#### Stage interface
+
+应用程序通过stage接口进入stage，该接口在提交到下一个I/O层(文件系统)之前将所有请求路由到PAIO。对每一个请求，都会生成一个具有相应I/O分类器的Context object。
+
+#### Differentiation moudle
+
+区分模块根据请求的Context object对请求进行分类和区分。为了确保用细粒度来区分请求，我们使仅对层本身可访问的应用程序级信息能够传播到PAIO，从而扩大了可以执行的策略集。
+
+#### Enforcement module
+
+该模块负责在请求之间执行真正的I/O策略。它由channel和enforcement object 组成。对于每个请求，模块选择应该处理它的channel和enforcement object 。执行后，请求返回到原始数据路径并提交到下一个I/O层。(文件系统)
+
+#### Control interface
+
+PAIo提供了Control interface，允许控制平面(1)通过创建channels、enforcement objects和differentiation rules,来编排stage的生命周期，(2)通过持续监控和微调stage，确保所有政策得到满足。控制平面提供全局可视化，全面地控制所有的stages。暴露此接口允许由现有控制平面管理stages。
+
+### A Day in the Life of a Request
+
+PAIO如何服务一个工作流的。考虑图三所示的I/O堆栈，它由一个应用程序、RocksDB、一个PAIO阶段和一个posix兼容的文件系统组成。并且包含以下规则：限制RocksDB的flush操作速率为X MiB/s。RocksDB的背景流生成flush和compactions任务，在提交给文件系统之前会被转换成多种POSIX请求。flush被转换成write，conmpactions被转换成read和write。
+
+![image-20240317202819785](/images/PAIO总结/image-20240317202819785.png)
+
+开始阶段，RocksDB初始化PAIO stage，连接到已经部署的控制平面。控制平面提交 housekeeping rules，以创建一个channel和一个enforcement object，对X MiB的请求进行速率限制(白1)。它还提交区分规则(白2)，以确定stage应该处理哪些请求(基于flush的write)。
+
+在执行阶段，RocksDB传播创建了给定操作的context(黑0)，并将所有写操作重定向到PAIO(黑1)。通过上一步可以确保旨在PAIO上强制执行写操作，通过使用 黑0 可以将带flush标记的写操作与其他可以由压缩作业触发的写操作区分开来。接下来stage选择要使用的channel，将请求入队，然后选择服务请求的enforcement object(将请求限制在XMiB/s)。执行请求之后，原写操作提交给文件系统。
+
+控制平面会持续监事和微调数据平面stage。它定期从stage收集为该请求提供服务的吞吐量。根据该测量值，控制平面调整enforcement object来保证flush操作流的速度是X MiB/s，使用新的配置生成enforcement rules。
+
+## I/O Differentiation
+
+PAIO的区分模块
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
