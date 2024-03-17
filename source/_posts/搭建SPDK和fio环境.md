@@ -82,6 +82,7 @@ path_to_fio/fio u_path/psync.fio
 
 # SPDK
 
+<<<<<<< Updated upstream
 ## 安装SPDK
 
 先查看我们系统的环境
@@ -143,3 +144,6 @@ Host 14#内网
 
 
 
+=======
+## 安装
+>>>>>>> Stashed changes

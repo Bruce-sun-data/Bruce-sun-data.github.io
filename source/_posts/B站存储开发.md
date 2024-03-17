@@ -272,10 +272,6 @@ default:
 
 
 
-
-
-
-
 # SPDK
 
 同一个host里，fio使用不同的引擎会有不同的结果(iops)
