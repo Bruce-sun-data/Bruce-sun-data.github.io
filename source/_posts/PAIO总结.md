@@ -182,7 +182,187 @@ PAIO的区分模块提供了在不同粒度级别(即每个工作流、请求类
 
 #### Startup Time
 
-开始的时候，用户定义如何区分请求以及谁应该处理每个请求。首先，它通过指定应该使用哪些I/O分类器来区分请求来定义区分的粒度。例如，为了区分每个workflow，PAIO只考虑Context’s workflow id分类器；而为了根据上下文和类型区分请求，它同时使用*request context*和*request type*分类器。
+开始的时候，用户定义如何区分请求以及谁应该处理每个请求。首先，它通过指定应该使用哪些I/O分类器来区分请求来定义区分的粒度。例如，为了区分每个workflow，PAIO只考虑Context’s workflow id分类器；而为了根据上下文和类型区分请求，它同时使用*request context*和*request type*分类器。其次，用户为每个通道设置特定的I/O分类器，以确定给定通道接收的请求集。表1提供了样例，channel1只接收来自flow1的流；channel2只处理background tasks生成的read请求；channel3接收来自flow5的压缩写请求。要生成将请求映射到通道的唯一标识符，可以将分类器连接到字符串或散列到固定大小的令牌中。这个流程可以被控制平面设置，或者在stage创建的时候被配置。
+
+![image-20240318092742856](/images/PAIO总结/image-20240318092742856.png)
+
+#### Execution time
+
+第二阶段区分提交到stage的I/O请求，并将它们路由到要执行的各自通道。由两个步骤组成
+
+==Channel selection==
+
+对每一个请求(包含Context object)，PAIO选择必须要服务它的channel。PAIO验证Context的I/O分类器，并将请求映射到要执行的相应channel。这种映射区分过程根据第一阶段的描述完成。
+
+==Enforcement object selection==
+
+每一个channel可以包括多个enforcement objects，与channel选择类似，PAIO需要选择合适的object。对于每个请求，channel验证Context的I/O分类器并将请求映射到相应的enforcement object，然后enforcement object将使用它的I/O机制。
+
+#### Context propagation
+
+一些I/O分类器(比如workflow id, request type and size)可以通过观察原始I/O请求访问。但是应用层的信息只能传递给提交I/O请求的层。operation context是这类信息的一个例子(如图1)，它允许确定给定请求的来源或上下文(它是前台流还是背景流，flush还是compaction或者其他的)。
+
+因此，PAIO支持将附加信息从目标层传播到stage。利用了context propagation的技术，该技术使系统能够沿着执行路径传播context，并应用他们来确保对请求的细粒度控制。为了实现这一点，系统对目标层(该层可以访问信息)的数据路径进行测量，并通过进程的地址空间、共享内存或线程局部变量使其对stage可用。这些信息都在创建Context object时被request context 分类器包含。如果不使用此方法传播context,则需要在找到信息的位置和将信息提交到stage之间更改所有核心模块和函数。
+
+```
+目标层是什么？
+```
+
+例如图3的I/O栈，为了确定RocksDB后台工作流提交的POSIX操作的来源，系统设计人员测量了RocksDB负责管理flush或compaction作业(黑0)的关键路径，以捕获它们的上下文。接下来信息被传播到stage interface，在该接口中使用所有的I/O分类器(包括请求上下文)创建Context object，并将其提交到stage。
+
+> 这里面是在RocksDB中捕获上下文？
+
+请注意，此步骤是可选的，因为对于不需要强制执行附加信息的策略，可以跳过此步骤
+
+## I/O Enforcement
+
+Enforcemnet 模块为开发用于请求的I/O机制提供构建块。它由几个通道组成，每个通道包含一个或多个enforcement object。
+
+如图3所示，请求被移动到被选择的channel然后放置到SQ(黑3)。对于每个出队的请求，PAIO选择合适的enforcement object(黑4)然后应用其I/O机制(黑5)。相关的I/O机制有令牌桶、缓存、加密方案等等。由于有几种机制可以改变原始请求的状态，例如数据转换(例如，加密、压缩)，在此阶段，enforcement object生成一个Result，该Result封装了请求的更新版本，包括其内容和大小。然后将Result对象返回给stage接口，stage接口对其进行解组、检查并将其路由到原始数据路径(黑6)。这个流程之后，PAIO确保该请求符合具体政策的目标。
+
+#### Optimizations
+
+根据所采用的的策略和机制，PAIO可以仅使用它们的I/O分类器强制执行请求。虽然数据转换直接适用于请求内容，但性能驱动机制(如令牌桶和调度器)只需要强制执行特定的请求元数据(例如，类型、大小、优先级、存储路径)。为了防止增加系统执行的开销，PAIO允许仅在必要时将请求的内容复制到stage的执行路径中.
+
+## PAIO Interfaces and Usage
+
+现在我们详细介绍PAIO如何与I/O层和控制平面交互，如何在用户级层中集成PAIO，以及如何构建enforcement objects.
+
+### Interfaces
+
+#### Stage interfaces
+
+PAIO提供了一个application的可编程接口，用于在I/O层和PAIO的内部机制中建立联系。如表2描述的，它提供两个功能：paio_init初始化一个stage，连接控制平面和stage内部的管理，同时定义workflows应该被如何处理，enforce拦截来自层的请求，并根据相关的Context object将它们路由到Stage。enforce 请求之后，Stage输出Result，然后层恢复原始路径。
+
+![image-20240318143600455](/images/PAIO总结/image-20240318143600455.png)
+
+#### Control interface
+
+Stage和控制平面的交互主要由五个调用支持，如图二所示。stage_info会返回stage相关的信息（包括stage identifier和process identifier (PID)）。基于rule的调用用于管理和调优数据平面阶段。Housekeeping rules (hsk_rule) 管理stage的生命周期(例如，创建channel和and enforcement objects)。differentiation rules (dif_rule) 映射请求到channels和enforcement objects。enforcement rules (enf_rule)根据工作负载和策略变化动态调整给定enforcement object(id)的内部状态(s)。控制平面使用collect调用监视stages，它收集所有工作流的关键性能指标(例如，IOPS，带宽)，并可用于调整数据平面stage.
+
+该接口允许控制平面定义PAIO stage如何处理I/O请求。然而，与数据平面阶段的可靠性相关的问题，以及冲突策略的解决是控制平面的责任[38]，因此与本文是正交的
+
+### Integrating PAIO in User-level Layers
+
+将I/O层移植到使用PAIO阶段可能需要几个步骤。
+
+#### Using PAIO with context propagation
+
+为了将stage集中到层中，需要：
+
+1. 在目标层创建stage，使用paio_init
+2. 检测关键数据路径，其中层级信息是可访问的，并在Context object创建时将其传播到Stage。这可能需要创建额外的数据结构
+3. 创建将与请求一起提交到Stage的Context object。包括workflow id, request type和size，并且传播信息
+4. 对在提交给下一层之前需要在Stage强制执行的I/O操作添加enforce调用。比如，为了enforce给定层的POSIX read 操作，所有read都需要先被提交到PAIO在提交到文件系统
+5. 通过检查从enforce返回的Result对象来验证请求是否成功enforced，并恢复执行路径
+
+#### Using PAIO transparently
+
+如果不需要context 传播，PAIO stages可以在I/O层(应用层和文件系统)中透明的使用。PAIO公开了面向层的接口(如POSIX)，并使用LD_PRELOAD将顶层的原始接口调用(如应用程序调用的读写calls)替换为在提交给底层之前首先提交给PAIO的接口调用(如文件系统)。每个支持的调用定义了创建Context object，将请求提交到stage，验证Result和调用原始I/O的逻辑。这使得层可以使用PAIO而无需更改任何代码行。
+
+### Building Enforcement Objects
+
+PAIO使用简单的API创建enforcement objects。如表2所示
+
+- obj_init：创建具有初始状态的enforcement object，包括其类型和初始配置。
+- obj_config：提供调优旋钮，以使用新状态更新enforcement object的内部设置。这使控制平面能够动态地使其适应工作负载变化和新策略。
+- obj_enf：实现应用于请求的实际I/O逻辑。在应用完它的逻辑之后会返回Result，其中包含请求(r)的更新版本。它还接收一个Context object(ctx)，该对象用于对I/O请求采取不同的操作
+
+默认情况下，PAIO保持目标系统的操作逻辑(例如排序，错误处理等)，因为提交给PAIO的enforcement object和操作都遵循同步模型。虽然可以开发成异步的，但是是要保证正确性和容错性。
+
+```
+这里的同步和异步是什么意思
+```
+
+## Implementation
+
+用了9K行C++代码实现。PAIO针对用户级别的层，允许构建新的stage实现和简单的集成，只需要更改少量代码
+
+### Enforcement objects
+
+实施了两种enforcement object。Noop实现了一种传递机制，该机制将请求的内容复制到Result对象，而不需要进行额外的数据处理。Dynamic rate limiter (DRL) 实现了一个令牌桶来控制I/O工作流的速率和突发性。该令牌桶设置了最大token容量(size)和补充桶的周期(fill period)。桶处理请求的速率以令牌/s表示。调用obj_init的时候，桶的这两个变量会被初始化。调用obj_config的时候，rate(r)会根据介于r和fill period之间的函数改变size的大小。对于每一个请求，obj_enf验证context's size分类器然后计算消耗的token数量。token不够的话，请求就等待。为了演示PAIO的I/O机制的可移植性和可维护性，我们在由不同层和目标组成的两个用例上应用了DRL对象。
+
+### I/O cost
+
+我们认为请求的成本是恒定的，例如，读或写请求的每个字节代表一个令牌。尽管成本取决于几个因素(例如，工作负载、类型、缓存命中)，但我们不断校准令牌桶，使其速率收敛于策略目标。实验结果显示该方法在场景中很适用，因为桶的速率在与控制平面的少量交互中收敛。确定I/O成本是后续工作。
+
+### Statistics, communication, and differentiation
+
+PAIO在Channel中实现每个工作流统计计数器，以记录截获请求的带宽、操作数量和收集周期之间的平均吞吐量。控制平面与stages的通信是通过UNIX Domain Sockets实现的。为了创建唯一标识符把请求映射到channels和enforcement objects，使用了MurmurHash3哈希方案，该方案将分类器哈希到固定大小的令牌中。
+
+### Context propagation
+
+为了在每个层中传播信息，使用了共享map，索引是workflow identifier(例如，thread-id)，存储正在提交的请求的Context
+
+### Transparently intercepting I/O calls
+
+PAIO使用LD_PRELOAD来拦截POSIX调用，并将它们路由到Stage或内核。它支持read和write调用，包括不同的变体(例如，pread，pwrite64)。我们发现，支持这组调用足以执行面向数据的策略。我们将其他调用和接口(例如，KVS，对象存储)的支持推迟到未来的工作中。
+
+### Control plane
+
+我们使用3.6K行代码构建了一个简单但功能齐全的控制平面，用于为本文的两个用例执行策略。策略以控制算法的形式实现。为了校准enforcement objects，除了Stage统计数据外，它还从/proc文件系统收集目标层生成的I/O指标。具体来说，它检查读字节和写字节I/O计数器，这些计数器表示块层读/写出去/进来的字节数，并将它们与阶段统计数据进行比较，以收敛到目标性能目标
+
+## Use Cases and Control Algorithms
+
+我们现在给出两个用例，展示了PAIO对不同应用程序和性能目标的适用性
+
+### Tail Latency Control in Key-Value Stores
+
+LSM KVSs(例如RocksDB)使用前台流来参加客户端请求，这些请求以FIFO顺序排队和服务。后台流服务于内部操作，即冲洗和压缩。Flush顺序地写入树的第一层(L0)，只有当有足够的空间时才继续执行。压缩保存在FIFO队列中,等待专用线程池执行。除了低级别压缩(L0 to L1)，这些都可以并行进行。然而，它们的一个常见问题是I/O工作流之间的干扰，从而会导致客户端请求产生延迟峰值。当由于L0 to L1压缩和刷新缓慢或暂停而无法进行刷新时，会出现延迟峰值。
+
+#### SILK
+
+SILK是一个基于RocksDB的KVS，他通过使用IO调度器来防止这种情况。当客户端负载较低时，为内部操作分配带宽(优先刷新和低级别压缩，因为它们影响客户端延迟)，用低级别压缩抢占高级别压缩。通过下面的控制算法实现，由于这些KVSs被嵌入，KVS I/O带宽被限定在给定的速率(KVSB)。它监控客户端额带宽(Fg)，并将剩余带宽(leftB)分配给内部操作(IB)，IB = KVSB−Fg.SILK使用RocksDB的速率限制器限制IB。Flushes和L0 to L1的压缩具有高优先级，并提供最小的I/O带宽(minB)。高级别压缩优先级较低，并且可以被随时停止。为所有的压缩都共享同一个线程池，所以有可能在某个时候，所有的线程都在处理高级的压缩。因此，SILK会抢占其中一个来执行低级压缩。
+
+SILK改变了很多RocksDB的内部操作。此外，将这些优化移植到其他同样从中受益的KVS，如LevelDB[21]和pebble[47]，需要深入的系统知识和大量的重新实现工作。
+
+#### PAIO
+
+我们发现可以通过编排I/O workflows来实现这些优化，而不是修改RocksDB引擎。因此我们应用SILK的设计原则如下：PAIO数据平面Stage提供I/O机制，用于对后台流进行优先级排序和速率限制，而控制平面重新实现I/O调度算法来编排Stage。
+
+Stage会拦截所有RocksDB的 workflows。我们将与文件系统交互的每个RocksDB线程视为一个工作流。Channel通过workflow id进行分类。我们使用RocksDB来传播创建给定操作时的context，即刷新(flush)或压缩(例如，compaction_L0_L1)。监控前台流以收集客户端带宽(Fg)。后台流被路由到由DRL对象组成的通道。Fiushed流单独设置通道。由于具有不同优先级(高和低)的压缩可以流经同一通道，因此每个通道包含两个以不同速率配置的DRL对象。通过request context分类器区分enforcement object，并使用第5节中描述的优化来强制执行请求。PAIO还收集刷新(Fl)、低级别压缩(L0)和高级别压缩(LN)的带宽。
+
+控制平面实现了SILK调度算法的控制部分(如算法1所示)。它使用一个反馈控制回路执行以下步骤。1. 收集stage的数据，计算盘的剩余带宽(leftB)并分配到内部操作。并给后台流设置了一个最低带宽。并根据优先级分配leftB。如果两个高优先级的任务都正在执行，它会为它们分配相同份额的leftB，同时确保高级压缩保持流动(minB)，防止低级压缩在队列中阻塞。如果只有一个高优先级的任务正在执行，则将left tb分配给它，将minB分配给其他任务。如果没有高优先级的任务正在执行，则将剩余的tb预留给低优先级的任务。然后，它生成并提交enf_rules，以调整每个enforcement object的比率。对于低优先级的压缩，所有DRL对象均分BLN。由于高优先级压缩是顺序执行的，它将BL0分配给各自的对象。比率BFl分配给负责flushes的对象。
+
+![image-20240318214126023](/images/PAIO总结/image-20240318214126023.png)
+
+#### 集成到RocksDB
+
+在RocksDB中集成PAIO只需要添加85个LoC(表3)
+
+![image-20240318215234069](/images/PAIO总结/image-20240318215234069.png)
+
+1. 初始化PAIO stage并创建额外的结构来标识每个工作流正在执行的任务(10LoC)
+2. 检测RocksDB的内部线程池，用于标识运行flush和compaction作业的工作流(17LoC)。为了区分压缩操作的高低优先级，我们检测了创建压缩操作的代码。对于每个job，我们验证其级别并使用工作流将要执行的任务(compaction_L0_L1)更新结构(30LoC)。
+3. 根据 workflow id，request type，context和size I/O分类器创建Context.(7LoC)
+4. 提交所有读和写calls到Stage(17LoC)
+5. Verify the Result of the enforcement(4LoC)
+
+### Per-Application Bandwidth Control
+
+ABCI超级计算机是在人工智能和高性能计算工作负载融合的基础上设计的。上面经常运行tensorFlow框架。为了执行TensorFlow作业，用户可以保留一个完整的节点或它的一小部分(即，作业并发执行)。通过Linux的cgroups将节点划分为资源隔离实例。每个实例对CPU内核、内存空间、GPU和本地存储配额具有独占性。但是本地的磁盘带宽还是共享的，每个作业之间会竞争带宽，导致I/O干扰和性能变化。即使块I/O调度器是公平的，也会为所有实例提供相同的服务级别，从而防止分配不同的优先级。
+
+使用cgroups的块I/O控制器(blkio)允许对每个实例的读写操作进行静态速率限制。但是在ABCI中，一旦速率被设置，就无法动态更改，因为它需要停止作业、调整所有组的速率并重新启动作业，就总体执行时间而言，这是非常昂贵的。所以当一个job停止的时候，就会有带宽浪费。
+
+#### PAIO
+
+为了解决上述问题，我们使用一个PAIO Stage来在每个实例中实现动态速率限制工作流的机制，同时控制平面实现了比例共享算法，确保所有实例都符合各自的策略。
+
+我们的用例侧重于模型训练阶段，其中每个实例运行一个tensorflow作业，该作业使用单个工作流从文件系统读取数据集文件。TensorFlow的read 请求被调度到Stage,其中包含一个带有DRL enforcement object的Channel。通过5中描述的优化来强制执行请求。
+
+![image-20240318222150329](/images/PAIO总结/image-20240318222150329.png)
+
+控制平面使用一个max-min公平算法来保障每个应用的带宽（如算法2），该算法常用于资源公平策略。总体可用磁盘带宽(MaxB)和每个应用程序的带宽需求(demand)由系统管理员或负责管理不同作业实例资源的机制预先定义。该算法也使用了反馈路径。1. 控制平面从每个活动实例的阶段收集统计信息(1)，以及每个TensorFlow作业生成的带宽(在/proc处收集)。2. 计算每个活动实例的rate(3-10)。如果一个实例的需求低于其公平份额，控制平面将分配其需求。如果实例的需求小于其公平份额，则控制平面分配其需求(4-5)，否则分配公平份额(7)。然后将剩余带宽在实例中分配(9-10)。然后，它在Ii和ratei的函数中校准每个实例的速率，生成要提交到每个阶段的最终规则(11)。然后等待下一个周期被调用。
+
+### 集成到tensorFlow
+
+如表3所示，集成到TensorFlow不需要代码改变。使用LD_PRELOAD来拦截TensorFlow的读写请求，然后重定向到PAIO。所有支持的调用都实现了执行请求所需的逻辑。
+
+## Evaluation
+
+
+
+
 
 
 
