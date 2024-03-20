@@ -144,9 +144,26 @@ make
 
 make之后，就可以看到在<spdk_repo>/build/fio目录会有下面两个文件，这就是fio_plugin的可执行程序。
 
+要在 fio 中使用 SPDK fio 插件，请在运行 fio 时使用 LD_PRELOAD 指定插件二进制文件，并在 fio 配置文件中设置 ioengine=spdk（请参阅 spdk/spdk/tree/v22.05.x/examples/nvme/fio_plugin 目录下的 example_config.fio）
 
+.fio文件内容
 
-
+```shell
+[global]
+ioengine=spdk
+thread=1
+group_reporting=1
+direct=1
+verify=0
+time_based=1
+ramp_time=0
+runtime=2
+iodepth=128
+rw=randrw
+filename=/dev/nvme1n1p1
+[test]
+numjobs=1
+```
 
 
 
