@@ -82,7 +82,6 @@ path_to_fio/fio u_path/psync.fio
 
 # SPDK
 
-<<<<<<< Updated upstream
 ## 安装SPDK
 
 先查看我们系统的环境
@@ -120,7 +119,7 @@ $ make
 git clone --branch v22.05.x https://github.com/spdk/spdk.git
 ```
 
-应该在可以翻墙的Linux系统中安装。连子组件安装完之后一起上传到服务器。
+==应该在可以翻墙的Linux系统中安装。连子组件安装完之后一起上传到服务器。==
 
 
 
@@ -134,6 +133,16 @@ Host 14#内网
 
 
 
+## SPDK结合FIO测试磁盘性能
+
+安装完SPDK和fio之后，需要配置SPDK使用fio
+
+```shell
+./configure --with-fio=/home/fio --with-ocf
+make
+```
+
+make之后，就可以看到在<spdk_repo>/build/fio目录会有下面两个文件，这就是fio_plugin的可执行程序。
 
 
 
@@ -144,6 +153,6 @@ Host 14#内网
 
 
 
-=======
-## 安装
->>>>>>> Stashed changes
+
+
+

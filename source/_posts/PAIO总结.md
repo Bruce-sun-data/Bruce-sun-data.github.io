@@ -218,6 +218,10 @@ PAIO的区分模块提供了在不同粒度级别(即每个工作流、请求类
 
 Enforcemnet 模块为开发用于请求的I/O机制提供构建块。它由几个通道组成，每个通道包含一个或多个enforcement object。
 
+```
+为什么一个channel有多个enforcement object？
+```
+
 如图3所示，请求被移动到被选择的channel然后放置到SQ(黑3)。对于每个出队的请求，PAIO选择合适的enforcement object(黑4)然后应用其I/O机制(黑5)。相关的I/O机制有令牌桶、缓存、加密方案等等。由于有几种机制可以改变原始请求的状态，例如数据转换(例如，加密、压缩)，在此阶段，enforcement object生成一个Result，该Result封装了请求的更新版本，包括其内容和大小。然后将Result对象返回给stage接口，stage接口对其进行解组、检查并将其路由到原始数据路径(黑6)。这个流程之后，PAIO确保该请求符合具体政策的目标。
 
 #### Optimizations
