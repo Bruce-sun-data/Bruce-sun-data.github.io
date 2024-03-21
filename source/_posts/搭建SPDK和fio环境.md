@@ -165,6 +165,38 @@ filename=/dev/nvme1n1p1
 numjobs=1
 ```
 
+### 
+
+### 初始化NVMe SSD
+
+使用lsblk的时候可以看出来对磁盘进行分区了，所以需要对该磁盘进行初始化
+
+![image-20240321221737551](/images/搭建SPDK和fio环境/image-20240321221737551.png)
+
+### 基于NVMe的fio_plugin
+
+#### 把nvme SSD设备绑定到spdk
+
+在运行SPDK应用程序之前，必须分配一些较大的页面，并且必须从本机内核驱动程序解绑定任何NVMe和I/OAT设备。SPDK包含一个脚本，可以在Linux上自动执行这个过程。这个脚本应该作为根运行。它只需要在系统上运行一次。
+
+```shell
+sudo scripts/setup.sh
+```
+
+![image-20240321155635222](/images/搭建SPDK和fio环境/image-20240321155635222.png)
+
+但是发现我们的两个nvme设备都在使用，没有办法绑定
+
+### 基于bdev的fio_plugin
+
+具体的使用方式可以看github.com/spdk/spdk/tree/v22.05.x/examples/bdev/fio_plugin这里的readme
+
+基于bdev的fio_plugin是将I/O在SPDK块设备bdev之上进行发送。而基于裸盘的fio_plugin，I/O是直接到裸盘上进行处理。两者最大的差别在于I/O是否经过bdev这一层。因此，基于bdev的fio_plugin能够很好的评估SPDK块设备层bdev的性能。其编译安装与裸盘的fio_plugin完全相同。
+
+首先需要
+
+
+
 
 
 
