@@ -144,7 +144,47 @@ make
 
 make之后，就可以看到在<spdk_repo>/build/fio目录会有下面两个文件，这就是fio_plugin的可执行程序。
 
-要在 fio 中使用 SPDK fio 插件，请在运行 fio 时使用 LD_PRELOAD 指定插件二进制文件，并在 fio 配置文件中设置 ioengine=spdk（请参阅 spdk/spdk/tree/v22.05.x/examples/nvme/fio_plugin 目录下的 example_config.fio）
+要在 fio 中使用 SPDK fio 插件，请在运行 fio 时使用 LD_PRELOAD 指定插件二进制文件。
+
+### 初始化NVMe SSD
+
+在运行SPDK应用程序之前，必须分配一些较大的页面，并且必须从本机内核驱动程序解绑定任何NVMe和I/OAT设备。SPDK包含一个脚本，可以在Linux上自动执行这个过程。这个脚本应该作为根运行。它只需要在系统上运行一次。
+
+```shell
+sudo scripts/setup.sh
+```
+
+![image-20240321155635222](/images/搭建SPDK和fio环境/image-20240321155635222.png)
+
+但是发现我们的两个nvme设备都在使用，没有办法绑定。并且使用lsblk的时候可以看出来对磁盘进行分区了，所以需要对该磁盘进行初始化
+
+![image-20240321221737551](/images/搭建SPDK和fio环境/image-20240321221737551.png)
+
+先使用fdisk删除分区。然后使用nvme-cli相关命令初始化nvme ssd
+
+```shell
+sudo nvme format /dev/nvme1n1
+```
+
+再运行上面的绑定命令，出现类似结果则绑定成功。再使用`lsblk`就不会看到结果了
+
+![image-20240322093108395](/images/搭建SPDK和fio环境/image-20240322093108395.png)
+
+绑定之后，在spdk的路径运行
+
+```shell
+sudo ./build/examples/hello_world
+```
+
+结果如下
+
+![image-20240322093927566](/images/搭建SPDK和fio环境/image-20240322093927566.png)
+
+成功
+
+### 基于NVMe的fio_plugin
+
+在 fio 配置文件中设置 ioengine=spdk（请参阅 github.com/spdk/spdk/tree/v22.05.x/examples/nvme/fio_plugin 目录下的 example_config.fio）
 
 .fio文件内容
 
@@ -159,45 +199,111 @@ time_based=1
 ramp_time=0
 runtime=2
 iodepth=128
+size=16384
 rw=randrw
-filename=/dev/nvme1n1p1
+
 [test]
 numjobs=1
+filename=trtype=PCIe traddr=0000.05.00.0 ns=1
 ```
 
-### 
-
-### 初始化NVMe SSD
-
-使用lsblk的时候可以看出来对磁盘进行分区了，所以需要对该磁盘进行初始化
-
-![image-20240321221737551](/images/搭建SPDK和fio环境/image-20240321221737551.png)
-
-### 基于NVMe的fio_plugin
-
-#### 把nvme SSD设备绑定到spdk
-
-在运行SPDK应用程序之前，必须分配一些较大的页面，并且必须从本机内核驱动程序解绑定任何NVMe和I/OAT设备。SPDK包含一个脚本，可以在Linux上自动执行这个过程。这个脚本应该作为根运行。它只需要在系统上运行一次。
+运行命令如下
 
 ```shell
-sudo scripts/setup.sh
+LD_PRELOAD=<path to spdk>spdk/build/fio/spdk_nvme fio example_spdk_nvme.fio
 ```
 
-![image-20240321155635222](/images/搭建SPDK和fio环境/image-20240321155635222.png)
+运行结果如下
 
-但是发现我们的两个nvme设备都在使用，没有办法绑定
+![image-20240322102259191](/images/搭建SPDK和fio环境/image-20240322102259191.png)
 
 ### 基于bdev的fio_plugin
 
 具体的使用方式可以看github.com/spdk/spdk/tree/v22.05.x/examples/bdev/fio_plugin这里的readme
 
-基于bdev的fio_plugin是将I/O在SPDK块设备bdev之上进行发送。而基于裸盘的fio_plugin，I/O是直接到裸盘上进行处理。两者最大的差别在于I/O是否经过bdev这一层。因此，基于bdev的fio_plugin能够很好的评估SPDK块设备层bdev的性能。其编译安装与裸盘的fio_plugin完全相同。
+基于bdev的fio_plugin是将I/O在SPDK块设备bdev之上进行发送。而基于裸盘的fio_plugin，I/O是直接到裸盘上进行处理。两者最大的差别在于I/O是否经过bdev这一层。因此，基于bdev的fio_plugin能够很好的评估SPDK块设备层bdev的性能。其编译安装与裸盘的fio_plugin完全相同。也需要将盘从原始驱动中解除。
 
-首先需要
+使用下面的命令自动监测，生成bdev.json
+
+```shell
+scripts/gen_nvme.sh --json-with-subsystems > /tmp/bdev.json
+```
+
+如下所示
+
+```json
+{
+    "subsystems": [
+        {
+            "subsystem": "bdev",
+            "config": [
+                {
+                "method": "bdev_nvme_attach_controller",
+                "params": {
+                    "trtype": "PCIe",
+                    "name":"Nvme1",
+                    "traddr":"0000:05:00.0"
+                    }
+                }
+            ]
+        }
+    ]
+}
+```
+
+.fio文件内容
+
+```shell
+[global]
+ioengine=spdk_bdev
+spdk_json_conf=/tmp/bdev.json
+thread=1
+group_reporting=1
+direct=1
+verify=0
+time_based=1
+ramp_time=0
+runtime=10
+iodepth=64
+size=16384
+rw=randwrite
+
+[test]
+bs=16k
+filename=Nvme1n1
+```
+
+**注意 Nvme0是指controller，而Nvme0n1才是指bdev，在Linux kernel中亦是如此，而非SPDK限定**
+
+运行命令如下
+
+```shell
+LD_PRELOAD=<path to spdk>spdk/build/fio/spdk_bdev fio example_spdk_bdev.fio
+```
+
+结果如下
+
+<img src="/images/搭建SPDK和fio环境/image-20240322150518070.png" alt="image-20240322150518070"  />
 
 
 
 
+
+# SPDK介绍
+
+SPDK是Intel针对NVMe SSD开源的高性能存储框架，它能够减低IO路径上软件栈所占用的耗时占比，从而尽可能发挥出硬件设备的性能。
+
+硬件处理数据的占比在整个IO路径中越来也少，软件处理开销占比越来越高，传统的驱动方式成为了IO性能无法继续提升的罪魁祸首，SPDK由此应运而生。
+
+SPDK的主要特征
+
+- **用户态驱动程序：** SPDK 是一个完全在用户态运行的存储栈，通过绕过操作系统内核和传统的存储协议栈，直接在用户态处理存储操作，从而提高了存储系统的性能和效率。
+- **Bdev（块设备）抽象层：** SPDK 提供了一个灵活的块设备抽象层，允许应用程序轻松管理和操作不同类型的块设备，如NVMe SSD、RAM Disk等。它提供了丰富的API和功能，使开发者能够快速开发高性能的存储应用程序。
+- **轮询：**在内核驱动中，当IO提交到设备时，进程会进入睡眠状态，当数据传输完毕，设备会发起中断从而将进程唤醒，到此整个IO就处理完毕；在SPDK中，并没有使用中断的方式，而是使用轮询的方式检查IO是否完成，当IO完成时，使用异步的方式进行回调，消除了中断的CPU消耗和避免IO延迟抖动。
+
+## SPDK架构
+
+![image-20240322111127433](/images/搭建SPDK和fio环境/image-20240322111127433.png)
 
 
 

@@ -294,9 +294,15 @@ default:
 
 ==spdk_bdev==
 
+bdevice和nvme裸盘的区别
 
+bdev更贴近于纯软件
 
+![image-20240322152814191](/images/B站存储开发/image-20240322152814191.png)
 
+blob通过函数调用bdev，bdev通过rpc调用数据到nvme
+
+ 
 
 
 
