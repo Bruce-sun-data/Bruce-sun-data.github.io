@@ -146,6 +146,11 @@ make之后，就可以看到在<spdk_repo>/build/fio目录会有下面两个文�
 
 要在 fio 中使用 SPDK fio 插件，请在运行 fio 时使用 LD_PRELOAD 指定插件二进制文件。
 
+SPDK提供两种形态的fio_plugin：
+
+- 基于裸盘NVMe的fio_plugin，其特点为I/O通过SPDK用户态驱动直接访问裸盘，常用于评估SPDK用户态驱动在裸盘上的性能。
+- 基于bdev的fio_plugin，其特点为I/O测试基于SPDK块设备bdev之上，所有I/O经由块设备层bdev，再传送至裸盘设备。常用于评估SPDK块设备bdev的性能。
+
 ### 初始化NVMe SSD
 
 在运行SPDK应用程序之前，必须分配一些较大的页面，并且必须从本机内核驱动程序解绑定任何NVMe和I/OAT设备。SPDK包含一个脚本，可以在Linux上自动执行这个过程。这个脚本应该作为根运行。它只需要在系统上运行一次。
@@ -284,6 +289,100 @@ LD_PRELOAD=<path to spdk>spdk/build/fio/spdk_bdev fio example_spdk_bdev.fio
 结果如下
 
 <img src="/images/搭建SPDK和fio环境/image-20240322150518070.png" alt="image-20240322150518070"  />
+
+
+
+### 使用fio运行自己定义的工作负载
+
+参考链接https://fio.readthedocs.io/en/latest/fio_doc.html#cmdoption-arg-read_iolog
+
+==**write_iolog**=str==可以将fio中执行一次的流量写入到对应的文件中
+
+==**read_iolog**=str==可以去读对应的流量文件然后执行。注意，一定要把时间线往后拉，这样才能都执行完
+
+这两个参数都可以在.fio配置文件中直接实现
+
+```
+fio version 3 iolog
+2 Nvme1n1 add
+872 Nvme1n1 open
+878 Nvme1n1 write 0 16384
+888 Nvme1n1 write 0 16384
+891 Nvme1n1 write 0 16384
+10001677 Nvme1n1 close
+```
+
+这是流文件格式，分别对应 `timestamp(μs) filename action offset length(Byte)`
+
+### 收集fio执行的每段结果并输出
+
+在命令行中使用三个参数
+
+```shell
+-output=../test_files/output #指定输出的具体文件
+-output-format=json #指定输出的格式
+-status-interval=1 #指定输出的时间间隔
+```
+
+但是我们使用fio官方文档中的 ==Measurements and reporting==模块进行信息收集
+
+在.fio配置文件中加入命令
+
+```shell
+write_bw_log=./test_files/foo
+write_lat_log=./test_files/foo
+log_avg_msec=10
+```
+
+每隔10ms收集一次数据
+
+为了比较使用trace文件方式和fio本身生成流量方式的区别。首先设置.fio配置文件为
+
+```shell
+[global]
+ioengine=spdk_bdev
+spdk_json_conf=/home/dell6/szb/NVMe/fio/test_files/bdev.json
+thread=1
+group_reporting=1
+direct=1
+verify=0
+time_based=1
+ramp_time=0
+runtime=5
+iodepth=64
+size=16384
+rw=randwrite
+write_bw_log=./test_files/foo
+write_lat_log=./test_files/foo
+log_avg_msec=10
+write_iolog=./test_files/iolog1.txt
+
+[test]
+bs=16k
+filename=Nvme1n1
+```
+
+运行结果如下图
+
+![image-20240323185108469](/images/搭建SPDK和fio环境/image-20240323185108469.png)
+
+同时还会生成相关的统计数据文件
+
+![image-20240323183452664](/images/搭建SPDK和fio环境/image-20240323183452664.png)
+
+每个值的意义见链接https://fio.readthedocs.io/en/latest/fio_doc.html#log-file-formats
+
+然后将write改成read再试一次
+
+![image-20240323185130498](/images/搭建SPDK和fio环境/image-20240323185130498.png)
+
+结果近似，并且多次只运行trace文件也是有误差的。
+
+# 实验过程
+
+## 多租户竞争同一块磁盘
+
+使用基于bdev的fio_plugin测试。因为我们修改的其实是bdev块设备的调度策略。我们使用fio运行我们自己
 
 
 
