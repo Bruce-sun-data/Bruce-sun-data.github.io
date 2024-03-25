@@ -2,6 +2,7 @@
 title: 搭建SPDK和fio环境
 date: 2024-03-15 20:26:22
 tags:
+published: false
 typora-root-url: ..
 categories:
     - 存储研究
@@ -382,7 +383,7 @@ filename=Nvme1n1
 
 # 实验过程
 
-## 多租户竞争同一块磁盘
+## 多租户相同发送速率竞争同一块磁盘
 
 使用基于bdev的fio_plugin测试。因为我们修改的其实是bdev块设备的调度策略。我们使用fio运行我们自己负载。
 
@@ -394,7 +395,45 @@ filename=Nvme1n1
 
 差距有点大，再试一下4KB的数据。
 
+### 4KB的数据
 
+设置iosize=4KB，基准测试中配置如下,iops的值是79.5K。为了让3个流都能被完全服务，所以在生成流量的时候，iosize设置为4KB，时间间隔是1000/26.5=38μs
+
+```shell
+[global]
+ioengine=spdk_bdev
+spdk_json_conf=/home/dell6/szb/NVMe/fio/test_files/bdev.json
+thread=1
+group_reporting=0
+direct=1
+verify=0
+time_based=1
+ramp_time=0
+runtime=10
+iodepth=1
+bs=4k
+size=4k
+rw=randwrite
+[test1]
+numjobs=1
+filename=Nvme1n1
+```
+
+通过设置多个job区域，实现多线程竞争的模式
+
+![image-20240325105430535](/images/搭建SPDK和fio环境/image-20240325105430535.png)
+
+![image-20240325105457953](/images/搭建SPDK和fio环境/image-20240325105457953.png)
+
+## 多租户不同发送速率竞争同一块磁盘
+
+### 4KB数据
+
+经过上面的判断，设置三个任务，其中一个任务在150000条之后把时间间隔改为20μs，提高发送速率
+
+![image-20240325152824718](/images/搭建SPDK和fio环境/image-20240325152824718.png)
+
+![image-20240325153007846](/images/搭建SPDK和fio环境/image-20240325153007846.png)
 
 
 
@@ -413,6 +452,26 @@ SPDK的主要特征
 ## SPDK架构
 
 ![image-20240322111127433](/images/搭建SPDK和fio环境/image-20240322111127433.png)
+
+如上图，是SPDK的整体架构，从下至上，最底层是最核心的用户态NVMe驱动，这是SPDK的基石；
+
+再往上一层是基于用户态驱动程序构建的存储服务，这部分主要是统一抽象的块设备层，包含了用户空间块设备语义的抽象和多个不同后端存储实现；
+
+在块设备之上，SPDK提供了标准存储协议的实现，使得SPDK可以为通用存储客户端提供高性能的存储服务。
+
+除此之外，SPDK还包含了用于管理运行环境、不同层内的管理开发工具，方便开发者的日常开发测试；为了适配更多的使用环境，SPDK也集成了不同的社区组件、如用户空间TCP/IP协议栈VPP、KV存储引擎RocksDB、缓存加速框架OCF等。
+
+### 驱动层
+
+![image-20240325212439022](/images/搭建SPDK和fio环境/image-20240325212439022.png)
+
+用户态驱动是SPDK构建其他服务的基础，主要实现了基于PCIe的NVMe协议，用于在用户态驱动NVMe SSD，也实现了NVMe-over-Fabric(NVMe-oF)用于连接网络的NVMe设备，其中Fabric在SPDK中支持RDMA和TCP两种实现方式；驱动层还包含了其他两类驱动，Virtio用于加速虚拟机IO，I/OAT是通过提高数据拷贝效率的IO加速引擎。
+
+### 存储服务层
+
+![image-20240325213359730](/images/搭建SPDK和fio环境/image-20240325213359730.png)
+
+存储服务层主要在用户空间对块设备语义进行了统一封装抽象，并开发了不同的实现，用于支持不同的后端存储，比如NVMe bdev支持SPDK NVMe驱动管理本地NVMe SSD或则使用NVMe-oF连接远端服务器的NVMe SSD，Ceph RBD用于对接Ceph块存储，AIO和uring等则使用不同的IO模型管理内核块设备；有一类bdev被称为vbdev，它们基于原本的bdev之上实现了一定的功能，比如逻辑卷管理、分区表、缓存加速等，对于更上层的应用来说，它们还是属于bdev。
 
 
 
