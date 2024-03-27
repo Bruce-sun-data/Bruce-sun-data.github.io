@@ -147,9 +147,13 @@ make之后，就可以看到在<spdk_repo>/build/fio目录会有下面两个文�
 
 要在 fio 中使用 SPDK fio 插件，请在运行 fio 时使用 LD_PRELOAD 指定插件二进制文件。
 
+```shell
+sudo LD_PRELOAD=<path to spdk>spdk/build/fio/spdk_bdev ./fio/fio ./test_files/example_spdk_bdev.fio
+```
+
 SPDK提供两种形态的fio_plugin：
 
-- 基于裸盘NVMe的fio_plugin，其特点为I/O通过SPDK用户态驱动直接访问裸盘，常用于评估SPDK用户态驱动在裸盘上的性能。
+- 基于裸盘NVMe的0fio_plugin，其特点为I/O通过SPDK用户态驱动直接访问裸盘，常用于评估SPDK用户态驱动在裸盘上的性能。
 - 基于bdev的fio_plugin，其特点为I/O测试基于SPDK块设备bdev之上，所有I/O经由块设备层bdev，再传送至裸盘设备。常用于评估SPDK块设备bdev的性能。
 
 ### 初始化NVMe SSD
@@ -378,6 +382,12 @@ filename=Nvme1n1
 ![image-20240323185130498](/images/搭建SPDK和fio环境/image-20240323185130498.png)
 
 结果近似，并且多次只运行trace文件也是有误差的。
+
+
+
+## SPDK日志输出
+
+
 
 
 
