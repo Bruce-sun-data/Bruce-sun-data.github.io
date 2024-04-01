@@ -302,9 +302,24 @@ bdev更贴近于纯软件
 
 blob通过函数调用bdev，bdev通过rpc调用数据到nvme
 
- 
+##  代码实现
 
+在`/spdk/examples/`中创建文件夹和makefile文件，进行example的编写
 
+在`spdk/build/examples`中运行对应的example
+
+操作blob分为如下步骤
+
+1. create_bdev:创建
+2. blobstore_init
+3. create_blob
+4. open_blob
+5. write_blob
+6. read_blob
+7. close_blob
+8. destory_blob
+
+基于以上八步，可以实现blob管理组件(文件系统)
 
 ## 内核文件系统与SPDK文件系统
 

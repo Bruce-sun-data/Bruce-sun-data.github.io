@@ -445,6 +445,74 @@ filename=Nvme1n1
 
 ![image-20240325153007846](/images/搭建SPDK和fio环境/image-20240325153007846.png)
 
+## 在使用fio的路径中修改SPDK源码，实现简单的漏桶控制
+
+问题：是把算法实现在`lib/bdev`还是实现在`lib/nvme`?
+
+![image-20240328210403556](/images/搭建SPDK和fio环境/image-20240328210403556.png)
+
+
+
+### SPDK QoS机制
+
+SPDK有自己的QoS实现机制。但是spdk qos做在bdev层，是面向块设备的qos，不是面向客户端的qos。
+
+### 源码分析
+
+==从fio开始分析,bdev==
+
+关于spdk在bdev层的流程可以看https://rootw.github.io/2018/05/SPDK-ioanalyze/
+
+在`./spdk/examples/bdev/fio_plugin/fio_plugin.c`中找到每个租户(thread)创建的过程，
+
+`spdk_fio_init_thread()`函数创建spdk_thread，创建的线程数比作业数目多1。调用的是`./spdk/lib/thread/thread.c`中的`spdk_thread_create()`函数，创建thread。为了调试，每次修改，应该同时对`fio_plugin`和`thread`进行重make。`spdk_fio_bdev_open`调用了作业数目的次数。
+
+`./spdk/lib/bdev` 每调用一次`spdk_fio_bdev_open()`都会调用`bdev_open()`.
+
+
+
+通过`bdev_channel_get_io()`获取`bdev_io`，然后调用`bdev_io_submit()`，该函数的调用次数比请求的总次数多三次。但是因为我们的请求都是写，所以`bdev_write_blocks_with_md()`该函数调用的次数和请求的数目是一致的。
+
+io channel是一个线程强相关对象，不同的线程对应不同的channel，。request必须在关联的I/Ochannel上提交。
+
+`fio_plugin.c`中的`spdk_fio_queue()`用于提交IO request
+
+
+
+
+
+
+
+
+
+==根据NVMe执行过程分析==
+
+在`nvme_ctrlr.c`中找到`nvme_ctrlr_proc_add_io_qpair()`，被调用的次数和线程数目一致
+
+`nvme_qpair_submit_request()`负责从把request放到qpair中。
+
+
+
+### 在bdev层进行token对每个thread进行速率限制
+
+首先在`./spdk/lib/bdev`中创建 `resource_schedule.c`文件,该文件中完成速率控制的函数。然后在。`./include/spdk/bdev.h`中创建`shceduler`结构体。
+
+该结构体中包括请求排队队列，和一些相关的参数。并且C语言中没有实现map。
+
+给`spdk_thread`中加入 void*指针，指向scheduler，每个线程绑定一个scheduler，每个线程创建之后将scheduler绑定到该线程
+
+在`_bdev_io_submit()`中，在记录
+
+**设置三个任务，其中一个任务在150000条之后把时间间隔改为20μs，提高发送速率**
+
+
+
+
+
+
+
+
+
 
 
 # SPDK介绍
@@ -457,7 +525,20 @@ SPDK的主要特征
 
 - **用户态驱动程序：** SPDK 是一个完全在用户态运行的存储栈，通过绕过操作系统内核和传统的存储协议栈，直接在用户态处理存储操作，从而提高了存储系统的性能和效率。
 - **Bdev（块设备）抽象层：** SPDK 提供了一个灵活的块设备抽象层，允许应用程序轻松管理和操作不同类型的块设备，如NVMe SSD、RAM Disk等。它提供了丰富的API和功能，使开发者能够快速开发高性能的存储应用程序。
-- **轮询：**在内核驱动中，当IO提交到设备时，进程会进入睡眠状态，当数据传输完毕，设备会发起中断从而将进程唤醒，到此整个IO就处理完毕；在SPDK中，并没有使用中断的方式，而是使用轮询的方式检查IO是否完成，当IO完成时，使用异步的方式进行回调，消除了中断的CPU消耗和避免IO延迟抖动。
+- **轮询：**在传统的I/O模型中，应用程序提交读写请求后进入睡眠状态，一旦I/O完成，中断就会将其唤醒。轮询的工作方式则不同，应用程序提交读写请求后继续执行其他工作，以一定的时间间隔回头检查I/O是否已经完成。这种方式避免了中断带来的延迟和开销，并使得应用程序提高了I/O效率。
+
+## SPDK基础知识
+
+为什么要分配大页？
+
+原理：dpdk大页内存原理
+
+- 所有大页以及大页表都以共享内存存放在**共享内存**中，永远都不会因为内存不足而导致被交换到磁盘swap分区中
+- 由于所有进程都共享一个大页表，减少了页表的开销，无形中减少了内存空间的占用， 使得系统支持更多的进程同时运行
+- 减轻TLB的压力
+- 减轻查内存的压力
+
+目前 Linux 常用的 HugePages 大小为 2MB 和 1GB。
 
 ## SPDK架构
 
