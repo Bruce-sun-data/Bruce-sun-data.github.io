@@ -457,6 +457,8 @@ filename=Nvme1n1
 
 SPDK有自己的QoS实现机制。但是spdk qos做在bdev层，是面向块设备的qos，不是面向客户端的qos。
 
+可以自己生成多个虚拟的块设备，然后再使用QoS机制。
+
 ### 源码分析
 
 ==从fio开始分析,bdev==
