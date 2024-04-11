@@ -2,9 +2,10 @@
 title: B站存储开发
 date: 2024-03-12 17:07:37
 tags:
-typora-root-url: ..
+
 categories:
     - 存储研究
+typora-root-url: ..
 ---
 
 # 存储体系介绍
@@ -13,7 +14,7 @@ categories:
 
 ## 自上而下的存储栈
 
-![image-20240312210534587](./images/B站存储开发/image-20240312210534587.png)
+![image-20240312210534587](/images/B站存储开发/image-20240312210534587.png)
 
 # 存储开发三部曲，内核文件系统实现
 
@@ -31,7 +32,7 @@ IMG是镜像文件。test.img和普通磁盘一样。
 
 Linux dd 命令用于读取、转换并输出数据。
 
-![image-20240312210711757](./images/B站存储开发/image-20240312210711757.png)
+![image-20240312210711757](/images/B站存储开发/image-20240312210711757.png)
 
 先生成50MB的img
 
@@ -63,11 +64,11 @@ sudo mount -t ext4 test.img ./mnt/
 
 # 存储的三座大山，磁盘，内核文件系统，分布式文件系统
 
-<img src="./images/B站存储开发/image-20240313204120783.png" alt="image-20240313204120783" style="zoom:67%;" />
+<img src="/images/B站存储开发/image-20240313204120783.png" alt="image-20240313204120783" style="zoom:67%;" />
 
 按照数据不同的需求，可以使用不同的文件系统
 
-<img src="./images/B站存储开发/image-20240313205244761.png" alt="image-20240313205244761" style="zoom:67%;" />
+<img src="/images/B站存储开发/image-20240313205244761.png" alt="image-20240313205244761" style="zoom:67%;" />
 
 将数据写入nvme裸盘的三种方式(三种方式实现文件系统)
 
