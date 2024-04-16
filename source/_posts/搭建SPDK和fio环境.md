@@ -406,7 +406,7 @@ filename=Nvme1n1
 
 ### 4KB的数据
 
-设置iosize=4KB，基准测试中配置如下,iops的值是79.5K。为了让3个流都能被完全服务，所以在生成流量的时候，iosize设置为4KB，时间间隔是1000/26.5=38μs
+设置iosize=4KB，基准测试中配置如下,iops的值是79.5K。为了让3个流都能被完全服务，所以在生成流量的时候，iosize设置为4KB，时间间隔是1000/26.5=38μs  发送速率是103MBps
 
 ```shell
 [global]
@@ -438,11 +438,154 @@ filename=Nvme1n1
 
 ### 4KB数据
 
-经过上面的判断，设置三个任务，其中一个任务在150000条之后把时间间隔改为20μs，提高发送速率
+经过上面的判断，设置三个任务，其中一个任务在150000条之后把时间间隔改为20μs(4Kiolog_2.trace)，提高发送速率为195MBps
 
 ![image-20240325152824718](/images/搭建SPDK和fio环境/image-20240325152824718.png)
 
 ![image-20240325153007846](/images/搭建SPDK和fio环境/image-20240325153007846.png)
+
+下面两幅图是对bdev的QoS进行限制(300MBps)之后的操作。
+
+![image-20240416155937214](/images/搭建SPDK和fio环境/image-20240416155937214.png)
+
+![image-20240416155956892](/images/搭建SPDK和fio环境/image-20240416155956892.png)
+
+## SPDK QoS机制实现对租户服务速率的限制
+
+SPDK有自己的QoS实现机制。但是spdk qos做在bdev层，是面向块设备的qos，不是面向客户端的qos。
+
+可以自己生成多个虚拟的块设备，然后再使用QoS机制。
+
+### SPDK QoS的使用
+
+json文件的使用就很好地替代了rpc的配置方式。
+
+作为bdev.json文件中的一部分。以json的格式运行。详情见https://spdk.io/doc/jsonrpc.html
+
+```json
+{
+  "subsystems": [
+    {
+      "subsystem": "bdev",
+      "config": [
+        {
+          "method": "bdev_nvme_attach_controller",
+          "params": {
+            "trtype": "PCIe",
+            "name": "Nvme1",
+            "traddr": "0000:05:00.0"
+          }
+        },
+        {
+          "method": "bdev_set_qos_limit",
+          "params": {
+            "name": "Nvme1n1",
+            "rw_mbytes_per_sec": 300
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 在fio中使用rate限制
+
+将每个job的rate设置为了100，但是不管用
+
+### 在json配置文件中使用bdev_split_create
+
+但是一上来不知道怎么使用，所以先用rpc生成分区，然后在将rpc操作转换为json。
+
+最后的json文件如下所示
+
+```json
+{
+  "subsystems": [
+    {
+      "subsystem": "bdev",
+      "config": [
+        {
+          "method": "bdev_nvme_attach_controller",
+          "params": {
+            "trtype": "PCIe",
+            "name": "Nvme1",
+            "traddr": "0000:05:00.0"
+          }
+        },
+        {
+          "method": "bdev_split_create",
+          "params": {
+            "base_bdev": "Nvme1n1",
+            "split_count": 3
+          }
+        },
+        {
+          "method": "bdev_set_qos_limit",
+          "params": {
+            "name": "Nvme1n1p0",
+            "rw_mbytes_per_sec": 100
+          }
+        },
+        {
+          "method": "bdev_set_qos_limit",
+          "params": {
+            "name": "Nvme1n1p1",
+            "rw_mbytes_per_sec": 100
+          }
+        },
+        {
+          "method": "bdev_set_qos_limit",
+          "params": {
+            "name": "Nvme1n1p2",
+            "rw_mbytes_per_sec": 100
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+注意，同时也要修改fio中trace文件对应的device name。fio文件的具体内容如下
+
+```shell
+[global]
+ioengine=spdk_bdev
+spdk_json_conf=/home/dell6/szb/NVMe/fio/test_files/bdev.json
+thread=1
+group_reporting=0
+direct=1
+verify=0
+time_based=1
+ramp_time=0
+runtime=10
+iodepth=1
+bs=4k
+size=4k
+rw=randwrite
+write_bw_log=./test_files/three4
+write_lat_log=./test_files/three4
+log_avg_msec=10
+
+
+[test1]
+numjobs=1
+filename=Nvme1n1p0
+read_iolog=./test_files/4Kiologp0.trace
+[test2]
+numjobs=1
+filename=Nvme1n1p1
+read_iolog=./test_files/4Kiologp1.trace
+[test3]
+numjobs=1
+filename=Nvme1n1p2
+read_iolog=./test_files/4Kiologp2.trace
+```
+
+![image-20240416173944439](/images/搭建SPDK和fio环境/image-20240416173944439.png)
+
+![image-20240416174115082](/images/搭建SPDK和fio环境/image-20240416174115082.png)
 
 ## 在使用fio的路径中修改SPDK源码，实现简单的漏桶控制
 
@@ -451,12 +594,6 @@ filename=Nvme1n1
 ![image-20240328210403556](/images/搭建SPDK和fio环境/image-20240328210403556.png)
 
 
-
-### SPDK QoS机制
-
-SPDK有自己的QoS实现机制。但是spdk qos做在bdev层，是面向块设备的qos，不是面向客户端的qos。
-
-可以自己生成多个虚拟的块设备，然后再使用QoS机制。
 
 ### 源码分析
 

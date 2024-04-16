@@ -9,11 +9,11 @@ categories:
 
 # SPDK使用vhost
 
+## SPDK vhost工作机制
 
+![image-20240416101340921](/images/SPDK使用vhost/image-20240416101340921.png)
 
-
-
-
+vhost target以进程的形式在本地计算机提供存储服务，
 
 
 
