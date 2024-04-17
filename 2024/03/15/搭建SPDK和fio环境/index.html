@@ -1,0 +1,833 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="sun_zhi_bin">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="fio安装这里使用github的安装方式，方便管理 使用内网的github网站 1git clone https:&#x2F;&#x2F;gitcode.com&#x2F;axboe&#x2F;fio.git  接着在fio的目录下运行下面的命令 12345sudo apt-get install libaio-devsudo apt-get install gccsudo .&#x2F;configuresudo make installfio">
+<meta property="og:type" content="article">
+<meta property="og:title" content="搭建SPDK和fio环境">
+<meta property="og:url" content="http://example.com/2024/03/15/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/index.html">
+<meta property="og:site_name" content="Bruce Sun&#39;s blog">
+<meta property="og:description" content="fio安装这里使用github的安装方式，方便管理 使用内网的github网站 1git clone https:&#x2F;&#x2F;gitcode.com&#x2F;axboe&#x2F;fio.git  接着在fio的目录下运行下面的命令 12345sudo apt-get install libaio-devsudo apt-get install gccsudo .&#x2F;configuresudo make installfio">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/搭建SPDK和fio环境/image-20240315210452247.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240315210748428.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240321155635222.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240321221737551.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240322093108395.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240322093927566.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240322102259191.png">
+<meta property="og:image" content="http://example.com/images/搭建SPDK和fio环境/image-20240322150518070.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240323185108469.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240323183452664.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240323185130498.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240324211128634.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240325105430535.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240325105457953.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240325152824718.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240325153007846.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240416155937214.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240416155956892.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240416173944439.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240416174115082.png">
+<meta property="og:image" content="http://example.com/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240328210403556.png">
+<meta property="article:published_time" content="2024-03-15T12:26:22.000Z">
+<meta property="article:modified_time" content="2024-04-16T10:31:53.394Z">
+<meta property="article:author" content="sun_zhi_bin">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/images/搭建SPDK和fio环境/image-20240315210452247.png">
+  
+  
+  
+  <title>搭建SPDK和fio环境 - Bruce Sun&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Bruce Sun的博客网站</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="搭建SPDK和fio环境"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-15 20:26" pubdate>
+          2024年3月15日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          78 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">搭建SPDK和fio环境</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="fio"><a href="#fio" class="headerlink" title="fio"></a>fio</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>这里使用github的安装方式，方便管理</p>
+<p>使用内网的github网站</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://gitcode.com/axboe/fio.git<br></code></pre></td></tr></table></figure>
+
+<p>接着在fio的目录下运行下面的命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo apt-get install libaio-dev<br>sudo apt-get install gcc<br>sudo ./configure<br>sudo make install<br>fio -v<br></code></pre></td></tr></table></figure>
+
+<p>可以看到fio的版本(这里的版本是<code>fio-3.36-38-g06c4</code>)</p>
+<p>fio的官方使用手册<a target="_blank" rel="noopener" href="https://fio.readthedocs.io/en/latest/fio_doc.html">https://fio.readthedocs.io/en/latest/fio_doc.html</a></p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>主要使用.fio文件进行测试</p>
+<h3 id="测试psync"><a href="#测试psync" class="headerlink" title="测试psync"></a>测试psync</h3><p>.fio文件内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs shell">[global]<br>thread=1<br>group_reporting=1<br>ioengine=psync<br>direct=1<br>verify=0<br>size=16384<br>time_based=1<br>rw=randwrite<br>runtime=10<br>bs=16K<br>iodepth=64<br>filename=/dev/nvme1n1p1<br>[test]<br>stonewall<br>description=&quot;variable bs&quot;<br>bs=16K<br><br></code></pre></td></tr></table></figure>
+
+<p>测试命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">path_to_fio/fio u_path/psync.fio<br></code></pre></td></tr></table></figure>
+
+<p>测试结果</p>
+<img src="/images/搭建SPDK和fio环境/image-20240315210452247.png" srcset="/img/loading.gif" lazyload alt="image-20240315210452247"  />
+
+<h3 id="测试libaio"><a href="#测试libaio" class="headerlink" title="测试libaio"></a>测试libaio</h3><p>只需要把上面的<code>psync</code>换成<code>libaio</code>就可以了</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240315210748428.png" srcset="/img/loading.gif" lazyload alt="image-20240315210748428"></p>
+<p>效果有一点点提升</p>
+<h1 id="SPDK"><a href="#SPDK" class="headerlink" title="SPDK"></a>SPDK</h1><h2 id="安装SPDK"><a href="#安装SPDK" class="headerlink" title="安装SPDK"></a>安装SPDK</h2><p>先查看我们系统的环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">cat /proc/version<br>Linux version 5.4.0-144-generic (buildd@lcy02-amd64-069) (gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04)) #161~18.04.1-Ubuntu SMP Fri Feb 10 15:55:22 UTC 2023<br></code></pre></td></tr></table></figure>
+
+<p>然后从github下载spdk，如果遇到了网络问题，可以手动修改github的dns映射，参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/melodyjerry/p/13031571.html">https://www.cnblogs.com/melodyjerry/p/13031571.html</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">#</span><span class="bash"> 下载</span><br><span class="hljs-meta">$</span><span class="bash"> git <span class="hljs-built_in">clone</span> https://github.com/spdk/spdk</span><br><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> spdk</span><br><span class="hljs-meta">#</span><span class="bash"> 安装子模块.</span><br><span class="hljs-meta">$</span><span class="bash"> git submodule update --init</span><br><span class="hljs-meta">#</span><span class="bash">如果安装的慢，可以将.gitmodules文件中的路径改成国内镜像的：hub.fastgit.org(只能用作镜像，不可访问)</span><br><span class="hljs-meta">#</span><span class="bash"> 安装依赖。有可能需要给pip换源，最好使用清华源</span><br><span class="hljs-meta">$</span><span class="bash"> sudo ./scripts/pkgdep.sh</span><br><span class="hljs-meta">#</span><span class="bash">编译</span><br><span class="hljs-meta">$</span><span class="bash"> ./configure</span><br><span class="hljs-meta">$</span><span class="bash"> make</span><br></code></pre></td></tr></table></figure>
+
+<p>安装依赖的时候报错</p>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs q">无法定位软件包 libfuse3-<span class="hljs-built_in">dev</span><br></code></pre></td></tr></table></figure>
+
+<p>安装的spdk版本出错，应该安装22.05</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone --branch v22.05.x https://github.com/spdk/spdk.git<br></code></pre></td></tr></table></figure>
+
+<p>==应该在可以翻墙的Linux系统中安装。连子组件安装完之后一起上传到服务器。==</p>
+<p>为了方便操作，我们使用vscode连接远程的服务器.注意，Host的命名不能加括号</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">Host 14#内网<br>    HostName 192.168.xxx.xxx<br>    User username<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="SPDK结合FIO测试磁盘性能"><a href="#SPDK结合FIO测试磁盘性能" class="headerlink" title="SPDK结合FIO测试磁盘性能"></a>SPDK结合FIO测试磁盘性能</h2><p>安装完SPDK和fio之后，需要配置SPDK使用fio</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">./configure --with-fio=/home/fio --with-ocf<br>make<br></code></pre></td></tr></table></figure>
+
+<p>make之后，就可以看到在<spdk_repo>/build/fio目录会有下面两个文件，这就是fio_plugin的可执行程序。</p>
+<p>要在 fio 中使用 SPDK fio 插件，请在运行 fio 时使用 LD_PRELOAD 指定插件二进制文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo LD_PRELOAD=&lt;path to spdk&gt;spdk/build/fio/spdk_bdev ./fio/fio ./test_files/example_spdk_bdev.fio<br></code></pre></td></tr></table></figure>
+
+<p>SPDK提供两种形态的fio_plugin：</p>
+<ul>
+<li>基于裸盘NVMe的0fio_plugin，其特点为I/O通过SPDK用户态驱动直接访问裸盘，常用于评估SPDK用户态驱动在裸盘上的性能。</li>
+<li>基于bdev的fio_plugin，其特点为I/O测试基于SPDK块设备bdev之上，所有I/O经由块设备层bdev，再传送至裸盘设备。常用于评估SPDK块设备bdev的性能。</li>
+</ul>
+<h3 id="初始化NVMe-SSD"><a href="#初始化NVMe-SSD" class="headerlink" title="初始化NVMe SSD"></a>初始化NVMe SSD</h3><p>在运行SPDK应用程序之前，必须分配一些较大的页面，并且必须从本机内核驱动程序解绑定任何NVMe和I/OAT设备。SPDK包含一个脚本，可以在Linux上自动执行这个过程。这个脚本应该作为根运行。它只需要在系统上运行一次。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo scripts/setup.sh<br></code></pre></td></tr></table></figure>
+
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240321155635222.png" srcset="/img/loading.gif" lazyload alt="image-20240321155635222"></p>
+<p>但是发现我们的两个nvme设备都在使用，没有办法绑定。并且使用lsblk的时候可以看出来对磁盘进行分区了，所以需要对该磁盘进行初始化</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240321221737551.png" srcset="/img/loading.gif" lazyload alt="image-20240321221737551"></p>
+<p>先使用fdisk删除分区。然后使用nvme-cli相关命令初始化nvme ssd</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo nvme format /dev/nvme1n1<br></code></pre></td></tr></table></figure>
+
+<p>再运行上面的绑定命令，出现类似结果则绑定成功。再使用<code>lsblk</code>就不会看到结果了</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240322093108395.png" srcset="/img/loading.gif" lazyload alt="image-20240322093108395"></p>
+<p>绑定之后，在spdk的路径运行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo ./build/examples/hello_world<br></code></pre></td></tr></table></figure>
+
+<p>结果如下</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240322093927566.png" srcset="/img/loading.gif" lazyload alt="image-20240322093927566"></p>
+<p>成功</p>
+<h3 id="基于NVMe的fio-plugin"><a href="#基于NVMe的fio-plugin" class="headerlink" title="基于NVMe的fio_plugin"></a>基于NVMe的fio_plugin</h3><p>在 fio 配置文件中设置 ioengine=spdk（请参阅 github.com/spdk/spdk/tree/v22.05.x/examples/nvme/fio_plugin 目录下的 example_config.fio）</p>
+<p>.fio文件内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs shell">[global]<br>ioengine=spdk<br>thread=1<br>group_reporting=1<br>direct=1<br>verify=0<br>time_based=1<br>ramp_time=0<br>runtime=2<br>iodepth=128<br>size=16384<br>rw=randrw<br><br>[test]<br>numjobs=1<br>filename=trtype=PCIe traddr=0000.05.00.0 ns=1<br></code></pre></td></tr></table></figure>
+
+<p>运行命令如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">LD_PRELOAD=&lt;path to spdk&gt;spdk/build/fio/spdk_nvme fio example_spdk_nvme.fio<br></code></pre></td></tr></table></figure>
+
+<p>运行结果如下</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240322102259191.png" srcset="/img/loading.gif" lazyload alt="image-20240322102259191"></p>
+<h3 id="基于bdev的fio-plugin"><a href="#基于bdev的fio-plugin" class="headerlink" title="基于bdev的fio_plugin"></a>基于bdev的fio_plugin</h3><p>具体的使用方式可以看github.com/spdk/spdk/tree/v22.05.x/examples/bdev/fio_plugin这里的readme</p>
+<p>基于bdev的fio_plugin是将I/O在SPDK块设备bdev之上进行发送。而基于裸盘的fio_plugin，I/O是直接到裸盘上进行处理。两者最大的差别在于I/O是否经过bdev这一层。因此，基于bdev的fio_plugin能够很好的评估SPDK块设备层bdev的性能。其编译安装与裸盘的fio_plugin完全相同。也需要将盘从原始驱动中解除。</p>
+<p>使用下面的命令自动监测，生成bdev.json</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">scripts/gen_nvme.sh --json-with-subsystems &gt; /tmp/bdev.json<br></code></pre></td></tr></table></figure>
+
+<p>如下所示</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs json">&#123;<br>    <span class="hljs-attr">&quot;subsystems&quot;</span>: [<br>        &#123;<br>            <span class="hljs-attr">&quot;subsystem&quot;</span>: <span class="hljs-string">&quot;bdev&quot;</span>,<br>            <span class="hljs-attr">&quot;config&quot;</span>: [<br>                &#123;<br>                <span class="hljs-attr">&quot;method&quot;</span>: <span class="hljs-string">&quot;bdev_nvme_attach_controller&quot;</span>,<br>                <span class="hljs-attr">&quot;params&quot;</span>: &#123;<br>                    <span class="hljs-attr">&quot;trtype&quot;</span>: <span class="hljs-string">&quot;PCIe&quot;</span>,<br>                    <span class="hljs-attr">&quot;name&quot;</span>:<span class="hljs-string">&quot;Nvme1&quot;</span>,<br>                    <span class="hljs-attr">&quot;traddr&quot;</span>:<span class="hljs-string">&quot;0000:05:00.0&quot;</span><br>                    &#125;<br>                &#125;<br>            ]<br>        &#125;<br>    ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>.fio文件内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell">[global]<br>ioengine=spdk_bdev<br>spdk_json_conf=/tmp/bdev.json<br>thread=1<br>group_reporting=1<br>direct=1<br>verify=0<br>time_based=1<br>ramp_time=0<br>runtime=10<br>iodepth=64<br>size=16384<br>rw=randwrite<br><br>[test]<br>bs=16k<br>filename=Nvme1n1<br></code></pre></td></tr></table></figure>
+
+<p><strong>注意 Nvme0是指controller，而Nvme0n1才是指bdev，在Linux kernel中亦是如此，而非SPDK限定</strong></p>
+<p>运行命令如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">LD_PRELOAD=&lt;path to spdk&gt;spdk/build/fio/spdk_bdev fio example_spdk_bdev.fio<br></code></pre></td></tr></table></figure>
+
+<p>结果如下</p>
+<img src="/images/搭建SPDK和fio环境/image-20240322150518070.png" srcset="/img/loading.gif" lazyload alt="image-20240322150518070"  />
+
+
+
+<h3 id="使用fio运行自己定义的工作负载"><a href="#使用fio运行自己定义的工作负载" class="headerlink" title="使用fio运行自己定义的工作负载"></a>使用fio运行自己定义的工作负载</h3><p>参考链接<a target="_blank" rel="noopener" href="https://fio.readthedocs.io/en/latest/fio_doc.html#cmdoption-arg-read_iolog">https://fio.readthedocs.io/en/latest/fio_doc.html#cmdoption-arg-read_iolog</a></p>
+<p>==<strong>write_iolog</strong>=str==可以将fio中执行一次的流量写入到对应的文件中</p>
+<p>==<strong>read_iolog</strong>=str==可以去读对应的流量文件然后执行。注意，一定要把时间线往后拉，这样才能都执行完</p>
+<p>这两个参数都可以在.fio配置文件中直接实现</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">fio</span> version <span class="hljs-number">3</span> iolog<br><span class="hljs-attribute">2</span> Nvme<span class="hljs-number">1</span>n<span class="hljs-number">1</span> add<br><span class="hljs-attribute">872</span> Nvme<span class="hljs-number">1</span>n<span class="hljs-number">1</span> open<br><span class="hljs-attribute">878</span> Nvme<span class="hljs-number">1</span>n<span class="hljs-number">1</span> write <span class="hljs-number">0</span> <span class="hljs-number">16384</span><br><span class="hljs-attribute">888</span> Nvme<span class="hljs-number">1</span>n<span class="hljs-number">1</span> write <span class="hljs-number">0</span> <span class="hljs-number">16384</span><br><span class="hljs-attribute">891</span> Nvme<span class="hljs-number">1</span>n<span class="hljs-number">1</span> write <span class="hljs-number">0</span> <span class="hljs-number">16384</span><br><span class="hljs-attribute">10001677</span> Nvme<span class="hljs-number">1</span>n<span class="hljs-number">1</span> close<br></code></pre></td></tr></table></figure>
+
+<p>这是流文件格式，分别对应 <code>timestamp(μs) filename action offset length(Byte)</code></p>
+<h3 id="收集fio执行的每段结果并输出"><a href="#收集fio执行的每段结果并输出" class="headerlink" title="收集fio执行的每段结果并输出"></a>收集fio执行的每段结果并输出</h3><p>在命令行中使用三个参数</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">-output=../test_files/output #指定输出的具体文件<br>-output-format=json #指定输出的格式<br>-status-interval=1 #指定输出的时间间隔<br></code></pre></td></tr></table></figure>
+
+<p>但是我们使用fio官方文档中的 ==Measurements and reporting==模块进行信息收集</p>
+<p>在.fio配置文件中加入命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">write_bw_log=./test_files/foo<br>write_lat_log=./test_files/foo<br>log_avg_msec=10<br></code></pre></td></tr></table></figure>
+
+<p>每隔10ms收集一次数据</p>
+<p>为了比较使用trace文件方式和fio本身生成流量方式的区别。首先设置.fio配置文件为</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs shell">[global]<br>ioengine=spdk_bdev<br>spdk_json_conf=/home/dell6/szb/NVMe/fio/test_files/bdev.json<br>thread=1<br>group_reporting=1<br>direct=1<br>verify=0<br>time_based=1<br>ramp_time=0<br>runtime=5<br>iodepth=64<br>size=16384<br>rw=randwrite<br>write_bw_log=./test_files/foo<br>write_lat_log=./test_files/foo<br>log_avg_msec=10<br>write_iolog=./test_files/iolog1.txt<br><br>[test]<br>bs=16k<br>filename=Nvme1n1<br></code></pre></td></tr></table></figure>
+
+<p>运行结果如下图</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240323185108469.png" srcset="/img/loading.gif" lazyload alt="image-20240323185108469"></p>
+<p>同时还会生成相关的统计数据文件</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240323183452664.png" srcset="/img/loading.gif" lazyload alt="image-20240323183452664"></p>
+<p>每个值的意义见链接<a target="_blank" rel="noopener" href="https://fio.readthedocs.io/en/latest/fio_doc.html#log-file-formats">https://fio.readthedocs.io/en/latest/fio_doc.html#log-file-formats</a></p>
+<p>然后将write改成read再试一次</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240323185130498.png" srcset="/img/loading.gif" lazyload alt="image-20240323185130498"></p>
+<p>结果近似，并且多次只运行trace文件也是有误差的。</p>
+<h2 id="SPDK日志输出"><a href="#SPDK日志输出" class="headerlink" title="SPDK日志输出"></a>SPDK日志输出</h2><h1 id="实验过程"><a href="#实验过程" class="headerlink" title="实验过程"></a>实验过程</h1><h2 id="多租户相同发送速率竞争同一块磁盘"><a href="#多租户相同发送速率竞争同一块磁盘" class="headerlink" title="多租户相同发送速率竞争同一块磁盘"></a>多租户相同发送速率竞争同一块磁盘</h2><p>使用基于bdev的fio_plugin测试。因为我们修改的其实是bdev块设备的调度策略。我们使用fio运行我们自己负载。</p>
+<p>我们自己生成流量数据，然后在.fio中使用参数<code>read_iolog=./test_files/iolog.trace</code>可以读取自己的流量数据。通过设置<code>runtime</code>的值可以防止段错误，即还有命令在跑但是程序结束的问题</p>
+<h3 id="16KB的数据"><a href="#16KB的数据" class="headerlink" title="16KB的数据"></a>16KB的数据</h3><p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240324211128634.png" srcset="/img/loading.gif" lazyload alt="image-20240324211128634"></p>
+<p>差距有点大，再试一下4KB的数据。</p>
+<h3 id="4KB的数据"><a href="#4KB的数据" class="headerlink" title="4KB的数据"></a>4KB的数据</h3><p>设置iosize=4KB，基准测试中配置如下,iops的值是79.5K。为了让3个流都能被完全服务，所以在生成流量的时候，iosize设置为4KB，时间间隔是1000/26.5=38μs  发送速率是103MBps</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell">[global]<br>ioengine=spdk_bdev<br>spdk_json_conf=/home/dell6/szb/NVMe/fio/test_files/bdev.json<br>thread=1<br>group_reporting=0<br>direct=1<br>verify=0<br>time_based=1<br>ramp_time=0<br>runtime=10<br>iodepth=1<br>bs=4k<br>size=4k<br>rw=randwrite<br>[test1]<br>numjobs=1<br>filename=Nvme1n1<br></code></pre></td></tr></table></figure>
+
+<p>通过设置多个job区域，实现多线程竞争的模式</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240325105430535.png" srcset="/img/loading.gif" lazyload alt="image-20240325105430535"></p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240325105457953.png" srcset="/img/loading.gif" lazyload alt="image-20240325105457953"></p>
+<h2 id="多租户不同发送速率竞争同一块磁盘"><a href="#多租户不同发送速率竞争同一块磁盘" class="headerlink" title="多租户不同发送速率竞争同一块磁盘"></a>多租户不同发送速率竞争同一块磁盘</h2><h3 id="4KB数据"><a href="#4KB数据" class="headerlink" title="4KB数据"></a>4KB数据</h3><p>经过上面的判断，设置三个任务，其中一个任务在150000条之后把时间间隔改为20μs(4Kiolog_2.trace)，提高发送速率为195MBps</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240325152824718.png" srcset="/img/loading.gif" lazyload alt="image-20240325152824718"></p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240325153007846.png" srcset="/img/loading.gif" lazyload alt="image-20240325153007846"></p>
+<p>下面两幅图是对bdev的QoS进行限制(300MBps)之后的操作。</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240416155937214.png" srcset="/img/loading.gif" lazyload alt="image-20240416155937214"></p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240416155956892.png" srcset="/img/loading.gif" lazyload alt="image-20240416155956892"></p>
+<h2 id="SPDK-QoS机制实现对租户服务速率的限制"><a href="#SPDK-QoS机制实现对租户服务速率的限制" class="headerlink" title="SPDK QoS机制实现对租户服务速率的限制"></a>SPDK QoS机制实现对租户服务速率的限制</h2><p>SPDK有自己的QoS实现机制。但是spdk qos做在bdev层，是面向块设备的qos，不是面向客户端的qos。</p>
+<p>可以自己生成多个虚拟的块设备，然后再使用QoS机制。</p>
+<h3 id="SPDK-QoS的使用"><a href="#SPDK-QoS的使用" class="headerlink" title="SPDK QoS的使用"></a>SPDK QoS的使用</h3><p>json文件的使用就很好地替代了rpc的配置方式。</p>
+<p>作为bdev.json文件中的一部分。以json的格式运行。详情见<a target="_blank" rel="noopener" href="https://spdk.io/doc/jsonrpc.html">https://spdk.io/doc/jsonrpc.html</a></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs json">&#123;<br>  <span class="hljs-attr">&quot;subsystems&quot;</span>: [<br>    &#123;<br>      <span class="hljs-attr">&quot;subsystem&quot;</span>: <span class="hljs-string">&quot;bdev&quot;</span>,<br>      <span class="hljs-attr">&quot;config&quot;</span>: [<br>        &#123;<br>          <span class="hljs-attr">&quot;method&quot;</span>: <span class="hljs-string">&quot;bdev_nvme_attach_controller&quot;</span>,<br>          <span class="hljs-attr">&quot;params&quot;</span>: &#123;<br>            <span class="hljs-attr">&quot;trtype&quot;</span>: <span class="hljs-string">&quot;PCIe&quot;</span>,<br>            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Nvme1&quot;</span>,<br>            <span class="hljs-attr">&quot;traddr&quot;</span>: <span class="hljs-string">&quot;0000:05:00.0&quot;</span><br>          &#125;<br>        &#125;,<br>        &#123;<br>          <span class="hljs-attr">&quot;method&quot;</span>: <span class="hljs-string">&quot;bdev_set_qos_limit&quot;</span>,<br>          <span class="hljs-attr">&quot;params&quot;</span>: &#123;<br>            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Nvme1n1&quot;</span>,<br>            <span class="hljs-attr">&quot;rw_mbytes_per_sec&quot;</span>: <span class="hljs-number">300</span><br>          &#125;<br>        &#125;<br>      ]<br>    &#125;<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="在fio中使用rate限制"><a href="#在fio中使用rate限制" class="headerlink" title="在fio中使用rate限制"></a>在fio中使用rate限制</h3><p>将每个job的rate设置为了100，但是不管用</p>
+<h3 id="在json配置文件中使用bdev-split-create"><a href="#在json配置文件中使用bdev-split-create" class="headerlink" title="在json配置文件中使用bdev_split_create"></a>在json配置文件中使用bdev_split_create</h3><p>但是一上来不知道怎么使用，所以先用rpc生成分区，然后在将rpc操作转换为json。</p>
+<p>最后的json文件如下所示</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs json">&#123;<br>  <span class="hljs-attr">&quot;subsystems&quot;</span>: [<br>    &#123;<br>      <span class="hljs-attr">&quot;subsystem&quot;</span>: <span class="hljs-string">&quot;bdev&quot;</span>,<br>      <span class="hljs-attr">&quot;config&quot;</span>: [<br>        &#123;<br>          <span class="hljs-attr">&quot;method&quot;</span>: <span class="hljs-string">&quot;bdev_nvme_attach_controller&quot;</span>,<br>          <span class="hljs-attr">&quot;params&quot;</span>: &#123;<br>            <span class="hljs-attr">&quot;trtype&quot;</span>: <span class="hljs-string">&quot;PCIe&quot;</span>,<br>            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Nvme1&quot;</span>,<br>            <span class="hljs-attr">&quot;traddr&quot;</span>: <span class="hljs-string">&quot;0000:05:00.0&quot;</span><br>          &#125;<br>        &#125;,<br>        &#123;<br>          <span class="hljs-attr">&quot;method&quot;</span>: <span class="hljs-string">&quot;bdev_split_create&quot;</span>,<br>          <span class="hljs-attr">&quot;params&quot;</span>: &#123;<br>            <span class="hljs-attr">&quot;base_bdev&quot;</span>: <span class="hljs-string">&quot;Nvme1n1&quot;</span>,<br>            <span class="hljs-attr">&quot;split_count&quot;</span>: <span class="hljs-number">3</span><br>          &#125;<br>        &#125;,<br>        &#123;<br>          <span class="hljs-attr">&quot;method&quot;</span>: <span class="hljs-string">&quot;bdev_set_qos_limit&quot;</span>,<br>          <span class="hljs-attr">&quot;params&quot;</span>: &#123;<br>            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Nvme1n1p0&quot;</span>,<br>            <span class="hljs-attr">&quot;rw_mbytes_per_sec&quot;</span>: <span class="hljs-number">100</span><br>          &#125;<br>        &#125;,<br>        &#123;<br>          <span class="hljs-attr">&quot;method&quot;</span>: <span class="hljs-string">&quot;bdev_set_qos_limit&quot;</span>,<br>          <span class="hljs-attr">&quot;params&quot;</span>: &#123;<br>            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Nvme1n1p1&quot;</span>,<br>            <span class="hljs-attr">&quot;rw_mbytes_per_sec&quot;</span>: <span class="hljs-number">100</span><br>          &#125;<br>        &#125;,<br>        &#123;<br>          <span class="hljs-attr">&quot;method&quot;</span>: <span class="hljs-string">&quot;bdev_set_qos_limit&quot;</span>,<br>          <span class="hljs-attr">&quot;params&quot;</span>: &#123;<br>            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Nvme1n1p2&quot;</span>,<br>            <span class="hljs-attr">&quot;rw_mbytes_per_sec&quot;</span>: <span class="hljs-number">100</span><br>          &#125;<br>        &#125;<br>      ]<br>    &#125;<br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>注意，同时也要修改fio中trace文件对应的device name。fio文件的具体内容如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs shell">[global]<br>ioengine=spdk_bdev<br>spdk_json_conf=/home/dell6/szb/NVMe/fio/test_files/bdev.json<br>thread=1<br>group_reporting=0<br>direct=1<br>verify=0<br>time_based=1<br>ramp_time=0<br>runtime=10<br>iodepth=1<br>bs=4k<br>size=4k<br>rw=randwrite<br>write_bw_log=./test_files/three4<br>write_lat_log=./test_files/three4<br>log_avg_msec=10<br><br><br>[test1]<br>numjobs=1<br>filename=Nvme1n1p0<br>read_iolog=./test_files/4Kiologp0.trace<br>[test2]<br>numjobs=1<br>filename=Nvme1n1p1<br>read_iolog=./test_files/4Kiologp1.trace<br>[test3]<br>numjobs=1<br>filename=Nvme1n1p2<br>read_iolog=./test_files/4Kiologp2.trace<br></code></pre></td></tr></table></figure>
+
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240416173944439.png" srcset="/img/loading.gif" lazyload alt="image-20240416173944439"></p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240416174115082.png" srcset="/img/loading.gif" lazyload alt="image-20240416174115082"></p>
+<h2 id="在使用fio的路径中修改SPDK源码，实现简单的漏桶控制"><a href="#在使用fio的路径中修改SPDK源码，实现简单的漏桶控制" class="headerlink" title="在使用fio的路径中修改SPDK源码，实现简单的漏桶控制"></a>在使用fio的路径中修改SPDK源码，实现简单的漏桶控制</h2><p>问题：是把算法实现在<code>lib/bdev</code>还是实现在<code>lib/nvme</code>?</p>
+<p><img src="/images/%E6%90%AD%E5%BB%BASPDK%E5%92%8Cfio%E7%8E%AF%E5%A2%83/image-20240328210403556.png" srcset="/img/loading.gif" lazyload alt="image-20240328210403556"></p>
+<h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><p>==从fio开始分析,bdev==</p>
+<p>关于spdk在bdev层的流程可以看<a target="_blank" rel="noopener" href="https://rootw.github.io/2018/05/SPDK-ioanalyze/">https://rootw.github.io/2018/05/SPDK-ioanalyze/</a></p>
+<p>在<code>./spdk/examples/bdev/fio_plugin/fio_plugin.c</code>中找到每个租户(thread)创建的过程，</p>
+<p><code>spdk_fio_init_thread()</code>函数创建spdk_thread，创建的线程数比作业数目多1。调用的是<code>./spdk/lib/thread/thread.c</code>中的<code>spdk_thread_create()</code>函数，创建thread。为了调试，每次修改，应该同时对<code>fio_plugin</code>和<code>thread</code>进行重make。<code>spdk_fio_bdev_open</code>调用了作业数目的次数。</p>
+<p><code>./spdk/lib/bdev</code> 每调用一次<code>spdk_fio_bdev_open()</code>都会调用<code>bdev_open()</code>.</p>
+<p>通过<code>bdev_channel_get_io()</code>获取<code>bdev_io</code>，然后调用<code>bdev_io_submit()</code>，该函数的调用次数比请求的总次数多三次。但是因为我们的请求都是写，所以<code>bdev_write_blocks_with_md()</code>该函数调用的次数和请求的数目是一致的。</p>
+<p>io channel是一个线程强相关对象，不同的线程对应不同的channel，。request必须在关联的I/Ochannel上提交。</p>
+<p><code>fio_plugin.c</code>中的<code>spdk_fio_queue()</code>用于提交IO request</p>
+<p>==根据NVMe执行过程分析==</p>
+<p>在<code>nvme_ctrlr.c</code>中找到<code>nvme_ctrlr_proc_add_io_qpair()</code>，被调用的次数和线程数目一致</p>
+<p><code>nvme_qpair_submit_request()</code>负责从把request放到qpair中。</p>
+<h3 id="在bdev层进行token对每个thread进行速率限制"><a href="#在bdev层进行token对每个thread进行速率限制" class="headerlink" title="在bdev层进行token对每个thread进行速率限制"></a>在bdev层进行token对每个thread进行速率限制</h3><p>首先在<code>./spdk/lib/bdev</code>中创建 <code>resource_schedule.c</code>文件,该文件中完成速率控制的函数。然后在。<code>./include/spdk/bdev.h</code>中创建<code>shceduler</code>结构体。</p>
+<p>该结构体中包括请求排队队列，和一些相关的参数。并且C语言中没有实现map。</p>
+<p>给<code>spdk_thread</code>中加入 void*指针，指向scheduler，每个线程绑定一个scheduler，每个线程创建之后将scheduler绑定到该线程</p>
+<p>在<code>_bdev_io_submit()</code>中，在记录</p>
+<p><strong>设置三个任务，其中一个任务在150000条之后把时间间隔改为20μs，提高发送速率</strong></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%98%E5%82%A8%E7%A0%94%E7%A9%B6/" class="category-chain-item">存储研究</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>搭建SPDK和fio环境</div>
+      <div>http://example.com/2024/03/15/搭建SPDK和fio环境/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>sun_zhi_bin</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/04/11/SPDK%E4%BD%BF%E7%94%A8vhost/" title="SPDK使用vhost">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">SPDK使用vhost</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/03/14/PAIO%E6%80%BB%E7%BB%93/" title="PAIO总结">
+                        <span class="hidden-mobile">PAIO总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

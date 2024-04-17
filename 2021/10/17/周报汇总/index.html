@@ -32,8 +32,13 @@
 <meta property="og:image" content="d:/Sun1999/MyHexoBlogs/myblogs/source_posts/images/周报汇总/image-20230604235608459.png">
 <meta property="og:image" content="http://example.com/2021/10/17/images/%E5%91%A8%E6%8A%A5%E6%B1%87%E6%80%BB/image-20230709150109380.png">
 <meta property="og:image" content="http://example.com/2021/10/17/images/%E5%91%A8%E6%8A%A5%E6%B1%87%E6%80%BB/image-20230709152945674.png">
+<meta property="og:image" content="http://example.com/2021/10/17/images/%E5%91%A8%E6%8A%A5%E6%B1%87%E6%80%BB/image-20240324233759857.png">
+<meta property="og:image" content="http://example.com/2021/10/17/images/周报汇总/image-20240331235707054.png">
+<meta property="og:image" content="http://example.com/2021/10/17/images/周报汇总/image-20240331235716261.png">
+<meta property="og:image" content="http://example.com/2021/10/17/images/周报汇总/image-20240401001604304.png">
+<meta property="og:image" content="http://example.com/2021/10/17/images/周报汇总/image-20240401001624455.png">
 <meta property="article:published_time" content="2021-10-17T12:29:39.000Z">
-<meta property="article:modified_time" content="2024-03-11T13:32:55.335Z">
+<meta property="article:modified_time" content="2024-04-16T10:31:53.389Z">
 <meta property="article:author" content="sun_zhi_bin">
 <meta property="article:tag" content="周报">
 <meta name="twitter:card" content="summary_large_image">
@@ -230,7 +235,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          33k 字
+          34k 字
         
       </span>
     
@@ -241,7 +246,7 @@
         
         
         
-          273 分钟
+          284 分钟
         
       </span>
     
@@ -1894,6 +1899,83 @@
 <li>完善ppt的方案细节和motivation</li>
 <li>思考在motivation中如何体现吞吐量SLO和延迟SLO的关系。</li>
 <li>回顾aequitas和D2FQ，定义motivation</li>
+</ol>
+<h1 id="20240311-20240315"><a href="#20240311-20240315" class="headerlink" title="20240311-20240315"></a>20240311-20240315</h1><h2 id="本周工作-78"><a href="#本周工作-78" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>完善PPT中细节方案和motivation。</p>
+</li>
+<li><p>Motivation包括两个部分</p>
+<ol>
+<li>多租户竞争有限存储资源：对应一个图，每个租户的SLO和到达速率都一样，随着租户数目增多，所有租户的SLO都无法满足。</li>
+<li>延迟SLO和带宽SLO：对应两个图，每个租户的到达速率等于吞吐量SLO，增加一个租户(延迟SLO宽松)的到达速率，抢占其他租户的资源，会导致其他租户的吞吐量SLO和延迟SLO无法满足。每个租户的到达速率等于吞吐量SLO，为每个租户按照吞吐量SLO进行限速。当一个租户(延迟SLO严格)的到达速率大于吞吐量SLO的时候，延迟SLO被破坏。</li>
+</ol>
+</li>
+<li><p>准备组会论文</p>
+</li>
+<li><p>在14号机安装了SPDK和FIO环境</p>
+</li>
+</ol>
+<h2 id="下周工作计划-20"><a href="#下周工作计划-20" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>准备组会PPT</li>
+<li>完善ppt细节</li>
+</ol>
+<h1 id="20240318-20240322"><a href="#20240318-20240322" class="headerlink" title="20240318-20240322"></a>20240318-20240322</h1><h2 id="本周工作-79"><a href="#本周工作-79" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>准备组会论文</p>
+</li>
+<li><p>在14号机安装了SPDK和FIO环境，能够用FIO测试SPDK的bdev。</p>
+<ol>
+<li><p>测试多租户竞争同一块SSD导致带宽SLO无法满足的情况。下图是iosize=16KB的情况。发送速率是1000MBps(每个io的间隔是16μs)</p>
+<p><img src="../images/%E5%91%A8%E6%8A%A5%E6%B1%87%E6%80%BB/image-20240324233759857.png" srcset="/img/loading.gif" lazyload alt="image-20240324233759857"></p>
+</li>
+<li><p>因为两条线差距过大，打算把iosize大小改为4KB的情况。但是只可以运行1个job(平均带宽是250MBps)。没有办法运行4个job(出现段错误)</p>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-21"><a href="#下周工作计划-21" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>完善ppt细节</li>
+<li>跑出来初步的motivation</li>
+</ol>
+<h1 id="20240325-20240329"><a href="#20240325-20240329" class="headerlink" title="20240325-20240329"></a>20240325-20240329</h1><h2 id="本周工作-80"><a href="#本周工作-80" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li><p>验证motivation</p>
+<ol>
+<li><p>多租户(发送速率相同)竞争有限的资源，随着租户数目的增多，每个租户的带宽和请求的延迟都增加了。当租户的数目增加到4的时候，每个租户的吞吐量降低和延迟增加</p>
+<img src="../images/周报汇总/image-20240331235707054.png" srcset="/img/loading.gif" lazyload alt="image-20240331235707054" style="zoom: 33%;" />
+
+<img src="../images/周报汇总/image-20240331235716261.png" srcset="/img/loading.gif" lazyload alt="image-20240331235716261" style="zoom: 33%;" />
+
+<ol>
+<li><p>多租户竞争有限资源，提高单个租户的发送速率，该租户的吞吐量会变大，但是由于资源是有限的，所以请求的延迟会增加</p>
+<img src="../images/周报汇总/image-20240401001604304.png" srcset="/img/loading.gif" lazyload alt="image-20240401001604304" style="zoom: 33%;" />
+
+<img src="../images/周报汇总/image-20240401001624455.png" srcset="/img/loading.gif" lazyload alt="image-20240401001624455" style="zoom: 33%;" /></li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>体现问题：如果静态按照租户的带宽SLO需求提供存储资源，当租户的发送速率变化的时候，租户的延迟SLO会被破坏</p>
+<ol>
+<li>分析spdk源代码。可以在bdev层和nvme驱动层实现调度算法。目前在spdk的bdev层增加漏桶策略(根据带宽需求生成令牌)，但是结果不理想，准备看一下问题。</li>
+</ol>
+</li>
+</ol>
+<h2 id="下周工作计划-22"><a href="#下周工作计划-22" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li>按照论文的架构整理当前的ppt。思考implementation部分</li>
+<li>在spdk中实现调度算法</li>
+</ol>
+<h1 id="20240408-20240412"><a href="#20240408-20240412" class="headerlink" title="20240408-20240412"></a>20240408-20240412</h1><h2 id="本周工作-81"><a href="#本周工作-81" class="headerlink" title="本周工作"></a>本周工作</h2><ol>
+<li>重新组织ppt内容，丰富motivation的部分</li>
+<li>调研当前spdk的使用方案。计划之后使用QEMU+vhost+SPDK的方案实现对NVMe SSD盘的虚拟化。将一个实体盘虚拟成多个虚拟盘，然后QEMU当做虚拟的客户端，访问每个虚拟盘。</li>
+</ol>
+<h2 id="下周工作计划-23"><a href="#下周工作计划-23" class="headerlink" title="下周工作计划"></a>下周工作计划</h2><ol>
+<li><p>继续组织motivation，分析问题和方案对应。</p>
+<ol>
+<li>有限资源不能无限满足所有租户的需求。需要尽可能满足更多租户的需求。就需要调度算法来决定如何满足租户们的需求。</li>
+<li>部分租户的发送速率是动态的。当租户的发送速率增加的时候，如果不对租户的提交速率进行限制，每个租户的请求延迟会增加，会无法满足租户的延迟SLO。    </li>
+<li>如果只对租户的提交速率进行吞吐量SLO限制(对每个租户的吞吐量设置上限)，当租户发送速率增加的时候，请求的排队延迟会增加，会影响租户的延迟SLO满足情况。     <strong>所以需要按照延迟SLO是否容易被破坏，对租户进行分类</strong></li>
+</ol>
+</li>
+<li><p>搭建QEMU+vhost+SPDK的实验环境。</p>
+</li>
 </ol>
 
                 

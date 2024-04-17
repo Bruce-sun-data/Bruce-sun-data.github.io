@@ -16,31 +16,42 @@
   <meta name="author" content="sun_zhi_bin">
   <meta name="keywords" content="">
   
-    <meta name="description" content="C++1.  C++中智能指针和指针的区别是什么(腾讯:1)智能指针会自动管理内存，可以自动释放。普通的指针需要手动管理内存，释放。智能指针实际上是对普通指针加了一层封装机制，智能指针就是一个类。 在C++11中出现三种智能指针，分别是unique_ptr、shared_ptr、weak_ptr。这三种智能指针分别有各自的应用场景，同时这些应用场景是有相互联系的。https:&#x2F;&#x2F;blog.csdn">
+    <meta name="description" content="C++https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s&#x2F;Y9cyH1X0HnTNBQSUJMb-fw 1.  C++中智能指针和指针的区别是什么(腾讯:1)智能指针会自动管理内存，可以自动释放。普通的指针需要手动管理内存，释放。智能指针实际上是对普通指针加了一层封装机制，智能指针就是一个类。 在C++11中出现三种智能指针，分别是unique_ptr、shared_ptr、weak_ptr。这">
 <meta property="og:type" content="article">
 <meta property="og:title" content="面经题目">
 <meta property="og:url" content="http://example.com/2024/03/12/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/index.html">
 <meta property="og:site_name" content="Bruce Sun&#39;s blog">
-<meta property="og:description" content="C++1.  C++中智能指针和指针的区别是什么(腾讯:1)智能指针会自动管理内存，可以自动释放。普通的指针需要手动管理内存，释放。智能指针实际上是对普通指针加了一层封装机制，智能指针就是一个类。 在C++11中出现三种智能指针，分别是unique_ptr、shared_ptr、weak_ptr。这三种智能指针分别有各自的应用场景，同时这些应用场景是有相互联系的。https:&#x2F;&#x2F;blog.csdn">
+<meta property="og:description" content="C++https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s&#x2F;Y9cyH1X0HnTNBQSUJMb-fw 1.  C++中智能指针和指针的区别是什么(腾讯:1)智能指针会自动管理内存，可以自动释放。普通的指针需要手动管理内存，释放。智能指针实际上是对普通指针加了一层封装机制，智能指针就是一个类。 在C++11中出现三种智能指针，分别是unique_ptr、shared_ptr、weak_ptr。这">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2024/03/12/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312171608374.png">
-<meta property="og:image" content="http://example.com/2024/03/12/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312171639634.png">
-<meta property="og:image" content="http://example.com/2024/03/12/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312172005215.png">
-<meta property="og:image" content="http://example.com/2024/03/12/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312232954820.png">
-<meta property="og:image" content="http://example.com/2024/03/12/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240313171845511.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312171608374.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312171639634.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312172005215.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312232954820.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240313171845511.png">
 <meta property="og:image" content="http://example.com/images/面经题目/image-20240314110741745.png">
 <meta property="og:image" content="http://example.com/images/面经题目/image-20240314144006871.png">
-<meta property="og:image" content="http://example.com/2024/03/12/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312235338063.png">
-<meta property="og:image" content="http://example.com/2024/03/12/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312235428564.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240407104820367.png">
+<meta property="og:image" content="http://example.com/images/面经题目/image-20240408111019744.png">
+<meta property="og:image" content="http://example.com/images/面经题目/image-20240408110759006.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240327182628099.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240327182720192.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312235338063.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312235428564.png">
 <meta property="og:image" content="http://example.com/images/面经题目/image-20240314154437720.png">
-<meta property="og:image" content="http://example.com/2024/03/12/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/images/面经题目/image-20240314155511687.png">
-<meta property="og:image" content="http://example.com/2024/03/12/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240313000442961.png">
+<meta property="og:image" content="http://example.com/images/面经题目/image-20240314155511687.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240407110941386.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240313000442961.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240401163056246.png">
 <meta property="og:image" content="http://example.com/images/面经题目/image-20240314185844274.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240407154420415.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240402214328942.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240402214806914.png">
+<meta property="og:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240405213820270.png">
 <meta property="article:published_time" content="2024-03-12T09:03:05.000Z">
-<meta property="article:modified_time" content="2024-03-14T15:12:50.450Z">
+<meta property="article:modified_time" content="2024-04-17T15:58:46.639Z">
 <meta property="article:author" content="sun_zhi_bin">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/2024/03/12/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312171608374.png">
+<meta name="twitter:image" content="http://example.com/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312171608374.png">
   
   
   
@@ -233,7 +244,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          7.7k 字
+          15k 字
         
       </span>
     
@@ -244,7 +255,7 @@
         
         
         
-          64 分钟
+          126 分钟
         
       </span>
     
@@ -286,10 +297,11 @@
             
               <div class="markdown-body">
                 
-                <h1 id="C"><a href="#C" class="headerlink" title="C++"></a><strong>C++</strong></h1><h3 id="1-C-中智能指针和指针的区别是什么-腾讯-1"><a href="#1-C-中智能指针和指针的区别是什么-腾讯-1" class="headerlink" title="1.  C++中智能指针和指针的区别是什么(腾讯:1)"></a>1.  C++中智能指针和指针的区别是什么(腾讯:1)</h3><p>智能指针会自动管理内存，可以自动释放。普通的指针需要手动管理内存，释放。智能指针实际上是对普通指针加了一层封装机制，智能指针就是一个类。</p>
+                <h1 id="C"><a href="#C" class="headerlink" title="C++"></a><strong>C++</strong></h1><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Y9cyH1X0HnTNBQSUJMb-fw">https://mp.weixin.qq.com/s/Y9cyH1X0HnTNBQSUJMb-fw</a></p>
+<h3 id="1-C-中智能指针和指针的区别是什么-腾讯-1"><a href="#1-C-中智能指针和指针的区别是什么-腾讯-1" class="headerlink" title="1.  C++中智能指针和指针的区别是什么(腾讯:1)"></a>1.  C++中智能指针和指针的区别是什么(腾讯:1)</h3><p>智能指针会自动管理内存，可以自动释放。普通的指针需要手动管理内存，释放。智能指针实际上是对普通指针加了一层封装机制，智能指针就是一个类。</p>
 <p>在C++11中出现三种智能指针，分别是unique_ptr、shared_ptr、weak_ptr。这三种智能指针分别有各自的应用场景，<strong>同时这些应用场景是有相互联系的</strong>。<a target="_blank" rel="noopener" href="https://blog.csdn.net/zsiming/article/details/125783890">https://blog.csdn.net/zsiming/article/details/125783890</a></p>
 <ul>
-<li> unique_ptr的出现，在一定程度上解决了裸指针使用完没有及时释放导致的内存泄漏问题，但多个unique_ptr不能指向同一资源</li>
+<li> unique_ptr的出现，在一定程度上解决了裸指针使用完没有及时释放导致的内存泄漏问题，但多个unique_ptr不能指向同一资源        </li>
 <li> shared_ptr的出现，解决了unique_ptr不能指向同一资源的问题。它的特点是引用计数不为0，就坚决不释放资源。这又导致了另一个问题：交叉引用导致资源无法释放，又会内存泄漏</li>
 <li>weak_ptr的特点是引用对象时引用计数不增加，但自能成为资源的观察者，无法使用资源。如果要使用资源，必须升级为shared_ptr。weak_ptr解决了shared_ptr交叉引用的问题。</li>
 </ul>
@@ -302,27 +314,28 @@
 <h3 id="3-简述C-右值引用与转移语义"><a href="#3-简述C-右值引用与转移语义" class="headerlink" title="3. 简述C++右值引用与转移语义"></a>3. 简述C++右值引用与转移语义</h3><p>左值表达式表示的是对象的身份，右值表达式表达的是对象的值。</p>
 <p>左值对应变量的存储位置，右值对应变量的值本身</p>
 <p>有地址的变量就是左值，没有底质的字面值、临时值就是右值</p>
-<p><img src="./images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312171608374.png" srcset="/img/loading.gif" lazyload alt="image-20240312171608374"></p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312171608374.png" srcset="/img/loading.gif" lazyload alt="image-20240312171608374"></p>
 <p>引用就是给变量取一个别名，和原来的变量公用一块空间。一个变量可以有多个引用，改变引用的值就改变了变量的值</p>
 <p>左值引用要求右边的值必须能够取出地址</p>
 <p>左值的声明符号为”&amp;”， 为了和左值区分，右值的声明符号为”&amp;&amp;”。</p>
 <p>转移语句可以将资源(堆，系统对象等)从一个对象转移到另一个对象</p>
 <p>右值引用实现了转移语义和精确传递，能够消除两个对象相互交互时不必要的对象拷贝，节省运算存储资源，提高运行效率。</p>
-<p><img src="./images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312171639634.png" srcset="/img/loading.gif" lazyload alt="image-20240312171639634"></p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312171639634.png" srcset="/img/loading.gif" lazyload alt="image-20240312171639634"></p>
 <h3 id="4-只定义析构函数，会自动生成哪些构造函数"><a href="#4-只定义析构函数，会自动生成哪些构造函数" class="headerlink" title="4. 只定义析构函数，会自动生成哪些构造函数"></a>4. 只定义析构函数，会自动生成哪些构造函数</h3><p>与构造函数相反，析构函数是在对象被撤销的时自动调用。</p>
 <p>默认生成的析构函数只能释放类的普通数据成员所占用的空间, 无法释放通过 new 或 malloc 进行申请的空间。</p>
 <p>只定义析构函数，会生成默认构造函数和拷贝构造函数。</p>
 <p>默认构造函数是给对象赋予初始值的函数</p>
 <p>拷贝构造函数有编辑器调用来完成一些基于同一类的其他对象的构建及初始化</p>
-<p><img src="./images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312172005215.png" srcset="/img/loading.gif" lazyload alt="image-20240312172005215"></p>
-<p><img src="./images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312232954820.png" srcset="/img/loading.gif" lazyload alt="image-20240312232954820"></p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312172005215.png" srcset="/img/loading.gif" lazyload alt="image-20240312172005215"></p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312232954820.png" srcset="/img/loading.gif" lazyload alt="image-20240312232954820"></p>
 <h3 id="5-C-中多态是如何实现的"><a href="#5-C-中多态是如何实现的" class="headerlink" title="5. C++中多态是如何实现的"></a>5. C++中多态是如何实现的</h3><p>通过虚函数实现动态多态，通过函数重载(参数和返回值不一样)实现静态多态</p>
 <p>多态：一个接口有多个形态</p>
 <h3 id="6-C-中虚函数表和虚函数表指针的创建时机"><a href="#6-C-中虚函数表和虚函数表指针的创建时机" class="headerlink" title="6.C++中虚函数表和虚函数表指针的创建时机"></a>6.C++中虚函数表和虚函数表指针的创建时机</h3><p>虚函数在继承的过程中可以重写基类的虚函数。</p>
 <p>在运行时才知道子类调用的哪一个函数</p>
 <p>虚函数表的创建时机：在编译器编译的时候生成，virtual关键字修饰的函数</p>
-<p>虚函数表是虚函数地址的数组，每有一个虚函数，数组长度就＋1.在可执行程序中存放在只读数据段，在内存中存放在代码区。</p>
-<p>虚函数表指针(在堆区)指向虚函数表的地址，虚函数地址又指向代码段中的函数的位置。</p>
+<p>虚函数表是虚函数地址的数组，每有一个虚函数，数组长度就＋1.在可执行程序中存放在只读数据段(堆中的)，</p>
+<p>虚函数在内存中存放在代码区。    </p>
+<p>虚函数表指针(在堆区)指向虚函数表、的地址，虚函数地址又指向代码段中的函数的位置。</p>
 <p>每个类对应一个虚函数表。类不同对象的虚函数表指针指向该类的虚函数表，但每个对象的虚函数表指针不同。</p>
 <h3 id="7-虚拟内存的构成"><a href="#7-虚拟内存的构成" class="headerlink" title="7. 虚拟内存的构成"></a>7. 虚拟内存的构成</h3><p>内核空间</p>
 <p>栈区</p>
@@ -332,11 +345,17 @@
 <p>代码区</p>
 <h3 id="8-构造函数的底层原理"><a href="#8-构造函数的底层原理" class="headerlink" title="8. 构造函数的底层原理"></a>8. 构造函数的底层原理</h3><p>先创建一个新对象，然后构造函数里的this替换成刚刚new的对象，通过强制转换的方式对新对象添加属性和方法</p>
 <h3 id="9-引用和指针的区别-腾讯-1"><a href="#9-引用和指针的区别-腾讯-1" class="headerlink" title="9. 引用和指针的区别(腾讯:1)"></a>9. 引用和指针的区别(腾讯:1)</h3><p><strong>指针</strong>是一个变量，它保存了另一个变量的内存地址；<strong>引用</strong>是另一个变量的别名，与原变量共享内存地址。</p>
-<p> 指针可以被重新赋值，指向不同的变量；引用在初始化后不能更改，始终指向同一个变量。</p>
-<p> 指针可以为nullptr，表示不指向任何变量；引用必须绑定到一个变量，不能为nullptr。</p>
+<ol>
+<li>定义方式：指针使用<code>*</code>来声明，并且需要通过取地址运算符<code>&amp;</code>获取变量的地址；引用则直接以变量名定义。</li>
+<li>空值：指针可以具有空值（nullptr），表示没有指向有效对象；而引用必须始终引用一个有效的对象。</li>
+<li>可改变性：指针可以被重新赋值，可以更改所指向的对象；而引用在创建时必须初始化，并且不能再绑定到其他对象上。</li>
+<li>空间占用：指针本身占据额外的内存空间来存储地址；而引用仅作为已存在对象的别名，不占据额外空间。</li>
+<li>访问方式：通过指针访问对象需要使用解引用操作符<code>*</code>；而通过引用直接访问即可，无需解引用操作符。</li>
+<li>函数参数传递：指针可以作为函数参数传递，允许在函数内部修改原始数据；而引用也可以作为函数参数传递，但不会创建副本，在函数内部修改将影响原始数据。</li>
+</ol>
 <h3 id="10-qt里面有用到多线程吗"><a href="#10-qt里面有用到多线程吗" class="headerlink" title="10. qt里面有用到多线程吗"></a>10. qt里面有用到多线程吗</h3><p>为什么在QT中要使用线程？</p>
 <p>如果我们在写GUI程序的时候，如果某处的数据，计算比较复杂，当前主线程就会卡在这里，在具体表现就是界面会卡住。所以在这个时候多线程就起到了关键的作用， 我们将复杂的逻辑运算交给线程，由线程在后台处理。<u>（注意：线程不能操作图形界面，他的线程任务是在后台进行数据运算等）</u></p>
-<p><img src="./images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240313171845511.png" srcset="/img/loading.gif" lazyload alt="image-20240313171845511"></p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240313171845511.png" srcset="/img/loading.gif" lazyload alt="image-20240313171845511"></p>
 <h3 id="11-面向对象的特点，三大特征-腾讯-1"><a href="#11-面向对象的特点，三大特征-腾讯-1" class="headerlink" title="11. 面向对象的特点，三大特征(腾讯:1)"></a>11. 面向对象的特点，三大特征(腾讯:1)</h3><p>继承、多态、封装</p>
 <p>其中，<strong>封装</strong>可以隐藏实现细节，使得代码模块化。</p>
 <p><strong>继承</strong>可以扩展已存在的代码模块（类）；它们的目的都是为了——代码重用。</p>
@@ -374,8 +393,65 @@
 <li>this指针只能在成员函数中使用，在静态函数和全局函数中都不能使用</li>
 <li>this指针只有在成员函数中才有定义</li>
 </ul>
-<h1 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a>计算机网络</h1><h3 id="1-简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"><a href="#1-简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？" class="headerlink" title="1. 简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"></a>1. 简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？</h3><p><strong>三次握手：</strong>客户端请求建立连接。服务器端确认请求，回复ACK，并为这次连接分配资源。Client端接收到ACK报文后也向Server段发生ACK报文，并分配资源，这样TCP连接就建立了。Server端接到FIN报文后，发出确认报文，</p>
+<h3 id="18-C-11的新特性"><a href="#18-C-11的新特性" class="headerlink" title="18. C++11的新特性"></a>18. C++11的新特性</h3><p>介绍几种常用的新特性</p>
+<ol>
+<li><p><strong>nullptr</strong>。用来区分空指针和0，nullptr 的类型为 nullptr_t，能够隐式的转换为任何指针或成员指针的类型，也能和他们进行相等或者不等的比较。当需要使用 NULL 时候，直接使用 nullptr。</p>
+</li>
+<li><p><strong>类型推导</strong>。C++11引入了auto和decltype这两个关键字实现了类型推导。</p>
+<p>auto可以对变量的类型进行推导，最常见的是迭代器。auto不能用于函数传参，也不能用于推导数组类型。</p>
+<p>decltype的推导对象总是以一个普通表达式作为参数，返回该表达式的类型，而且decltype并不会对表达式进行求值。</p>
+</li>
+<li><p>区间迭代。for(auto i:arr)</p>
+</li>
+<li><p>初始化列表</p>
+</li>
+</ol>
+<h3 id="19-简述-vector-的实现原理"><a href="#19-简述-vector-的实现原理" class="headerlink" title="19. 简述 vector 的实现原理"></a>19. 简述 vector 的实现原理</h3><p>vector是一个动态数组，用于维护一段连续的动态控件，内部有三个成员函数，用来储存起始位置，已使用位置，以及整个空间的最后位置，每当动态内存用完时，它会按照原内存的2倍，重新申请新内存。将原内存的数据拷贝到新内存，释放掉原内存。</p>
+<h3 id="20-简述hashmap的底层实现原理"><a href="#20-简述hashmap的底层实现原理" class="headerlink" title="20. 简述hashmap的底层实现原理"></a>20. 简述hashmap的底层实现原理</h3><p>使用一个下标范围比较大的数组来存储元素。可以设计一个函数（哈希函数，也叫做散列函数），使得每个元素的关键字都与一个函数值（即数组下标，hash值）相对应，于是用这个数组单元来存储这个元素。</p>
+<p>hash_map，首先分配一大片内存，形成许多桶。是利用hash函数，对key进行映射到不同区域（桶）进行保存。其插入过程是：</p>
+<ul>
+<li>得到key</li>
+<li>通过hash函数得到hash值</li>
+<li>得到桶号(一般都为hash值对桶数求模)</li>
+<li>存放key和value在桶内。</li>
+</ul>
+<p>其取值过程是:</p>
+<ul>
+<li>得到key</li>
+<li>通过hash函数得到hash值</li>
+<li>得到桶号(一般都为hash值对桶数求模)</li>
+<li>比较桶的内部元素是否与key相等，若都不相等，则没有找到。</li>
+<li>取出相等的记录的value。</li>
+<li>hash_map中直接地址用hash函数生成，解决冲突，用比较函数解决。这里可以看出，如果每个桶内部只有一个元素，那么查找的时候只有一次比较。当许多桶内没有值时，许多查询就会更快了(指查不到的时候).</li>
+</ul>
+<p>hashmap是数组和链表组成的，数据结构中又叫“链表散列”。单线链表如果长度超过8的话会变成红黑树。</p>
+<p>单线链表只是为了解决hash冲突准备的，将哈希表的每个位置都设置为一个链表头节点，发生哈希冲突时，将新的键值对插入到对应的链表中。</p>
+<h3 id="21-include-lt-gt-和“”区别"><a href="#21-include-lt-gt-和“”区别" class="headerlink" title="21. include &lt;&gt;和“”区别"></a>21. include &lt;&gt;和“”区别</h3><p>一、引用的头文件不同<br>#include&lt; &gt;引用的是编译器的类库路径里面的头文件。<br>#include“ ”引用的是你程序目录的相对路径中的头文件。<br>二、用法不同<br>#include&lt; &gt;用来包含标准头文件(例如stdio.h或stdlib.h).<br>#include“ ”用来包含非标准头文件。<br>三、调用文件的顺序不同<br>#include&lt; &gt;编译程序会先到标准函数库中调用文件。<br>#include“ ”编译程序会先从当前目录中调用文件。<br>四、预处理程序的指示不同<br>#include&lt; &gt;指示预处理程序到预定义的缺省路径下寻找文件。<br>#include“ ”指示预处理程序先到当前目录下寻找文件，再到预定义的缺省路径下寻找文件。</p>
+<h3 id="22-面向对象优点"><a href="#22-面向对象优点" class="headerlink" title="22. 面向对象优点"></a>22. 面向对象优点</h3><p>可重用性好，我们可以利用其继承、封装、多态的特性来对一个类或者类中的函数实现进行重复利用</p>
+<p>可维护性好</p>
+<p>易于理解</p>
+<p>能更好的对问题进行建模分析，在具体实现时，我们可以跟踪一个对象不同属性的状态</p>
+<h3 id="23-C-从编译到运行发生了什么"><a href="#23-C-从编译到运行发生了什么" class="headerlink" title="23. C++从编译到运行发生了什么"></a>23. C++从编译到运行发生了什么</h3><p>C/C++程序编译流程：预处理-&gt;编译-&gt;汇编-&gt;链接</p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240407104820367.png" srcset="/img/loading.gif" lazyload alt="image-20240407104820367"></p>
+<h3 id="24-C-中const和static的区别"><a href="#24-C-中const和static的区别" class="headerlink" title="24. C++中const和static的区别"></a>24. C++中const和static的区别</h3><p>Const</p>
+<img src="/images/面经题目/image-20240408111019744.png" srcset="/img/loading.gif" lazyload alt="image-20240408111019744" style="zoom:67%;" />
+
+<p>Static有四种用途：</p>
+<img src="/images/面经题目/image-20240408110759006.png" srcset="/img/loading.gif" lazyload alt="image-20240408110759006" style="zoom:67%;" />
+
+<h3 id="25-虚函数和纯虚函数的区别"><a href="#25-虚函数和纯虚函数的区别" class="headerlink" title="25. 虚函数和纯虚函数的区别"></a>25. 虚函数和纯虚函数的区别</h3><p>在C++中，虚函数（Virtual Function）是一种用于实现运行时多态的特殊函数。它通过使用关键字<code>virtual</code>进行声明，在基类中定义并在派生类中进行重写。当通过基类指针或引用调用虚函数时，将根据实际对象的类型来确定要调用的函数版本。</p>
+<p>纯虚函数（Pure Virtual Function）是一个在基类中声明但没有具体实现的虚函数。它通过在函数声明末尾加上<code>= 0</code>来表示纯虚函数。纯虚函数只有声明而没有定义，需要被派生类重写才能使用。</p>
+<p>区别：</p>
+<ol>
+<li>虚函数可以具有默认实现，而纯虚函数没有具体实现。</li>
+<li>派生类可以选择是否重写虚函数，但必须重写纯虚函数。</li>
+<li>含有纯虚函数的类称为抽象类，不能直接创建对象，只能作为基类供派生类继承和实现。而含有普通虚函数的类可以被直接实例化。</li>
+<li>如果一个派生类未覆盖了其基类的纯虚函数，则该派生类也成为抽象类(接口)。</li>
+</ol>
+<h1 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a>计算机网络</h1><h3 id="1-简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"><a href="#1-简述-TCP-三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？" class="headerlink" title="1. 简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？"></a>1. 简述 TCP 三次握手以及四次挥手的流程。为什么需要三次握手以及四次挥手？</h3><p><strong>三次握手：</strong>客户端请求建立连接。服务器端确认请求，回复ACK，并为这次连接分配资源。Client端接收到ACK报文后也向Server段发生ACK报文，并分配资源，这样TCP连接就建立了。</p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240327182628099.png" srcset="/img/loading.gif" lazyload alt="image-20240327182628099"></p>
 <p><strong>四次挥手：</strong>四次挥手在客户端发起中断连接请求的时候，服务器有可能还有数据没有发送完。1. Client端发起中断连接请求，也就是发送FIN报文。2. 服务器收到连接释放报文，这时候处于半关闭状态，即客户端已经没有数据要发送了，但是服务器若发送数据，客户端依然要接受。3. 服务器将最后的数据发送完毕后，就向客户端发送连接释放报文。此时，服务器就进入了LAST-ACK（最后确认）状态，等待客户端的确认。4. 客户端收到服务器的连接释放报文后，必须发出确认，进入TIME-WAIT状态此时TCP连接还没有释放，必须经过2∗MSL（最长报文段寿命）的时间后，才释放TCP，进入CLOSE状态。服务器只要收到了客户端发送的确认，直接进入CLOSE状态。</p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240327182720192.png" srcset="/img/loading.gif" lazyload alt="image-20240327182720192"></p>
 <h3 id="2-为什么不用两次握手"><a href="#2-为什么不用两次握手" class="headerlink" title="2. 为什么不用两次握手"></a>2. 为什么不用两次握手</h3><p>主要为了防止已失效的连接请求报文段突然又传送到了服务器，因而产生错误。</p>
 <h3 id="3-从输入-URL-到展现页面的全过程-腾讯-1"><a href="#3-从输入-URL-到展现页面的全过程-腾讯-1" class="headerlink" title="3. 从输入 URL 到展现页面的全过程(腾讯:1)"></a>3. 从输入 URL 到展现页面的全过程(腾讯:1)</h3><ul>
 <li>浏览器解析URL输入</li>
@@ -395,8 +471,8 @@
 <li>数据链路层：建立逻辑连接、进行硬件地址寻址、差错校验等功能。将比特组合成字节进而组合成帧，用MAC地址访问介质，错误发现但不能纠正。</li>
 <li>物理层：建立、维护、断开物理连接。</li>
 </ul>
-<p><img src="./images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312235338063.png" srcset="/img/loading.gif" lazyload alt="image-20240312235338063"></p>
-<h4 id="TCP-IP四层模型"><a href="#TCP-IP四层模型" class="headerlink" title="TCP/IP四层模型"></a>TCP/IP四层模型</h4><h3 id="5-session和cookie的区别"><a href="#5-session和cookie的区别" class="headerlink" title="5. session和cookie的区别"></a>5. session和cookie的区别</h3><p><img src="./images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312235428564.png" srcset="/img/loading.gif" lazyload alt="image-20240312235428564"></p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312235338063.png" srcset="/img/loading.gif" lazyload alt="image-20240312235338063"></p>
+<h4 id="TCP-IP四层模型"><a href="#TCP-IP四层模型" class="headerlink" title="TCP/IP四层模型"></a>TCP/IP四层模型</h4><h3 id="5-session和cookie的区别"><a href="#5-session和cookie的区别" class="headerlink" title="5. session和cookie的区别"></a>5. session和cookie的区别</h3><p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240312235428564.png" srcset="/img/loading.gif" lazyload alt="image-20240312235428564"></p>
 <h3 id="6-http和https的区别-腾讯-1"><a href="#6-http和https的区别-腾讯-1" class="headerlink" title="6. http和https的区别(腾讯:1)"></a>6. http和https的区别(腾讯:1)</h3><p>安全超文本传输协议（HTTPS）是 HTTP 的一种更安全的版本或扩展。在 HTTPS 中，浏览器与服务器会在传输数据之前建立安全的加密连接。</p>
 <p>HTTPS 将 HTTP 请求和响应与 SSL 和 TLS 技术相结合。</p>
 <h3 id="7-tcp-udp的区别，TCP为什么是可靠传输，TCP拥塞控制是怎样的-腾讯-1"><a href="#7-tcp-udp的区别，TCP为什么是可靠传输，TCP拥塞控制是怎样的-腾讯-1" class="headerlink" title="7. tcp/udp的区别，TCP为什么是可靠传输，TCP拥塞控制是怎样的(腾讯:1)"></a>7. tcp/udp的区别，TCP为什么是可靠传输，TCP拥塞控制是怎样的(腾讯:1)</h3><p><strong>udp</strong>：传送数据前不需要先建立连接，远地主机在收到 UDP 报文后，也不需要给出任何确认。UDP不保证可靠的交付。适用于IM、语音、视频、直播等.</p>
@@ -407,6 +483,7 @@
 <p>TCP使用窗口实现<strong>拥塞控制</strong>。防止过多的包被发送到网络中，避免出现网络负载过大，网络拥塞的情况。</p>
 <p>原理是：发送方根据其对当前网络拥塞程序的估计确定一个拥塞窗口<strong>cwnd</strong>。</p>
 <p>最终A发送的窗口的实际大小是min(rwnd,cwnd)值。</p>
+<p>拥塞窗口(cwnd)反映网络的拥塞程度。发送窗口(rwnd)反映接收方拥塞程度</p>
 <p>==<strong>慢开始算法</strong>==</p>
 <p>在TCP刚连接好，开始发送TCP报文段时，先令拥塞窗口cwnd=1，在每收到一个对新的报文段确认后，再将cwnd加1，慢开始算法，每经过一个传输轮次（即往返RTT)，拥塞窗口cwnd就会加倍，即呈指数形式增加，当慢开始算法把拥塞窗口cwnd增大到一个阈值ssthresh，改用拥塞避免算法。</p>
 <p>==<strong>拥塞避免算法</strong>==</p>
@@ -419,9 +496,103 @@
 <p>当发送方连续收到三个重复的ACK报文，直接重传对方尚未收到的报文段，而不必等待那个报文段设置的重传计时器超时。</p>
 <p><strong>==快恢复==</strong></p>
 <p>当发送端收到连续三个冗余ACK时，就执行“乘法减少”算法，把慢开始阈值ssthresh设置为出现拥塞时发送方cwnd的一半。与慢开始将拥塞窗口cwnd设置为1的不同之处，它把cwnd的值设置为慢开始阈值ssthresh减半后的数值，然后执行拥塞避免算法，使拥塞窗口缓慢线性增大</p>
-<img src="./images/面经题目/image-20240314155511687.png" srcset="/img/loading.gif" lazyload alt="image-20240314155511687" style="zoom:67%;" />
+<img src="/images/面经题目/image-20240314155511687.png" srcset="/img/loading.gif" lazyload alt="image-20240314155511687" style="zoom:67%;" />
 
 <h3 id="8-IP地址子网掩码是什么-腾讯-1"><a href="#8-IP地址子网掩码是什么-腾讯-1" class="headerlink" title="8. IP地址子网掩码是什么(腾讯:1)"></a>8. IP地址子网掩码是什么(腾讯:1)</h3><p>网掩码只有一个作用，就是将某个IP地址划分成网络地址和主机地址两部分。翻译一下就是：一是用于屏蔽IP地址的一部分以区别<strong>网络标识</strong>和<strong>主机</strong>标识，并说明该IP地址是在<strong>局域网</strong>上，还是在远程网上。二是用于将一个大的IP网络划分为若干小的子网络。</p>
+<h3 id="9-https工作原理"><a href="#9-https工作原理" class="headerlink" title="9. https工作原理"></a>9. https工作原理</h3><p>HTTPS的整体过程分为证书验证和数据传输阶段，具体的交互过程如下：</p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240407110941386.png" srcset="/img/loading.gif" lazyload alt="image-20240407110941386"></p>
+<p>只是对随机数进行了非对称加密(公钥和私钥)。随机数本身是对称加密</p>
+<h3 id="10-对称加密和非对称加密"><a href="#10-对称加密和非对称加密" class="headerlink" title="10.对称加密和非对称加密"></a>10.对称加密和非对称加密</h3><h3 id="11-TCP长短连接流程，怎么实现"><a href="#11-TCP长短连接流程，怎么实现" class="headerlink" title="11. TCP长短连接流程，怎么实现"></a>11. TCP长短连接流程，怎么实现</h3><p>==长连接==指建立SOCKET连接后不管是否使用都保持连接，但安全性较差。</p>
+<p>Client方与Server方先建立通讯连接，连接建立后不断开， 然后再进行报文发送和接收。 </p>
+<p>连接-&gt;传输数据-&gt;保持连接 -&gt; 传输数据-&gt; 。。。-&gt;关闭连接。 </p>
+<p>例如在线游戏。</p>
+<p>==短连接==指Client方与Server每进行一次报文收发交易时才进行通讯连接，交易完毕后立即断开连接。</p>
+<p>连接-&gt;传输数据-&gt;关闭连接  </p>
+<p>HTTP是无状态的，浏览器和服务器每进行一次HTTP操作，就建立一次连接，但任务结束就中断连接。 </p>
+<h3 id="12-TCP协议如何保障可靠传输的"><a href="#12-TCP协议如何保障可靠传输的" class="headerlink" title="12.  TCP协议如何保障可靠传输的"></a>12.  TCP协议如何保障可靠传输的</h3><ul>
+<li><strong>确认和重传</strong>：接收方收到报文就会确认，发送方发送一段时间后没有收到确认就会重传。</li>
+<li><strong>数据校验</strong>：TCP报文头有校验和，用于校验报文是否损坏。</li>
+<li><strong>数据合理分片和排序</strong>：tcp会按最大传输单元(MTU)合理分片，接收方会缓存未按序到达的数据，重新排序后交给应用层。</li>
+<li><strong>流量控制</strong>：当接收方来不及处理发送方的数据，能通过滑动窗口，提示发送方降低发送的速率，防止包丢失</li>
+<li><strong>拥塞控制</strong>：当网络拥塞时，通过拥塞窗口，减少数据的发送，防止包丢失</li>
+</ul>
+<h3 id="13-http1-0，http1-1和http2-0的区别"><a href="#13-http1-0，http1-1和http2-0的区别" class="headerlink" title="13. http1.0，http1.1和http2.0的区别"></a>13. http1.0，http1.1和http2.0的区别</h3><p>HTTP 1.0需要使用keep-alive参数来告知服务器端要建立一个长连接，而HTTP1.1默认支持长连接。</p>
+<p>==HTTP 2.0 和 HTTP 1.X相比的新特性==</p>
+<p><strong>新的二进制格式</strong>（Binary Format），HTTP1.x的解析是基于文本。基于文本协议的格式解析存在天然缺陷，文本的表现形式有多样性，要做到健壮性考虑的场景必然很多，二进制则不同，只认0和1的组合。基于这种考虑HTTP2.0的协议解析决定采用二进制格式，实现方便且健壮。</p>
+<p><strong>多路复用</strong>（MultiPlexing），即连接共享，即每一个request都是是用作连接共享机制的。一个request对应一个id，这样一个连接上可以有多个request，每个连接的request可以随机的混杂在一起，接收方可以根据request的 id将request再归属到各自不同的服务端请求里面。</p>
+<h3 id="14-常见的HTTP状态码有哪些？"><a href="#14-常见的HTTP状态码有哪些？" class="headerlink" title="14. 常见的HTTP状态码有哪些？"></a>14. 常见的HTTP状态码有哪些？</h3><table>
+<thead>
+<tr>
+<th align="center">状态码</th>
+<th align="center">类别</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1XX</td>
+<td align="center">Informational（信息性状态码）</td>
+<td align="center">接收的请求正在处理</td>
+</tr>
+<tr>
+<td align="center">2XX</td>
+<td align="center">Success（成功状态码）</td>
+<td align="center">请求正常处理完毕</td>
+</tr>
+<tr>
+<td align="center">3XX</td>
+<td align="center">Redirection（重定向状态码）</td>
+<td align="center">需要进行附加操作以完成请求</td>
+</tr>
+<tr>
+<td align="center">4XX</td>
+<td align="center">Client Error（客户端错误状态码）</td>
+<td align="center">服务器无法处理请求</td>
+</tr>
+<tr>
+<td align="center">5XX</td>
+<td align="center">Server Error（服务器错误状态码）</td>
+<td align="center">服务器处理请求出错</td>
+</tr>
+</tbody></table>
+<ol>
+<li><p>1XX 信息</p>
+<p><strong>100 Continue</strong> ：表明到目前为止都很正常，客户端可以继续发送请求或者忽略这个响应。</p>
+</li>
+<li><p>2XX 成功</p>
+<ul>
+<li><strong>200 OK</strong></li>
+<li><strong>204 No Content</strong> ：请求已经成功处理，但是返回的响应报文不包含实体的主体部分。一般在只需要从客户端往服务器发送信息，而不需要返回数据时使用。</li>
+<li><strong>206 Partial Content</strong> ：表示客户端进行了范围请求，响应报文包含由 Content-Range 指定范围的实体内容。</li>
+</ul>
+</li>
+<li><p>3XX 重定向</p>
+<ul>
+<li><strong>301 Moved Permanently</strong> ：永久性重定向</li>
+<li><strong>302 Found</strong> ：临时性重定向</li>
+<li><strong>303 See Other</strong> ：和 302 有着相同的功能，但是 303 明确要求客户端应该采用 GET 方法获取资源。</li>
+<li><strong>304 Not Modified</strong> ：如果请求报文首部包含一些条件，例如：If-Match，If-Modified-Since，If-None-Match，If-Range，If-Unmodified-Since，如果不满足条件，则服务器会返回 304 状态码。</li>
+<li><strong>307 Temporary Redirect</strong> ：临时重定向，与 302 的含义类似，但是 307 要求浏览器不会把重定向请求的 POST 方法改成 GET 方法。</li>
+</ul>
+</li>
+<li><p>4XX 客户端错误</p>
+<ul>
+<li><strong>400 Bad Request</strong> ：请求报文中存在语法错误。</li>
+<li><strong>401 Unauthorized</strong> ：该状态码表示发送的请求需要有认证信息（BASIC 认证、DIGEST 认证）。如果之前已进行过一次请求，则表示用户认证失败。</li>
+<li><strong>403 Forbidden</strong> ：请求被拒绝。</li>
+<li><strong>404 Not Found</strong></li>
+</ul>
+</li>
+<li><p>5xx 服务器错误</p>
+<ul>
+<li><strong>500 Internal Server Error</strong> ：服务器正在执行请求时发生错误。</li>
+<li><strong>503 Service Unavailable</strong> ：服务器暂时处于超负载或正在进行停机维护，现在无法处理请求。</li>
+</ul>
+</li>
+</ol>
+<h3 id="15-HTTP长连接和TCP长连接有什么区别"><a href="#15-HTTP长连接和TCP长连接有什么区别" class="headerlink" title="15. HTTP长连接和TCP长连接有什么区别"></a>15. HTTP长连接和TCP长连接有什么区别</h3><ul>
+<li>HTTP 的 Keep-Alive，是由应用层（用户态）实现的，称为 HTTP 长连接；</li>
+<li>TCP 的 Keepalive，是由TCP 层（内核态）实现的，称为 TCP 保活机制；</li>
+</ul>
 <h1 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h1><h3 id="1-线程的生命周期（进程的五个状态）"><a href="#1-线程的生命周期（进程的五个状态）" class="headerlink" title="1. 线程的生命周期（进程的五个状态）"></a>1. 线程的生命周期（进程的五个状态）</h3><p>线程的生命周期通常包括以下几个阶段：</p>
 <ol>
 <li><strong>创建（Creation）：</strong> 在这个阶段，线程被创建并初始化。在许多编程语言中，你需要调用特定的函数或构造一个线程对象来创建线程。线程被创建后，它处于就绪状态，等待被调度执行。</li>
@@ -451,7 +622,7 @@
 <h3 id="4-并发和并行的区别"><a href="#4-并发和并行的区别" class="headerlink" title="4. 并发和并行的区别"></a>4. <strong>并发和并行的区别</strong></h3><p>并发和并行最开始都是操作系统中的概念，表示的是CPU执行多个任务的方式。</p>
 <p>并发是指一个处理器同时处理多个任务，并行是指搓个处理器或者多核的处理器同时处理多个不同的任务。</p>
 <p>并发是交替执行，并行是同时执行</p>
-<p><img src="./images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240313000442961.png" srcset="/img/loading.gif" lazyload alt="image-20240313000442961"></p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240313000442961.png" srcset="/img/loading.gif" lazyload alt="image-20240313000442961"></p>
 <h3 id="5-死锁的条件-腾讯-1"><a href="#5-死锁的条件-腾讯-1" class="headerlink" title="5. 死锁的条件(腾讯:1)"></a>5. 死锁的条件(腾讯:1)</h3><ul>
 <li>互斥</li>
 <li>不可抢占</li>
@@ -462,18 +633,91 @@
 <p>按照计划好的顺序获取锁</p>
 <h3 id="7-为什么要加锁，锁有几种类型？-腾讯-1"><a href="#7-为什么要加锁，锁有几种类型？-腾讯-1" class="headerlink" title="7. 为什么要加锁，锁有几种类型？(腾讯:1)"></a>7. 为什么要加锁，锁有几种类型？(腾讯:1)</h3><p>在多线程情况下共享操作同一个变量时，会导致数据不一致，出现并发安全问题，所以通过锁机制来保证数据的准确和唯一。</p>
 <p>互斥锁(排队的线程会被挂起)、自旋锁(排队的进程不会挂起，一直占用CPU资源)、递归锁(同一个线程可以多次获得该资源锁，别的线程必须等待该线程释放所有次数的锁才能获得)、读写锁(允许多个线程读但只允许一个线程写)</p>
-<h3 id="8-操作系统的几种文件管理系统-腾讯-1"><a href="#8-操作系统的几种文件管理系统-腾讯-1" class="headerlink" title="8. 操作系统的几种文件管理系统(腾讯:1)"></a>8. 操作系统的几种文件管理系统(腾讯:1)</h3><h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><h3 id="1-排序算法和思路-腾讯-1"><a href="#1-排序算法和思路-腾讯-1" class="headerlink" title="1. 排序算法和思路(腾讯:1)"></a>1. 排序算法和思路(腾讯:1)</h3><img src="/images/面经题目/image-20240314185844274.png" srcset="/img/loading.gif" lazyload alt="image-20240314185844274" style="zoom:67%;" />
+<h3 id="8-操作系统的几种文件管理系统-腾讯-1"><a href="#8-操作系统的几种文件管理系统-腾讯-1" class="headerlink" title="8. 操作系统的几种文件管理系统(腾讯:1)"></a>8. 操作系统的几种文件管理系统(腾讯:1)</h3><p>ext4,ext3,NTFS</p>
+<h3 id="9-动态链接静态链接区别"><a href="#9-动态链接静态链接区别" class="headerlink" title="9. 动态链接静态链接区别"></a>9. 动态链接静态链接区别</h3><p>一个C或者C++文件需要经过预处理、编译、汇编、链接四步才能形成一个可执行文件。</p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240401163056246.png" srcset="/img/loading.gif" lazyload alt="image-20240401163056246"></p>
+<ul>
+<li><strong>静态链接：</strong> 在链接阶段，把所有需要的函数和数据编译进一个二进制文件。在使用静态库的情况下，在编译链接可执行文件时，链接器从库中复制这些函数和数据并把它们和应用程序的其它模块组合起来创建最终的可执行文件。</li>
+<li>空间浪费：因为每个可执行程序中对所有需要的静态库文件都要有一份副本，所以如果多个程序对同一个目标文件都有依赖，会出现同一个目标文件都在内存存在多个副本；</li>
+<li>更新困难：每当库函数的代码修改了，这个时候就需要重新进行编译链接形成可执行程序。</li>
+<li>运行速度快：但是静态链接的优点就是，在可执行程序中已经具备了所有执行程序所需要的任何东西，在执行的时候运行速度快。</li>
+<li><strong>动态链接：</strong> 动态链接的基本思想是把程序按照模块拆分成各个相对独立部分，在<strong>程序运行时</strong>才将它们链接在一起形成一个完整的程序，而不是像静态链接一样把所有程序模块都链接成一个单独的可执行文件。<ul>
+<li>共享库：就是即使需要每个程序都依赖同一个库，但是该库不会像静态链接那样在内存中存在多份副本，而是这多个程序在执行时共享同一份副本；</li>
+<li>更新方便：更新时只需要替换原来的目标文件，而无需将所有的程序再重新链接一遍。当程序下一次运行时，新版本的目标文件会被自动加载到内存并且链接起来，程序就完成了升级的目标。</li>
+<li>性能损耗：因为把链接推迟到了程序运行时，所以每次执行程序都需要进行链接，所以性能会有一定损失。</li>
+</ul>
+</li>
+</ul>
+<h3 id="10-介绍一下I-O多路复用"><a href="#10-介绍一下I-O多路复用" class="headerlink" title="10. 介绍一下I/O多路复用"></a>10. 介绍一下I/O多路复用</h3><p>这一篇讲的比较清楚<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/63179839">https://zhuanlan.zhihu.com/p/63179839</a></p>
+<p>一个进程虽然任意时刻只能处理一个请求，但是处理每个请求事件时，耗时控制在1ms以内，这样1秒内就可以处理上千个请求，相当于多个请求复用了一个进程，这就是多路复用。也叫做时分多路复用</p>
+<p>select/poll/epoll内核提供给用户态的多路复用系统调用，进程可以通过一个系统调用函数从内核中获取多个事件。</p>
+<p>==select/poll==</p>
+<p>select仅仅知道有I/O事件发生，却并不知道是哪几个流（可能有一个，多个，甚至全部）。我们只能无差别轮询所有流，找出能读出数据，或者写入数据的流，对他们进行操作。所以<strong>select具有O(n)的无差别轮询复杂度</strong>，同时处理的流越多，无差别轮询时间就越长。</p>
+<p>select 使用固定长度的 BitsMap，表示文件描述符集合，而且所支持的文件描述符的个数是有限制的。</p>
+<p>poll 不再用 BitsMap 来存储所关注的文件描述符，取而代之用动态数组，以链表形式来组织，突破了 select 的文件描述符个数限制。</p>
+<p><strong>缺点</strong>：每次调用 select/poll时 ，都需要把 fd 集合从用户态拷贝到内核态，这个开销在 fd 很多时会很大。对 socket 扫描是线性扫描，采用轮询的方法，效率较低（高并发时）。</p>
+<p>==epoll==</p>
+<h3 id="11-线程调度"><a href="#11-线程调度" class="headerlink" title="11.线程调度"></a>11.线程调度</h3><p>先到先服务：</p>
+<p>短作业优先：长作业有可能饿死</p>
+<p>优先级队列：</p>
+<p>最短剩余时间优先：</p>
+<p>时间片轮转：</p>
+<h3 id="12-介绍一下虚拟内存"><a href="#12-介绍一下虚拟内存" class="headerlink" title="12. 介绍一下虚拟内存"></a>12. 介绍一下虚拟内存</h3><p>虚拟内存的目的是为了让物理内存扩充成更大的逻辑内存，从而让程序获得更多的可用内存。</p>
+<p>为了更好的管理内存，操作系统将内存抽象成地址空间。每个程序拥有自己的地址空间，这个地址空间被分割成多个块，每一块称为一页。</p>
+<p>这些页被映射到物理内存，但不需要映射到连续的物理内存，也不需要所有页都必须在物理内存中。当程序引用到不在物理内存中的页时，由硬件执行必要的映射，将缺失的部分装入物理内存并重新执行失败的指令。</p>
+<p>从上面的描述中可以看出，虚拟内存允许程序不用将地址空间中的每一页都映射到物理内存，也就是说一个程序不需要全部调入内存就可以运行，这使得有限的内存运行大程序成为可能。</p>
+<h3 id="13-线程阻塞"><a href="#13-线程阻塞" class="headerlink" title="13. 线程阻塞"></a>13. 线程阻塞</h3><p>等待阻塞：运行状态中的线程执行 wait() 方法，使线程进入到等待阻塞状态</p>
+<p>同步阻塞：线程在获取 synchronized 同步锁失败(因为同步锁被其他线程占用)</p>
+<p>其他阻塞：通过调用线程的 sleep() 或 join() 发出了 I/O 请求时，线程就会进入到阻塞状态。当sleep() 状态超时，join() 等待线程终止或超时，或者 I/O 处理完毕，线程重新转入就绪状态</p>
+<h3 id="14-线程join-操作"><a href="#14-线程join-操作" class="headerlink" title="14. 线程join()操作"></a>14. 线程join()操作</h3><p>某个线程可以通过调用join操作来等待另外一个线程的执行，直到另外一个线程执行完毕。</p>
+<h1 id="数据结构与算法"><a href="#数据结构与算法" class="headerlink" title="数据结构与算法"></a>数据结构与算法</h1><h3 id="1-排序算法和思路-腾讯-1"><a href="#1-排序算法和思路-腾讯-1" class="headerlink" title="1. 排序算法和思路(腾讯:1)"></a>1. 排序算法和思路(腾讯:1)</h3><img src="/images/面经题目/image-20240314185844274.png" srcset="/img/loading.gif" lazyload alt="image-20240314185844274" style="zoom:67%;" />
 
 <h4 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h4><p><strong>两两比较相邻记录的关键字</strong>，如果是反序则交换，直到没有反序为止。如果是从小到大排序，会把最大的值排到后面。</p>
 <h4 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h4><p>直接插入排序：将一个记录插入到已经排好序的有序表中，从而得到一个新的有序表。</p>
 <h4 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h4><p>主要思路就是我们每一趟在 n-i+1 个记录中选取关键字最小的记录作为有序序列的第 i 个记录</p>
 <h4 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h4><p>其思想简单点说就是有跨度的插入排序，这个跨度会逐渐变小(折半减少)，直到变为 1，变为 1 时记录也就基本有序，这时用到的也就是我们之前讲的直接插入排序了。</p>
-<h4 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h4><p>先把数组构造成一个大顶堆(所有父节点的值都要大于或等于子节点的值)，然后把堆顶元素和最后一个值交换。</p>
-<h3 id="2-查找算法和思路-腾讯-1"><a href="#2-查找算法和思路-腾讯-1" class="headerlink" title="2. 查找算法和思路(腾讯:1)"></a>2. 查找算法和思路(腾讯:1)</h3><p>顺序查找</p>
+<h4 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h4><p>堆需要是一个完全二叉树。</p>
+<p>先把数组构造成一个大顶堆(所有父节点的值都要大于或等于子节点的值)，然后把堆顶元素和最后一个值交换。</p>
+<p>从第h-1层开始，每个节点做一个heapify(该节点和左右孩子，选择最大的值作为根节点) </p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Eb41147dK?from=search&amp;seid=3993837508839965022">https://www.bilibili.com/video/BV1Eb41147dK?from=search&amp;seid=3993837508839965022</a></p>
+<h4 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h4><h4 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h4><h3 id="2-查找算法和思路-腾讯-1"><a href="#2-查找算法和思路-腾讯-1" class="headerlink" title="2. 查找算法和思路(腾讯:1)"></a>2. 查找算法和思路(腾讯:1)</h3><p>顺序查找</p>
 <p>二分查找</p>
 <p>二叉搜索树</p>
-<h3 id="3-链表和数组的区别，栈和队列的区别-腾讯-1"><a href="#3-链表和数组的区别，栈和队列的区别-腾讯-1" class="headerlink" title="3. 链表和数组的区别，栈和队列的区别(腾讯:1)"></a>3. 链表和数组的区别，栈和队列的区别(腾讯:1)</h3><h3 id="4-树有几种遍历形式，二叉树用在什么场景-腾讯-1"><a href="#4-树有几种遍历形式，二叉树用在什么场景-腾讯-1" class="headerlink" title="4. 树有几种遍历形式，二叉树用在什么场景(腾讯:1)"></a>4. 树有几种遍历形式，二叉树用在什么场景(腾讯:1)</h3><p>查询，二叉排序树，计算表达式</p>
-<h1 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h1><h3 id="1-有几种类型的数据库-腾讯-1"><a href="#1-有几种类型的数据库-腾讯-1" class="headerlink" title="1. 有几种类型的数据库(腾讯:1)"></a>1. 有几种类型的数据库(腾讯:1)</h3><h3 id="2-索引有哪些怎么实现的-腾讯-1"><a href="#2-索引有哪些怎么实现的-腾讯-1" class="headerlink" title="2. 索引有哪些怎么实现的(腾讯:1)"></a>2. 索引有哪些怎么实现的(腾讯:1)</h3><h3 id="3-数据库事务类型有哪些-腾讯-1"><a href="#3-数据库事务类型有哪些-腾讯-1" class="headerlink" title="3. 数据库事务类型有哪些(腾讯:1)"></a>3. 数据库事务类型有哪些(腾讯:1)</h3>
+<h3 id="3-链表和数组的区别，栈和队列的区别，栈和堆的区别-腾讯-1"><a href="#3-链表和数组的区别，栈和队列的区别，栈和堆的区别-腾讯-1" class="headerlink" title="3. 链表和数组的区别，栈和队列的区别，栈和堆的区别(腾讯:1)"></a>3. 链表和数组的区别，栈和队列的区别，栈和堆的区别(腾讯:1)</h3><p>操作系统中的堆和栈都是指内存空间，不同的是堆为按需申请、动态分配，例如 C 中的 malloc 函数和 C++ 中的 new 操作（当然 C++ 的 new 不仅仅是申请内存这么简单）。内存中的空闲空间并不是连续的，而是不同程序占用了不同的一块一块的内存，即使是同一个程序也可能占用了不同地方的多块内存。操作系统中则会对这些空间进行统一的管理，在应用程序提出申请时，就会从堆中按照一定算法找出一块可用内存，标记占用空间等信息之后返回其起始地址给程序。</p>
+<h3 id="4-树有几种遍历形式，二叉树用在什么场景-腾讯-1"><a href="#4-树有几种遍历形式，二叉树用在什么场景-腾讯-1" class="headerlink" title="4. 树有几种遍历形式，二叉树用在什么场景(腾讯:1)"></a>4. 树有几种遍历形式，二叉树用在什么场景(腾讯:1)</h3><p>前序遍历，中序遍历，后序遍历</p>
+<p>查询，二叉排序树，计算表达式</p>
+<h3 id="5-求图中最短路径的算法"><a href="#5-求图中最短路径的算法" class="headerlink" title="5. 求图中最短路径的算法"></a>5. 求图中最短路径的算法</h3><p><strong>Dijkstra(迪杰斯特拉)算法</strong></p>
+<p><strong>Floyd-Warshall算法</strong></p>
+<h3 id="6-B树和B-树"><a href="#6-B树和B-树" class="headerlink" title="6. B树和B+树"></a>6. B树和B+树</h3><p>==B树==</p>
+<p>B树是一种平衡的多路查找树，允许一个节点存放多个数据。</p>
+<p>树中每个节点至多有m个孩子节点。</p>
+<p>每个节点的结构如下所示。P是指向孩子节点的指针，k是关键字。n代表关键字的个数</p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240407154420415.png" srcset="/img/loading.gif" lazyload alt="image-20240407154420415"></p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240402214328942.png" srcset="/img/loading.gif" lazyload alt="image-20240402214328942"></p>
+<p>为了描述B-树，首先定义一条记录为一个键值对[key,data]，key和data分布在整棵树的结构当中</p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240402214806914.png" srcset="/img/loading.gif" lazyload alt="image-20240402214806914"></p>
+<p>每个节点一般放置一页的数据，每个节点的大小是16K。data的大小比较大，会限制每个节点存储的键值数目，所以树的深度会变大。</p>
+<p>B+树的数据不存储在非叶子结点。非叶子结点只存储记录和指针，叶子结点存储数据 </p>
+<h3 id="7-红黑树"><a href="#7-红黑树" class="headerlink" title="7. 红黑树"></a>7. 红黑树</h3><p>是一种自平衡的二叉搜索树。</p>
+<p>红黑树的原则有以下几点：</p>
+<ul>
+<li>特性1：节点非黑即红</li>
+<li>特性2：根节点一定是黑色</li>
+<li>特性3：叶子节点（NIL）一定是黑色</li>
+<li>特性4：每个红色节点的两个子节点都为黑色。(从每个叶子到根的所有路径上不能有两个连续的红色节点)</li>
+<li>特性5：从任一节点到其每个叶子的所有路径，都包含相同数目的黑色节点。</li>
+</ul>
+<h3 id="8-KMP匹配算法"><a href="#8-KMP匹配算法" class="headerlink" title="8. KMP匹配算法"></a>8. KMP匹配算法</h3><h2 id="图论"><a href="#图论" class="headerlink" title="图论"></a>图论</h2><h3 id="9"><a href="#9" class="headerlink" title="9."></a>9.</h3><h1 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h1><h3 id="1-有几种类型的数据库-腾讯-1"><a href="#1-有几种类型的数据库-腾讯-1" class="headerlink" title="1. 有几种类型的数据库(腾讯:1)"></a>1. 有几种类型的数据库(腾讯:1)</h3><h3 id="2-索引有哪些怎么实现的-腾讯-1"><a href="#2-索引有哪些怎么实现的-腾讯-1" class="headerlink" title="2. 索引有哪些怎么实现的(腾讯:1)"></a>2. 索引有哪些怎么实现的(腾讯:1)</h3><h3 id="3-数据库事务类型有哪些-腾讯-1"><a href="#3-数据库事务类型有哪些-腾讯-1" class="headerlink" title="3. 数据库事务类型有哪些(腾讯:1)"></a>3. 数据库事务类型有哪些(腾讯:1)</h3><h3 id="4-LSM-tree介绍，什么是追加写"><a href="#4-LSM-tree介绍，什么是追加写" class="headerlink" title="4. LSM-tree介绍，什么是追加写"></a>4. LSM-tree介绍，什么是追加写</h3><p>LSM-tree(Log Structured-Merge Tree) 是一种分层，有序，面向磁盘的数据结构，其核心思想是充分了利用了，磁盘批量的顺序写要远比随机写性能高出很多。这种结构的写入，全部都是以Append的模式追加，不存在删除和修改。</p>
+<p><img src="/images/%E9%9D%A2%E7%BB%8F%E9%A2%98%E7%9B%AE/image-20240405213820270.png" srcset="/img/loading.gif" lazyload alt="image-20240405213820270"></p>
+<p>LSM树有以下三个重要组成部分：</p>
+<p>==MemTable==</p>
+<p>MemTable是在***内存***中的数据结构，用于保存最近更新的数据，会按照Key有序地组织这些数据。</p>
+<p>==Immutable MemTable==</p>
+<p>当 MemTable达到一定大小后，会转化成Immutable MemTable。Immutable MemTable是将转MemTable变为SSTable的一种中间状态。写操作由新的MemTable处理，在转存过程中不阻塞数据更新操作。</p>
+<p>==SSTable(Sorted String Table)==</p>
+<p><em><strong>有序键值对</strong></em>集合，是LSM树组在磁盘中的数据结构。为了加快SSTable的读取，可以通过建立key的索引以及布隆过滤器来加快key的查找。</p>
+<p>LSM树(Log-Structured-Merge-Tree)正如它的名字一样，LSM树会将所有的数据插入、修改、删除等操作记录(注意是操作记录)保存在内存之中，当此类操作达到一定的数据量后，再批量地顺序写入到磁盘当中。当MemTable达到一定大小flush到持久化存储变成SSTable后，在不同的SSTable中，可能存在相同Key的记录，当然最新的那条记录才是准确的。</p>
+<h1 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h1>
                 
               </div>
             
