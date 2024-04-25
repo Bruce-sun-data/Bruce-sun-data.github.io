@@ -22,32 +22,46 @@ SPDK vhost以进程的形式在本地计算机提供存储服务，
 
 ## 安装QEMU
 
-通过官网下载了qemu-5.0.0
+通过官网下载了qemu-7.2.0(如果出错了了就换版本安装)
 
 ```shell
-wget https://download.qemu.org/qemu-5.0.0.tar.xz
+wget https://download.qemu.org/qemu-7.2.0.tar.xz
 #安装依赖包
 sudo apt-get install git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev
 #编译安装
 tar xvJf qemu-5.0.0.tar.xz
-cd qemu-5.0.0
+cd qemu-7.2.0
 mkdir build
 cd build
 ../configure
 make
 ```
 
-make需要很久，要等一下
+make需要很久，要等一下。
 
-然后在build目录下运行`qemu-system-x86_64 --version` 出现报错
+然后在build目录下运行`qemu-system-x86_64 --version` 显示qemu版本
 
-```shell
-qemu-system-x86_64: error while loading shared libraries: libncursesw.so.6: cannot open shared object file: No such file or directory
+```
+QEMU emulator version 7.2.0
+Copyright (c) 2003-2022 Fabrice Bellard and the QEMU Project developers
 ```
 
+然后根据[SPDK官网](https://spdk.io/doc/vhost.html)的提示运行
 
+```
+# qemu-system-x86_64 -device vhost-user-scsi-pci,help
+# qemu-system-x86_64 -device vhost-user-blk-pci,help
+```
 
+这两个命令会返回命令的相关参数。如果都有输出就对了，否则继续换版本。
 
+## QEMU使用
+
+必须指定运行的CPU和基础镜像。可以在https://cloud-images.ubuntu.com/bionic/20230607/中下载ubuntu18.04的.img文件，然后通过qemu-img转化为.qcow2，然后提供给qemu作为磁盘映像。
+
+[qemu-img命令详解](https://blog.csdn.net/c_base_jin/article/details/104126542)
+
+### 制作qcow2磁盘映像
 
 
 
