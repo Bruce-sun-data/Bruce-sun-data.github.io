@@ -61,7 +61,87 @@ Copyright (c) 2003-2022 Fabrice Bellard and the QEMU Project developers
 
 [qemu-img命令详解](https://blog.csdn.net/c_base_jin/article/details/104126542)
 
-### 制作qcow2磁盘映像
+在服务器中安装虚拟机(没有图形界面安装没有图形界面的虚拟机)https://blog.csdn.net/qq_32305507/article/details/119976049
+
+j教程不管用
+
+最终还是决定了使用图形化界面安装QEMU
+
+### 在服务器中安装vnc，实现没有显示器的远程访问
+
+借鉴这一篇博客https://help.aliyun.com/zh/simple-application-server/use-cases/use-vnc-to-build-guis-on-ubuntu-18-04-and-20-04#21e09061d7w5p
+
+注意，在客户端使用VNC Viewer的时候，关闭翻墙软件
+
+如果再出现黑屏，重启机器
+
+### 安装QEMU虚拟机
+
+首先准备了一个1TB的机械硬盘。然后分区300GB，进行挂载。
+
+在该机械硬盘中生成.qcow2文件作为虚拟磁盘，会作为虚拟机的系统盘。
+
+创建30G的虚拟磁盘
+
+```shell
+qemu-img create -f qcow2 test.qcow2 30G
+```
+
+使用cdrom(ubuntu的iso的镜像文件)安装虚拟机
+
+```shell
+sudo ../QEMU/qemu-7.2.0/build/qemu-system-x86_64  -hda ubuntu-server1.qcow2 -cdrom ./ubuntu-18.04.6-live-server-amd64.iso -boot d -m 2048 
+```
+
+然后直接就会跳出来QEMU的界面，然后先不设置网络，一切都点ok
+
+安装完之后直接退出界面，然后使用如下命令直接可以启动。
+
+```shell
+sudo ../QEMU/qemu-7.2.0/build/qemu-system-x86_64 -hda test.qcow2 -boot c -m 1024 
+```
+
+
+
+### 给虚拟机配置网络
+
+其中需要==设置网络参数==详见https://blog.csdn.net/v6543210/article/details/117668461
+
+在使用`ip a`命令的时候发现有`virbr0`,直接使用NAT模式
+
+直接使用virbr0可以看https://blog.csdn.net/liukuan73/article/details/49231785这篇文章。但是看不明白。
+
+还是使用桥接模式，但是还是不太管用。为了能够正确使用，对每一种网络连接方法进行深入了解
+
+QEMU提供了4种网络通信的方式
+
+[QEMU关于网络配置的文档](https://wiki.qemu.org/Documentation/Networking)
+
+1. User mode stack：
+
+   如果不指定nic，那么默认的就是user模式。以下三个命令等效
+
+   ```
+   qemu -m 256 -hda disk.img &
+   
+   qemu -m 256 -hda disk.img -net nic -net user & #使用 -net user 必须同 -net nic配合
+   
+   qemu-system-i386 -m 256 -hda disk.img -netdev user,id=network0 -device e1000,netdev=network0,mac=52:54:00:12:34:56 &
+   ```
+
+   在该模式中，
+
+   
+
+2. 
+
+
+
+### 设置nographic启动
+
+
+
+
 
 
 
