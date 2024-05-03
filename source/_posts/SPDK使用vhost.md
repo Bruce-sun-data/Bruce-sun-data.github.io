@@ -113,11 +113,28 @@ sudo ../QEMU/qemu-7.2.0/build/qemu-system-x86_64 -hda test.qcow2 -boot c -m 1024
 
 还是使用桥接模式，但是还是不太管用。为了能够正确使用，对每一种网络连接方法进行深入了解
 
-QEMU提供了4种网络通信的方式
+[QEMU关于网络配置的文档](https://wiki.qemu.org/Documentation/Networking)。
 
-[QEMU关于网络配置的文档](https://wiki.qemu.org/Documentation/Networking)
+QEMU的networking主要有两部分
 
-1. User mode stack：
+- 提供给guest的虚拟网络设备，例如PCI网卡
+- 与虚拟网卡交互的网络后端，例如把packets放到host的网络中
+
+默认情况下QEMU会给guest创建一个SLiRP的用户网络后端和一个虚拟网络设备(an E1000 PCI card for most x86 PC guests)
+
+#### Network Backends
+
+创建一个网络后端
+
+```
+-netdev TYPE,id=NAME,...
+```
+
+id是virtual network device和network backend连接的选项。id用于区分后端。每个虚拟网络设备对应一个后端
+
+多数情况下使用user模式就够用了，之后是使用tap模式
+
+1. User mode stack(SLIRP)：
 
    如果不指定nic，那么默认的就是user模式。以下三个命令等效
 
@@ -129,7 +146,11 @@ QEMU提供了4种网络通信的方式
    qemu-system-i386 -m 256 -hda disk.img -netdev user,id=network0 -device e1000,netdev=network0,mac=52:54:00:12:34:56 &
    ```
 
-   在该模式中，
+   有以下几点限制
+
+   - 开销很大，所以性能不好
+   - `ICMP(ping)`无法使用
+   - 
 
    
 
