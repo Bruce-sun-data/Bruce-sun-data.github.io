@@ -150,13 +150,19 @@ id是virtual network device和network backend连接的选项。id用于区分后
 
    - 开销很大，所以性能不好
    - `ICMP(ping)`无法使用
-   - 
+   - guest不能从主机或者外部网络直接访问
 
-   
+   User Networking是通过slirp实现的，它在QEMU中提供了一个完整的TCP/IP堆栈，并使用该堆栈实现一个虚拟的NAT网络。下图是一个默认的网络
 
-2. 
+   <img src="/images/SPDK使用vhost/image-20240504143305762.png" alt="image-20240504143305762" style="zoom:67%;" />
 
+​	Gateway上的IP是guest和host交互的端口。例如，"ssh 10.0.2.2 "将从客户机 ssh 到主机。在QEMU中加入下面的命令会改变网络配置为192.168.76.0/24而不是默认的(10.0.2.0/24)并且会9开始分配guest的动态IP，而不是从15开始。
 
+```shell
+-netdev user,id=mynet0,net=192.168.76.0/24,dhcpstart=192.168.76.9
+```
+
+​	
 
 ### 设置nographic启动
 
