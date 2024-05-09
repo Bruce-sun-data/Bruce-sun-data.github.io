@@ -61,9 +61,7 @@ Copyright (c) 2003-2022 Fabrice Bellard and the QEMU Project developers
 
 [qemu-img命令详解](https://blog.csdn.net/c_base_jin/article/details/104126542)
 
-在服务器中安装虚拟机(没有图形界面安装没有图形界面的虚拟机)https://blog.csdn.net/qq_32305507/article/details/119976049
-
-j教程不管用
+在服务器中安装虚拟机(没有图形界面安装没有图形界面的虚拟机)https://blog.csdn.net/qq_32305507/article/details/119976049 但是该教程不管用
 
 最终还是决定了使用图形化界面安装QEMU
 
@@ -103,7 +101,7 @@ sudo ../QEMU/qemu-7.2.0/build/qemu-system-x86_64 -hda test.qcow2 -boot c -m 1024
 
 
 
-### 给虚拟机配置网络
+### 给虚拟机配置网络(官网方法)
 
 其中需要==设置网络参数==详见https://blog.csdn.net/v6543210/article/details/117668461
 
@@ -162,13 +160,281 @@ id是virtual network device和network backend连接的选项。id用于区分后
 -netdev user,id=mynet0,net=192.168.76.0/24,dhcpstart=192.168.76.9
 ```
 
-​	
+​	可以通过`restrict`选项将guest单独隔离开。
+
+1. TAP
+
+   Tap网络后端利用主机中的tap网络设备，它能够提供高性能并且能创建虚拟的多个拓扑。但是，他需要根据操作系统配置网络拓扑。命令如下
+
+   ```shell
+   -netdev tap,id=mynet0
+   ```
+
+#### Virtual Network Devices
+
+**如何创建虚拟网络设备**
+
+虚拟网络设备的选择需要基于需求和guest的环境。例如，如果要使用嵌入式网卡，需要使用`-nic`配置。
+
+对于现在的guest，应该使用虚拟网络(半虚拟化)网络适配器，因为它具有最佳性能，但它需要特殊的guest驱动程序支持，这在非常旧的操作系统上可能无法获得。
+
+使用`-device`可以添加一个虚拟的网络设备
+
+```shell
+-device TYPE,netdev=NAME
+```
+
+这里的`netdev`是前面的`id`。也可以使用`-nic`选项
+
+```
+-netdev user,id=n1 -device virtio-net-pci,netdev=n1
+```
+
+和
+
+```
+-nic user,model=virtio-net-pci
+```
+
+是等价的。
+
+#### 如何配置
+
+1. 如何给guest设置ssh权限
+
+   最简单的命令如下，第一行创建虚拟的e1000网络设备，第二行创建了一个user类型的后端，转发local端口5555到guest的22。
+
+   ```shell
+   -device e1000,netdev=net0
+   -netdev user,id=net0,hostfwd=tcp::5555-:22
+   ```
+
+   然后使用`ssh localhost -p 5555`就可以连接到虚拟机了
+
+2. 在Linux中设置taps
+
+   对于支持iproute2和tap/tun的Linux，可以通过如下配置。其中需要注意host物理机的配置，因为创建的网桥会成为物理设备的新端点，会导致host的网络中断
+
+   ```
+    # ip link add br0 type bridge
+    # ip tuntap add dev tap0 mode tap
+    # ip link set dev tap0 master br0   # set br0 as the target bridge for tap0
+    # ip link set dev eth0 master br0   # set br0 as the target bridge for eth0
+    # ip link set dev br0 up
+   ```
+
+   结构如下图所示
+
+   ![image-20240505194322805](/images/SPDK使用vhost/image-20240505194322805.png)
+
+   上面运行之后，网桥能够成功运行，但是不能成功使用，因为它没有IP address。用如下命令重新分配IP地址
+
+   ```
+    # ip address delete $PREFIX dev eth0  // 给eth0网卡删除对应的ip地址,$PREFIX应该是之前网卡的ip地址
+    # ip address add $PREFIX dev br0    // 添加ip地址，该IP地址分配给网桥设备本身的，用于管理和通信。
+    # ip route add default via $ROUTE dev br0  // 将默认路由添加到网桥 br0 上，并指定网关地址为 $ROUTE。网关是一个网络设备或者主机，用于连接两个不同网络，并且通常是两个不同网络之间的出口点。当你设置网关地址时，你在告诉主机或者网络设备，如果要与不在本地网络中的主机通信，应该将数据包发送到这个地址。网关地址通常是主机或者设备连接到的本地网络的路由器或者防火墙的接口地址。
+   ```
+
+   可以使用 shell 脚本自动在远程主机上设置 tap 网络，将物理设备的主控设置为网桥后，连接将丢失。
+
+   但是按照上述的命令创建网桥之后host无法联网了。
+
+
+### 在ubuntu18.04中使用netplan配置网桥，然后再配置tap提供给虚拟机
+
+参考这篇文章：[Ubuntu网络配置-桥接和多网卡绑定](https://blog.csdn.net/shadow6907/article/details/138283306)。
+
+我们的具体配置如下
+
+```
+# Let NetworkManager manage all devices on this system
+
+network:
+	version: 2
+    ethernets:
+    	eno1:
+        	dhcp4: false
+            dhcp6: false
+    bridges:
+    	br0:
+        	interfaces: [eno1]
+            dhcp4: false
+            addresses: [192.168.1.14/24]
+            routes:
+            	- to: 0.0.0.0/0
+                via: 192.168.1.1
+            nameservers:
+            	addresses: [114.114.114.114,8.8.8.8]
+            parameters:
+            	stp: false
+            dhcp6: false
+```
+
+其中，eno1是之前网卡的名称，192.168.1.14是之前网卡的ip地址。
+
+在给网桥配置路由的时候，to那里要改成0.0.0.0/0
+
+之后使用命令更新网络
+
+```shell
+sudo netplan generate
+sudo netplan --debug apply
+```
+
+之后仍可以使用192.168.1.14网址远程连接该机器。使用`ifconfig`查看网络设备
+
+<img src="/images/SPDK使用vhost/image-20240507093011123.png" alt="image-20240507093011123" style="zoom:100%;" />
+
+br0的ip已经变成了之前eno1的ip。通过下面的命令再创建一个TAP 设备，作为 QEMU 一端的接口：
+
+```
+tunctl -t tap0 -u root              # 创建一个 tap0 接口，只允许 root 用户访问
+brctl addif br0 tap0                # 在虚拟网桥中增加一个 tap0 接口
+ifconfig tap0 0.0.0.0 promisc up    # 启用 tap0 接口
+```
+
+运行`brctl show`可以看到
+
+![image-20240507103447017](/images/SPDK使用vhost/image-20240507103447017.png)
+
+之后将命令转化为脚本，启动的时候使用。`qemu-ifup`
+
+```shell
+#!/bin/bash
+switch=br0
+
+if [ -n "$1" ]; then
+#tunctl -u ${whoami} -t $1
+ip link set $1 up
+sleep 1
+brctl addif ${switch} $1
+exit 0
+else
+echo "Error: no interface specified"
+exit 1
+fi
+```
+
+并准备结束脚本
+
+```shell
+#!/bin/bash
+switch=br0
+
+if [ -n "$1" ];then
+tunctl -d $1
+brctl delif ${switch} $1
+ip link set $1 down
+exit 0
+else
+echo "Error: no interface specified"
+exit 1
+fi
+```
+
+之后通过如下命令启动虚拟机
+
+```
+qemu-system-x86_64 -hda test.qcow2 -smp 2 -m 1024 -net nic -net tap,ifname=tap1,script=/root/kvm_demo/qemu-ifup,downscript=/root/kvm_demo/qemu-ifdown -enable-kvm
+```
+
+在虚拟机中查看ip地址如下图所示
+
+![image-20240507104901880](/images/SPDK使用vhost/image-20240507104901880.png)
+
+成功联网。然后给虚拟机配置ssh操作之后就可以直连了
+
+```
+sudo apt update
+sudo apt install openssh-server
+sudo systemctl start ssh
+systemctl enable ssh.service	#开机自启动
+```
+
+#### 使用netplan给虚拟机配置静态ip
+
+使用命令`ip addr show`查看ip地址是动态的还是静态的。
+
+如果网络接口已配置为静态IP地址，则在输出中会看到以下内容：
+
+```
+inet <静态IP地址>/<子网掩码> brd <广播地址> scope global <网络接口名称>
+```
+
+如果网络接口已配置为动态IP地址，则在输出中会看到以下内容：
+
+```
+inet <动态IP地址>/<子网掩码> brd <广播地址> scope global dynamic <网络接口名称>
+```
+
+如果是动态的，就修改  `/etc/netplan`中对应的文件。记得提前先把之前的备份了
+
+![image-20240507171353225](/images/SPDK使用vhost/image-20240507171353225.png)
+
+#### NAT网络和桥接模式的区别
+
+NAT（Network Address Translation）和桥接（Bridge）是两种不同的网络连接方式。
+
+==NAT==
+
+ 用于连接内部网络与外部网络，并隐藏内部网络的结构。在NAT模式下，虚拟机的网络适配器（Network Adapter）通过虚拟网络设备和虚拟化软件创建一个私有网络。虚拟机会被分配到私有网络中的一个IP地址，并使用该地址进行内部通信。
+
+当虚拟机需要与外部网络通信时，虚拟化软件会将虚拟机的网络流量转发到宿主机（Host Machine）上。宿主机通过Network Address Translation（NAT）技术将虚拟机的私有IP地址转换成宿主机在外部网络上可路由的公共IP地址，同时维护一个转发表来跟踪虚拟机的网络连接。
+
+==桥接==
+
+将多个网络接口连接在一起形成一个单一的网络。虚拟机会和主机IP在同一个网段中。将虚拟机出来的计算机,直接连入当前的网络环境中,并且独占IP。**特点**：在当前网络中的全部计算机,都可以访问虚拟机。
+
+<img src="/images/SPDK使用vhost/image-20240507100108525.png" alt="image-20240507100108525" style="zoom:80%;" />
+
+
+
+
+
+
+
+### 问题注意
+
+- 如果要使用user模式，QEMU7.2.0将slirp模块移除了，所以需要再安装回来
+
+
+```
+sudo apt-get install libslirp-dev
+```
+
+然后在编译前
+
+```
+./configure --enable-slirp
+```
+
+- QEMU加载网卡显示failed with status 256
+
+  脚本文件的权限问题，需要将脚本文件设置为777才可以
+
+- 
 
 ### 设置nographic启动
 
+## QEMU配置SPDK
 
+先使用命令启动SPDK并绑定设备，给SPDK分配大页
 
+```shell
+sudo HUGEMEM=4096 scripts/setup.sh
+```
 
+如果要解绑，`sudo scripts/setup.sh reset`
+
+###  创建SPDK bdev
+
+（注意：SPDK bdev是SPDK中对多种存储后端(storage backend)的抽象。 这些存储后端(storage backend)包括：ceph RBD，ramdisk，NVMe，iSCSI，逻辑卷，甚至是virtio）。这里就体现了SPDK block device layer的概念。
+
+因为我们直接使用的是盘，所以使用基于物理盘的方法
+
+首先使用命令`sudo ./scripts/setup.sh status`查看物理盘的PCI地址
+
+然后
 
 
 
