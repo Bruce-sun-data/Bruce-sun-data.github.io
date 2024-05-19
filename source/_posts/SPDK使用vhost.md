@@ -85,10 +85,10 @@ Copyright (c) 2003-2022 Fabrice Bellard and the QEMU Project developers
 qemu-img create -f qcow2 test.qcow2 30G
 ```
 
-使用cdrom(ubuntu的iso的镜像文件)安装虚拟机
+使用cdrom(ubuntu的iso的镜像文件)安装虚拟机(一定要在图形界面中运行)
 
 ```shell
-sudo ../QEMU/qemu-7.2.0/build/qemu-system-x86_64  -hda ubuntu-server1.qcow2 -cdrom ./ubuntu-18.04.6-live-server-amd64.iso -boot d -m 2048 
+sudo ../QEMU/qemu-7.2.0/build/qemu-system-x86_64  -hda ubuntu-server1.qcow2 -cdrom ./ubuntu-18.04.6-live-server-amd64.iso -boot d -m 2048 -enable-kvm
 ```
 
 然后直接就会跳出来QEMU的界面，然后先不设置网络，一切都点ok
@@ -293,11 +293,19 @@ brctl addif br0 tap0                # 在虚拟网桥中增加一个 tap0 接口
 ifconfig tap0 0.0.0.0 promisc up    # 启用 tap0 接口
 ```
 
+删除`tap0`的命令
+
+```
+ip link set tap0 down
+brctl delif br0 tap0
+tunctl -d tap0
+```
+
 运行`brctl show`可以看到
 
 ![image-20240507103447017](/images/SPDK使用vhost/image-20240507103447017.png)
 
-之后将命令转化为脚本，启动的时候使用。`qemu-ifup`
+之后将上面命令转化为脚本见[文章](https://github.com/QthCN/opsguide_book/blob/master/QEMU%E7%BD%91%E7%BB%9C%E6%93%8D%E4%BD%9C%E7%9B%B8%E5%85%B3%E8%AF%B4%E6%98%8E%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4.md)，启动的时候使用。`qemu-ifup`
 
 ```shell
 #!/bin/bash
@@ -399,7 +407,7 @@ NAT（Network Address Translation）和桥接（Bridge）是两种不同的网�
 
 
 ```
-sudo apt-get install libslirp-dev
+sudo apt-get install libslirp-dev-enable-kvm
 ```
 
 然后在编译前
@@ -412,11 +420,11 @@ sudo apt-get install libslirp-dev
 
   脚本文件的权限问题，需要将脚本文件设置为777才可以
 
-- 
-
 ### 设置nographic启动
 
 ## QEMU配置SPDK
+
+### 启动SPDK vhost target
 
 先使用命令启动SPDK并绑定设备，给SPDK分配大页
 
@@ -426,17 +434,119 @@ sudo HUGEMEM=4096 scripts/setup.sh
 
 如果要解绑，`sudo scripts/setup.sh reset`
 
-###  创建SPDK bdev
+然后启动SPDK vhost target应用。下面的命令会在CPU核0和1上启动vhost，所有未来的套接字文件都放在/var/tmp中。Vhost将完全占用给定的CPU核进行I/O轮询。vhost设备可以被限制在这些CPU内核的子集上运行。
 
-（注意：SPDK bdev是SPDK中对多种存储后端(storage backend)的抽象。 这些存储后端(storage backend)包括：ceph RBD，ramdisk，NVMe，iSCSI，逻辑卷，甚至是virtio）。这里就体现了SPDK block device layer的概念。
-
-因为我们直接使用的是盘，所以使用基于物理盘的方法
-
-首先使用命令`sudo ./scripts/setup.sh status`查看物理盘的PCI地址
-
-然后
+```shell
+sudo build/bin/vhost -S /var/tmp -m 0x3
+```
 
 
+
+###  创建bdev(block device)
+
+SPDK bdevs是提供给Guest的块设备。**vhost-scsi**中，bdev在客户端中作为SCSI lun暴露在连接到vhost-scsi控制器的SCSI设备上。**vhost-blk**中，bdevs直接作为客户端的块设备。
+
+（注意：SPDK bdev是SPDK中对多种存储后端(storage backend)的抽象。 这些存储后端(storage backend)包括：ceph RBD，ramdisk，NVMe，iSCSI，逻辑卷，甚至是virtio）。这里就体现了SPDK block device layer的概念。可以在 [Block Device User Guide](https://spdk.io/doc/bdev.html) 找到更多的关于SPDK存储后端的信息
+
+bdev设备我们直接选择使用NVMe bdev
+
+```
+sudo ./scripts/setup.sh status   #查找nvme设备对应的PCI地址
+rpc.py bdev_nvme_attach_controller -b NVMe1 -t PCIe -a 0000:01:00.0  #在SPDK中创建NVMe Bdev
+```
+
+输出结果
+
+![image-20240511205528041](/images/SPDK使用vhost/image-20240511205528041.png)
+
+<u>试一下使用 bdev_split_create 能不能成</u>
+
+### 创建vhost device
+
+选择试用vhost-blk作为客户端的块设备。下面的命令使用NVMe1n1创建vhost-blk设备。该设备会QEMU可以通过`/var/tmp/vhost.1`访问该设备。所有的I/O轮询都将被固定到给定的cpumask中占用最少的CPU内核上——在本例中是CPU 0。对于NUMA系统，cpumask应该在与其关联的VM相同的CPU套接字上指定内核。
+
+```
+ sudo ./rpc.py vhost_create_blk_controller --cpumask 0x1 vhost.1 NVMe1n1
+```
+
+为了方便之后的使用，将当前的rpc的配置生成文件
+
+```
+./rpc.py save_config > vhost.json
+```
+
+之后可以直接在配置文件中直接加载vhost
+
+```
+build/bin/vhost -S /var/tmp -m 0x3 -s 1024 -c vhost.json
+```
+
+
+
+### 通过QEMU启动
+
+在QEMU启动的参数中加入必要的参数才可以将虚拟机连接到vhost
+
+第一，给虚拟机指定内存，由于QEMU必须与SPDK vhost target共享虚拟机的内存，因此需要设置`share=on`
+
+```
+-object memory-backend-file,id=mem,size=1G,mem-path=/dev/hugepages,share=on
+-numa node,memdev=mem
+```
+
+这里容易出错
+
+其次，确定QEMU从虚拟机的映像中boots，需要设置`bootindex=0`
+
+```
+-drive file=guest_os_image.qcow2,if=none,id=disk
+-device ide-hd,drive=disk,bootindex=0
+```
+
+如下参数指定SPDK vhost设备
+
+```
+-chardev socket,id=char1,path=/var/tmp/vhost.1
+-device vhost-user-blk-pci,id=blk0,chardev=char1
+```
+
+QEMU启动的命令
+
+```shell
+qemu-system-x86_64 -smp 2 -m 1G\
+-net nic -net tap,ifname=tap1,script=qemu-ifup,downscript=qemu-ifdown \
+-enable-kvm \
+-drive file=test.qcow2,if=none,id=disk \
+-device ide-hd,drive=disk,bootindex=0 \
+-object memory-backend-file,id=mem,size=1G,mem-path=/dev/hugepages,share=on \
+-numa node,memdev=mem \
+-chardev socket,id=char1,path=/var/tmp/vhost.1 \
+-device vhost-user-blk-pci,chardev=char1,num-queues=2 
+```
+
+如果遇到了报错：`qemu total memory for NUMA nodes should equal RAM size`是因为 `-m`指定的值和共享内存的`size`大小不一样
+
+运行上述命令出现如下错误
+
+![image-20240511221538534](/images/SPDK使用vhost/image-20240511221538534.png)
+
+这种问题一般是spdk的运行中出现了问题。可以重新make一下spdk，看一下SPDK的代码中是否有问题。
+
+进入虚拟机后执行命令`lsblk --output "NAME,KNAME,MODEL,HCTL,SIZE,VENDOR,SUBSYSTEMS"`可以看到出现虚拟设备vda. vda是SPDK的vhost-blk disk
+
+![image-20240516134856410](/images/SPDK使用vhost/image-20240516134856410.png)
+
+## 多个QEMU虚拟机同时访问一块物理盘
+
+### 虚拟机克隆
+
+只是使用qemu的话克隆虚拟机比较麻烦，所以还是一个个创建吧。
+
+
+
+### 多个虚拟机能不能设置同一个vhost device
+
+可以，创建多个虚拟机，然后可以使用同一个device
 
 ## 参考文献
 
