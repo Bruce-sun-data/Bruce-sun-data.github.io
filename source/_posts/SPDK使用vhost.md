@@ -536,6 +536,30 @@ qemu-system-x86_64 -smp 2 -m 1G\
 
 ![image-20240516134856410](/images/SPDK使用vhost/image-20240516134856410.png)
 
+将QEMU的运行命令保存为了脚本
+
+```shell
+#!/bin/bash
+
+../QEMU/qemu-7.2.0/build/qemu-system-x86_64 -smp 2 -m 1G\
+        -net nic -net tap,ifname=$1,script=qemu-ifup,downscript=qemu-ifdown \
+        -enable-kvm \
+        -drive file=$2,if=none,id=disk \
+        -device ide-hd,drive=disk,bootindex=0 \
+        -object memory-backend-file,id=mem,size=1G,mem-path=/dev/hugepages,share=on \
+        -numa node,memdev=mem \
+        -chardev socket,id=char1,path=/var/tmp/vhost.1 \
+        -device vhost-user-blk-pci,chardev=char1,num-queues=2 
+```
+
+运行命令如下
+
+```shell
+sudo sh ./startqemu.sh tap1 test2.qcow2
+```
+
+
+
 ## 多个QEMU虚拟机同时访问一块物理盘
 
 ### 虚拟机克隆
@@ -547,6 +571,22 @@ qemu-system-x86_64 -smp 2 -m 1G\
 ### 多个虚拟机能不能设置同一个vhost device
 
 可以，创建多个虚拟机，然后可以使用同一个device
+
+## 通过VFIO-USER访问
+
+详情见这篇[文章](https://mp.weixin.qq.com/s?__biz=MzI3NDA4ODY4MA==&mid=2653338902&idx=1&sn=158bbe3d6f8d95d80863c8fafc6dca5a&chksm=f0cb4a91c7bcc38751a31fe1f3214d644ae3a81e9513eabdab33c1ade605f7b04eacd08c90ef&mpshare=1&scene=1&srcid=1213vc7pAy2MZ2cQE8FGdjse&sharer_sharetime=1670897001260&sharer_shareid=16362cd686fb4155d775401692935830&exportkey=n_ChQIAhIQr3m2reKrGl%2FivEG96Nyx%2BRKZAgIE97dBBAEAAAAAAN9DM8o42tEAAAAOpnltbLcz9gKNyK89dVj0JLDLSVHcfQuTlDlwjDSdXQXFOg604HChEfG6uWCMbK%2Ff5dx%2Bu13DFcNLvlEp0PxeSkVLpJYSGjkt3PrUW1Bs%2FDOJsaE5enXukd4Y9hLUBeJ8f9SWt7tKxxbiOxYr09RvVyrD%2BdiFo49ni0GC7%2BLyH2P1P5s%2FIQCLMT0LFE9RRMCNQj1GOsj%2FrfZxO%2Bzzj%2FGs1B19pmn7uL2zzjwiopk8ILSLdl8xMrSw47aGfXE%2BGhdyFfoGJeKU2Ak552U%2Fjar3OUGTl72OGgCr0FVrz4fbqEHFoHKwcqd%2Fa84%2BQ6DbIts%2F4W89KHt77UMUoYPaSaIuY1gL&acctmode=0&pass_ticket=X3rIA7DhA0Qn%2FAJfhiHkt%2FatLl8TSGQitORh34QjySKVfRHU86fvpwasiJR%2FZFyl9vEqLJJDoqEUCzkZurdAJA%3D%3D&wx_header=0#rd)
+
+vfio-user允许 SPDK 在虚拟机中呈现完全仿真的 NVMe 设备。虚拟机可以利用现有的 NVMe 驱动程序与设备通信，并使用共享内存将数据高效地传输到 SPDK 或从 SPDK 传输。换句话说，就像 vhost-user 一样，但可以模拟 NVMe 设备，而不是 virtio-blk 或 virtio-scsi 设备。
+
+
+
+## 如何在虚拟机中使用fio访问物理磁盘
+
+这篇[文章](https://escholarship.mcgill.ca/concern/theses/8c97kw85j)介绍了虚拟机访问物理磁盘的几种方式。
+
+我们的实现主要借鉴这篇文章，[SPDK virtio 驱动模块介绍及使用](https://mp.weixin.qq.com/s?__biz=MzI3NDA4ODY4MA==&mid=2653336450&idx=1&sn=3a15cf91138031bec34abac774a41506&chksm=f0cb4405c7bccd1306a867d817a7691243814d83d7cb7b43f0f5b6677112b78bcd6a0f8efeba&token=1050568646&lang=zh_CN#rd)。
+
+
 
 ## 参考文献
 

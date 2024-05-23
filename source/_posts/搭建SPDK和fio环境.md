@@ -288,6 +288,7 @@ filename=Nvme1n1
 
 ```shell
 LD_PRELOAD=<path to spdk>spdk/build/fio/spdk_bdev fio example_spdk_bdev.fio
+sudo LD_PRELOAD=../spdk/spdk/build/fio/spdk_bdev ./fio/fio ./test_files/example_spdk_bdev.fio
 ```
 
 结果如下
