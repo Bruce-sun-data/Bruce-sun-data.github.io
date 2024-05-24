@@ -475,7 +475,7 @@ rpc.py bdev_nvme_attach_controller -b NVMe1 -t PCIe -a 0000:01:00.0  #在SPDK中
 ./rpc.py save_config > vhost.json
 ```
 
-之后可以直接在配置文件中直接加载vhost
+之后可以直接在配置文件中直接加载vhost，可以使用-h查看每个参数的含义
 
 ```
 build/bin/vhost -S /var/tmp -m 0x3 -s 1024 -c vhost.json
@@ -578,6 +578,8 @@ sudo sh ./startqemu.sh tap1 test2.qcow2
 
 vfio-user允许 SPDK 在虚拟机中呈现完全仿真的 NVMe 设备。虚拟机可以利用现有的 NVMe 驱动程序与设备通信，并使用共享内存将数据高效地传输到 SPDK 或从 SPDK 传输。换句话说，就像 vhost-user 一样，但可以模拟 NVMe 设备，而不是 virtio-blk 或 virtio-scsi 设备。
 
+## virtio介绍
+
 
 
 ## 如何在虚拟机中使用fio访问物理磁盘
@@ -586,7 +588,19 @@ vfio-user允许 SPDK 在虚拟机中呈现完全仿真的 NVMe 设备。虚拟�
 
 我们的实现主要借鉴这篇文章，[SPDK virtio 驱动模块介绍及使用](https://mp.weixin.qq.com/s?__biz=MzI3NDA4ODY4MA==&mid=2653336450&idx=1&sn=3a15cf91138031bec34abac774a41506&chksm=f0cb4405c7bccd1306a867d817a7691243814d83d7cb7b43f0f5b6677112b78bcd6a0f8efeba&token=1050568646&lang=zh_CN#rd)。
 
+使用之前的方法在虚拟机中安装spdk和fio
 
+在spdk目录下运行下面的命令进行配置
+
+```
+./configure --with-virtio --with-fio=../../fio/fio --with-ocf && make
+```
+
+### libaio测试盘
+
+可以在虚拟机中使用==libaio==的方式访问虚拟磁盘。只需要先将虚拟盘从spdk中解绑，然后修改之前的fio配置文件中的设备路径即可。
+
+### 在虚拟机中使用SPDK访问虚拟磁盘
 
 ## 参考文献
 
