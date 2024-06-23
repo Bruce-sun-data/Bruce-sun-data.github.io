@@ -600,7 +600,36 @@ vfio-user允许 SPDK 在虚拟机中呈现完全仿真的 NVMe 设备。虚拟�
 
 可以在虚拟机中使用==libaio==的方式访问虚拟磁盘。只需要先将虚拟盘从spdk中解绑，然后修改之前的fio配置文件中的设备路径即可。
 
+### 控制两个虚拟机同时使用fio访问盘
+
+在主机中使用`pssh`命令可以同时在多个虚拟机中运行命令。为了不在登录和使用`sudo`时候输入密码，需要先配置[SSH 三步解决免密登录](https://blog.csdn.net/jeikerxiao/article/details/84105529)，然后在虚拟机中将[用户添加进无密码](https://blog.csdn.net/MiddleWeek/article/details/121314368)。
+
+运行简单的命令`pssh -h host.txt -l ubuntu -i "echo 123 "`但是总有一个机器反应慢，如下所示
+
+![image-20240529111934803](/images/SPDK使用vhost/image-20240529111934803.png)
+
+为了解决该问题，使用ubuntu 的`at`命令，可以在特定的时间运行指定的命令`at 17:22 -f ./script.sh`,该命令是在17：22的时候运行`script.sh`脚本。
+
+可以在每个虚拟机上都设置一个`script.sh`脚本，然后通过`pssh`使用`at`命令在同一时刻运行该脚本。这样就避免了由于`ssh`接入虚拟机的时间差了。下面是`script.sh`的内容
+
+```shell
+#!/bin/bash
+# This script displays the current date and time
+cat /dev/null >./at.txt
+echo "Current date and time: $(date)" >> ./at.txt
+```
+
+然后运行命令` pssh -h host.txt -l ubuntu -i "at 21:24 -f ./script.sh "`就可以看到每个虚拟机中的==./at.txt==中有相同内容
+
+![image-20240531212710826](/images/SPDK使用vhost/image-20240531212710826.png)
+
+运行fio的命令`pssh -h host.txt -l ubuntu -i "sudo ./fio/fio/fio ./testfile/libaio.fio"`
+
+前提是`fio`命令和配置文件libaio.fio
+
 ### 在虚拟机中使用SPDK访问虚拟磁盘
+
+
 
 ## 参考文献
 
