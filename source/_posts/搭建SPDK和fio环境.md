@@ -461,7 +461,7 @@ SPDK有自己的QoS实现机制。但是spdk qos做在bdev层，是面向块设�
 
 json文件的使用就很好地替代了rpc的配置方式。
 
-作为bdev.json文件中的一部分。以json的格式运行。详情见https://spdk.io/doc/jsonrpc.html
+作为bdev.json文件中的一部分。以json的格式运行。详情见bdev_io_submit
 
 ```json
 {
