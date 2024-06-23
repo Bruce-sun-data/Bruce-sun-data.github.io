@@ -625,9 +625,11 @@ echo "Current date and time: $(date)" >> ./at.txt
 
 运行fio的命令`pssh -h host.txt -l ubuntu -i "sudo ./fio/fio/fio ./testfile/libaio.fio"`
 
-
+前提是`fio`命令和配置文件libaio.fio
 
 ### 在虚拟机中使用SPDK访问虚拟磁盘
+
+
 
 ## 参考文献
 
