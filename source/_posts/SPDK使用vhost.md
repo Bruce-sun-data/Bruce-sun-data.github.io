@@ -541,7 +541,7 @@ qemu-system-x86_64 -smp 2 -m 1G\
 ```shell
 #!/bin/bash
 
-../QEMU/qemu-7.2.0/build/qemu-system-x86_64 -smp 2 -m 1G\
+../QEMU/qemu-7.2.0/build/qemu-system-x86_64 -cpu host -smp 2 -m 1G\
         -net nic -net tap,ifname=$1,script=qemu-ifup,downscript=qemu-ifdown \
         -enable-kvm \
         -drive file=$2,if=none,id=disk \
