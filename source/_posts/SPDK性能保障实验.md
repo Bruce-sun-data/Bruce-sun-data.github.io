@@ -215,15 +215,46 @@ ubuntu@192.168.1.174
 
 ## 修改SPDK源码
 
-## 编译与日志系统
+### 日志系统与编译
 
 使用`SPDK_NOTICELOG`函数可以输出对应内容
 
 首先调试了==bdev.c==中的`bdev_io_submit`函数，观察是否有输出，即IO请求是否会经过`bdev`层
 
-加入`SPDK_NOTICELOG`函数，查看输出
+vhost_blk加入`SPDK_NOTICELOG`函数，查看输出
+
+修改日志级别显示的代码
+
+```shell
+# 修改日志输出级别为DEBUG
+sudo ./scripts/rpc.py log_set_print_level DEBUG
+# 查看日志输出级别
+sudo ./scripts/rpc.py log_get_print_level
+# 设置日志级别
+sudo ./scripts/rpc.py -s /var/tmp/spdk.sock log_set_level debug
+# 查看日志级别
+sudo ./scripts/rpc.py -s /var/tmp/spdk.sock log_get_level
+# 设置日志标志
+sudo scripts/rpc.py -s /var/tmp/spdk.sock log_set_flag vhost_blk
+```
+
+这里日志的flag是指DEBUG输出中的第一个参数。
+
+![image-20240624211504045](/images/SPDK性能保障实验/image-20240624211504045.png)
+
+
 
 修改之后在==./spdk/lib==目录下使用`make`重新编译。但是不管用，需要先关闭虚拟机然后停止虚拟磁盘然后再重新编译才管用。
+
+### 查找代码部署的位置
+
+对使用vhost的IO请求进行追踪，参考这篇[文章](https://rootw.github.io/2018/05/SPDK-ioanalyze/)。
+
+==Gimbal==是将算法实现在了目录==./lib/nvmf/==中，后面将请求提交到了==Bdev==层
+
+所以我们也可以将算法实现在目录==./lib/vhost/==中
+
+即我们和Gimbal一样都将代码实现在SPDK的存储协议层
 
 
 
