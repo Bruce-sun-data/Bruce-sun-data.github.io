@@ -252,7 +252,7 @@ sudo scripts/rpc.py -s /var/tmp/spdk.sock log_set_flag vhost_blk
 
 ==Gimbal==是将算法实现在了目录==./lib/nvmf/==中，后面将请求提交到了==Bdev==层
 
-所以我们也可以将算法实现在目录==./lib/vhost/==中
+所以我们也可以将算法实现在目录==./lib/vhost/==中，因为vhost层之后请求会被提交到Bdev层
 
 即我们和Gimbal一样都将代码实现在SPDK的存储协议层
 
@@ -271,6 +271,10 @@ git checkout v19.10.1
 ![image-20240627160235908](/images/SPDK性能保障实验/image-20240627160235908.png)
 
 这是==Gimbal==的基本架构，其中==IO Scheduler==对应的代码结构体是==spdk_nvmf_iosched_drr_sched_ctx==，
+
+<img src="/images/SPDK性能保障实验/image-20240711000804838.png" alt="image-20240711000804838" style="zoom:50%;" />
+
+可以看到里面存储了多个队列的指针
 
 #### 租户的识别
 
@@ -302,9 +306,11 @@ git checkout v19.10.1
 
 合理利用ctx
 
+在Gimbal中
+
 基本不会用字典
 
-#### 
+
 
 
 
