@@ -244,7 +244,9 @@ sudo scripts/rpc.py -s /var/tmp/spdk.sock log_set_flag vhost_blk
 
 
 
-修改之后在==./spdk/lib==目录下使用`make`重新编译。但是不管用，需要先关闭虚拟机然后停止虚拟磁盘然后再重新编译才管用。
+
+
+修改源码之后之后在==./spdk/lib==目录下使用`make`重新编译并在==spdk==主目录下也进行`make`。但是不管用，需要先关闭虚拟机然后停止虚拟磁盘然后再重新编译才管用。
 
 ### 查找代码部署的位置
 
@@ -252,7 +254,15 @@ sudo scripts/rpc.py -s /var/tmp/spdk.sock log_set_flag vhost_blk
 
 ==Gimbal==是将算法实现在了目录==./lib/nvmf/==中，后面将请求提交到了==Bdev==层
 
-所以我们也可以将算法实现在目录==./lib/vhost/==中
+`spdk_nvmf_ctrlr_process_io_cmd_tmgr()`函数实现了请求提交到traffic_manager
+
+`spdk_nvmf_iosched_wdrr_enqueue`是将请求放在`spdk_nvmf_iosched_drr_qpair_ctx.queued`中
+
+
+
+
+
+所以我们也可以将算法实现在目录==./lib/vhost/==中，因为vhost层之后请求会被提交到Bdev层
 
 即我们和Gimbal一样都将代码实现在SPDK的存储协议层
 
@@ -272,6 +282,14 @@ git checkout v19.10.1
 
 这是==Gimbal==的基本架构，其中==IO Scheduler==对应的代码结构体是==spdk_nvmf_iosched_drr_sched_ctx==，
 
+<img src="/images/SPDK性能保障实验/image-20240711000804838.png" alt="image-20240711000804838" style="zoom:50%;" />
+
+可以看到里面存储了多个队列的指针。
+
+在==traffic_manager==结构体中存储了一个读队列和一个写队列，用于存储用户的请求
+
+源码中使用`spdk_nvmf_ctrlr_process_io_cmd()`在nvmf层提交代码。使用`spdk_nvmf_ctrlr_process_io_cmd_tmgr()`接入Gimbal的模块，然后再在Gimbal的模块最后调用`spdk_nvmf_ctrlr_process_io_cmd()`提交代码。
+
 #### 租户的识别
 
 在vhost层中，==spdk_vhost_session==结构体(存储于==vhost_internal.h==)用于表示一个vhost用户回话，每个虚拟机连接到vhost模块时，都会创建一个独立的会话。
@@ -281,6 +299,8 @@ git checkout v19.10.1
 #### 租户的创建
 
 在vhost中，创建租户即为创建会话。在==rte_vhost_user.c==文件中实现。该文件主要用于实现`vhost-user`协议的处理，管理`vhost-user`会话，处理协议消息，管理虚拟机内存，以及初始化Virtio设备和队列。用户的创建是在`new_connection`函数中。
+
+每一个租户都有自己的`spdk_vhost_session`对应
 
 #### 租户请求的提交
 
@@ -302,9 +322,17 @@ git checkout v19.10.1
 
 合理利用ctx
 
-基本不会用字典
+模仿Gimbal中的操作。Gimbal中的request对应这里的task
 
-#### 
+基本不会用字典的形式
+
+#### 部署WFQ
+
+三个队列，优先级分别是H,M,L。
+
+每个队列都
+
+
 
 
 
