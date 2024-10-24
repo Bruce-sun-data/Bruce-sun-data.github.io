@@ -13,6 +13,8 @@ categories:
 
 ![image-20240416101340921](/images/SPDK使用vhost/image-20240416101340921.png)
 
+SPDK vhost是虚拟机存储的后端，以进程的形式在宿主机上运行，通过轮询的方式从共享的Ring Buffer中得到虚拟机中的I/O请求，并进行处理。最后将处理完的数据同样通过Ring Buffer的方式通知虚拟机。SPDK vhost是真正处理I/O请求的核心逻辑，通过用户态的存储驱动实现I/O操作
+
 SPDK vhost以进程的形式在本地计算机提供存储服务，
 
 - 虚拟机中的存储前端驱动：根据具体使用的协议不同而不同，可能为 virtio blk，virtio scsi，或直接使用原生的 NVMe driver，主要负责接收 IO 请求，并将请求保存到 Ring Buffer 中，等待后端的处理。另一方面，前端驱动还需要处理后端的完成通知；
@@ -580,7 +582,7 @@ vfio-user允许 SPDK 在虚拟机中呈现完全仿真的 NVMe 设备。虚拟�
 
 ## virtio介绍
 
-
+https://blog.csdn.net/lzw06061139/article/details/131509412
 
 ## 如何在虚拟机中使用fio访问物理磁盘
 
